@@ -3,6 +3,7 @@ package com.github.allisson95.codeflix.domain.category;
 import java.time.Instant;
 
 import com.github.allisson95.codeflix.domain.AggregateRoot;
+import com.github.allisson95.codeflix.domain.validation.ValidationHandler;
 
 public class Category extends AggregateRoot<CategoryID> {
 
@@ -35,6 +36,11 @@ public class Category extends AggregateRoot<CategoryID> {
         final var now = Instant.now();
 
         return new Category(id, aName, aDescription, isActive, now, now, null);
+    }
+
+    @Override
+    public void validate(ValidationHandler aHandler) {
+        new CategoryValidator(this, aHandler).validate();
     }
 
     public String getName() {
