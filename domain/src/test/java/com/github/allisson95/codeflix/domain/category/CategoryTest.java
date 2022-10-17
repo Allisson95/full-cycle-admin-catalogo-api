@@ -24,8 +24,9 @@ class CategoryTest {
         final Category newCategory = Category.newCategory(expectedName, expectedDescription, expectedIsActive);
         final ThrowsValidationHandler aHandler = new ThrowsValidationHandler();
 
-        assertDoesNotThrow(() -> newCategory.validate(aHandler));
         assertNotNull(newCategory);
+        assertDoesNotThrow(() -> newCategory.validate(aHandler));
+
         assertNotNull(newCategory.getId());
         assertEquals(expectedName, newCategory.getName());
         assertEquals(expectedDescription, newCategory.getDescription());
@@ -45,8 +46,9 @@ class CategoryTest {
 
         final ThrowsValidationHandler aHandler = new ThrowsValidationHandler();
 
-        assertDoesNotThrow(() -> newCategory.validate(aHandler));
         assertNotNull(newCategory);
+        assertDoesNotThrow(() -> newCategory.validate(aHandler));
+
         assertNotNull(newCategory.getId());
         assertEquals(expectedName, newCategory.getName());
         assertEquals(expectedDescription, newCategory.getDescription());
@@ -66,8 +68,9 @@ class CategoryTest {
 
         final ThrowsValidationHandler aHandler = new ThrowsValidationHandler();
 
-        assertDoesNotThrow(() -> newCategory.validate(aHandler));
         assertNotNull(newCategory);
+        assertDoesNotThrow(() -> newCategory.validate(aHandler));
+
         assertNotNull(newCategory.getId());
         assertEquals(expectedName, newCategory.getName());
         assertEquals(expectedDescription, newCategory.getDescription());
@@ -87,8 +90,9 @@ class CategoryTest {
 
         final ThrowsValidationHandler aHandler = new ThrowsValidationHandler();
 
-        assertDoesNotThrow(() -> newCategory.validate(aHandler));
         assertNotNull(newCategory);
+        assertDoesNotThrow(() -> newCategory.validate(aHandler));
+
         assertNotNull(newCategory.getId());
         assertEquals(expectedName, newCategory.getName());
         assertEquals(expectedDescription, newCategory.getDescription());
@@ -193,9 +197,9 @@ class CategoryTest {
 
         final var inactivatedCategory = activeCategory.deactivate();
 
+        assertNotNull(inactivatedCategory);
         assertDoesNotThrow(() -> inactivatedCategory.validate(aHandler));
 
-        assertNotNull(inactivatedCategory);
         assertEquals(activeCategory.getId(), inactivatedCategory.getId());
         assertEquals(expectedName, inactivatedCategory.getName());
         assertEquals(expectedDescription, inactivatedCategory.getDescription());
@@ -225,9 +229,9 @@ class CategoryTest {
 
         final var activatedCategory = inactiveCategory.activate();
 
+        assertNotNull(activatedCategory);
         assertDoesNotThrow(() -> activatedCategory.validate(aHandler));
 
-        assertNotNull(activatedCategory);
         assertEquals(inactiveCategory.getId(), activatedCategory.getId());
         assertEquals(expectedName, activatedCategory.getName());
         assertEquals(expectedDescription, activatedCategory.getDescription());
