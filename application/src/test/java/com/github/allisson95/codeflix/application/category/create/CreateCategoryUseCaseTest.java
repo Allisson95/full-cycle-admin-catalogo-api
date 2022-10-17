@@ -2,7 +2,6 @@ package com.github.allisson95.codeflix.application.category.create;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -19,7 +18,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.github.allisson95.codeflix.domain.category.CategoryGateway;
-import com.github.allisson95.codeflix.domain.exceptions.DomainException;
 
 @ExtendWith(MockitoExtension.class)
 class CreateCategoryUseCaseTest {
@@ -40,7 +38,7 @@ class CreateCategoryUseCaseTest {
 
         when(categoryGateway.create(any())).thenAnswer(returnsFirstArg());
 
-        final var createdCategory = useCase.execute(aCommand);
+        final var createdCategory = useCase.execute(aCommand).get();
 
         assertNotNull(createdCategory);
         assertNotNull(createdCategory.id());
@@ -66,10 +64,10 @@ class CreateCategoryUseCaseTest {
 
         final var aCommand = CreateCategoryCommand.with(expectedName, expectedDescription, expectedIsActive);
 
-        final var exception = assertThrows(DomainException.class, () -> useCase.execute(aCommand));
+        final var notification = useCase.execute(aCommand).getLeft();
 
-        assertEquals(expectedErrorCount, exception.getErrors().size());
-        assertEquals(expectedErrorMessage, exception.getErrors().get(0).message());
+        assertEquals(expectedErrorCount, notification.getErrors().size());
+        assertEquals(expectedErrorMessage, notification.firstError().message());
 
         verify(categoryGateway, times(0)).create(any());
     }
@@ -84,7 +82,7 @@ class CreateCategoryUseCaseTest {
 
         when(categoryGateway.create(any())).thenAnswer(returnsFirstArg());
 
-        final var createdCategory = useCase.execute(aCommand);
+        final var createdCategory = useCase.execute(aCommand).get();
 
         assertNotNull(createdCategory);
         assertNotNull(createdCategory.id());
@@ -105,15 +103,17 @@ class CreateCategoryUseCaseTest {
         final String expectedName = "Filme";
         final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = true;
+        final var expectedErrorCount = 1;
         final var expectedErrorMessage = "Gateway error";
 
         final var aCommand = CreateCategoryCommand.with(expectedName, expectedDescription, expectedIsActive);
 
         when(categoryGateway.create(any())).thenThrow(new IllegalStateException(expectedErrorMessage));
 
-        final var exception = assertThrows(IllegalStateException.class, () -> useCase.execute(aCommand));
+        final var notification = useCase.execute(aCommand).getLeft();
 
-        assertEquals(expectedErrorMessage, exception.getMessage());
+        assertEquals(expectedErrorCount, notification.getErrors().size());
+        assertEquals(expectedErrorMessage, notification.firstError().message());
 
         verify(categoryGateway, times(1))
                 .create(argThat(

@@ -23,8 +23,22 @@
 			// Set *default* container specific settings.json values on container create.
 			"settings": { 
 				"java.codeGeneration.hashCodeEquals.useJava7Objects": true,
+				"java.completion.favoriteStaticMembers": [
+					"org.junit.Assert.*",
+					"org.junit.Assume.*",
+					"org.junit.jupiter.api.Assertions.*",
+					"org.junit.jupiter.api.Assumptions.*",
+					"org.junit.jupiter.api.DynamicContainer.*",
+					"org.junit.jupiter.api.DynamicTest.*",
+					"org.mockito.Mockito.*",
+					"org.mockito.ArgumentMatchers.*",
+					"org.mockito.Answers.*",
+					"org.mockito.AdditionalAnswers.*",
+					"io.vavr.API.*"
+				],
 				"java.configuration.updateBuildConfiguration": "automatic",
-				"java.dependency.packagePresentation": "hierarchical"
+				"java.dependency.packagePresentation": "hierarchical",
+				"java.signatureHelp.description.enabled": true
 			},
 			
 			// Add the IDs of extensions you want installed when the container is created.
