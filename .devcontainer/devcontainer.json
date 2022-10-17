@@ -22,8 +22,9 @@
 		"vscode": {
 			// Set *default* container specific settings.json values on container create.
 			"settings": { 
-				"java.dependency.packagePresentation": "hierarchical",
-				"java.configuration.updateBuildConfiguration": "automatic"
+				"java.codeGeneration.hashCodeEquals.useJava7Objects": true,
+				"java.configuration.updateBuildConfiguration": "automatic",
+				"java.dependency.packagePresentation": "hierarchical"
 			},
 			
 			// Add the IDs of extensions you want installed when the container is created.
