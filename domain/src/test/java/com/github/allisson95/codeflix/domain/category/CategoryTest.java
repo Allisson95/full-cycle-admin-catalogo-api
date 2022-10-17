@@ -2,9 +2,11 @@ package com.github.allisson95.codeflix.domain.category;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -170,6 +172,70 @@ class CategoryTest {
 
         assertEquals(expectedErrorCount, exception.getErrors().size());
         assertEquals(expectedErrorMessage, exception.getErrors().get(0).message());
+    }
+
+    @Test
+    void Given_AValidActiveCategory_When_CallDeactivate_Then_ReturnCategoryInactivated() {
+        final var expectedName = "Terror";
+        final var expectedDescription = "Contos de terror";
+        final var expectedIsActive = false;
+
+        final Category activeCategory = Category.newCategory(expectedName, expectedDescription, true);
+        final ThrowsValidationHandler aHandler = new ThrowsValidationHandler();
+
+        assertDoesNotThrow(() -> activeCategory.validate(aHandler));
+
+        final var createdAt = activeCategory.getCreatedAt();
+        final var updatedAt = activeCategory.getUpdatedAt();
+
+        assertTrue(activeCategory.isActive());
+        assertNull(activeCategory.getDeletedAt());
+
+        final var inactivatedCategory = activeCategory.deactivate();
+
+        assertDoesNotThrow(() -> inactivatedCategory.validate(aHandler));
+
+        assertNotNull(inactivatedCategory);
+        assertEquals(activeCategory.getId(), inactivatedCategory.getId());
+        assertEquals(expectedName, inactivatedCategory.getName());
+        assertEquals(expectedDescription, inactivatedCategory.getDescription());
+        assertEquals(expectedIsActive, inactivatedCategory.isActive());
+        assertEquals(createdAt, inactivatedCategory.getCreatedAt());
+        assertNotNull(inactivatedCategory.getUpdatedAt());
+        assertTrue(inactivatedCategory.getUpdatedAt().isAfter(updatedAt));
+        assertNotNull(inactivatedCategory.getDeletedAt());
+    }
+
+    @Test
+    void Given_AValidInactiveCategory_When_CallActivate_Then_ReturnCategoryActivated() {
+        final var expectedName = "Terror";
+        final var expectedDescription = "Contos de terror";
+        final var expectedIsActive = true;
+
+        final Category inactiveCategory = Category.newCategory(expectedName, expectedDescription, false);
+        final ThrowsValidationHandler aHandler = new ThrowsValidationHandler();
+
+        assertDoesNotThrow(() -> inactiveCategory.validate(aHandler));
+
+        final var createdAt = inactiveCategory.getCreatedAt();
+        final var updatedAt = inactiveCategory.getUpdatedAt();
+
+        assertFalse(inactiveCategory.isActive());
+        assertNotNull(inactiveCategory.getDeletedAt());
+
+        final var activatedCategory = inactiveCategory.activate();
+
+        assertDoesNotThrow(() -> activatedCategory.validate(aHandler));
+
+        assertNotNull(activatedCategory);
+        assertEquals(inactiveCategory.getId(), activatedCategory.getId());
+        assertEquals(expectedName, activatedCategory.getName());
+        assertEquals(expectedDescription, activatedCategory.getDescription());
+        assertEquals(expectedIsActive, activatedCategory.isActive());
+        assertEquals(createdAt, activatedCategory.getCreatedAt());
+        assertNotNull(activatedCategory.getUpdatedAt());
+        assertTrue(activatedCategory.getUpdatedAt().isAfter(updatedAt));
+        assertNull(activatedCategory.getDeletedAt());
     }
 
 }
