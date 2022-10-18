@@ -30,4 +30,21 @@ public class CategoryID extends Identifier {
         return value;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(getValue());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+        if (getClass() != o.getClass())
+            return false;
+        final CategoryID other = (CategoryID) o;
+        return Objects.equals(getValue(), other.getValue());
+    }
+
 }
