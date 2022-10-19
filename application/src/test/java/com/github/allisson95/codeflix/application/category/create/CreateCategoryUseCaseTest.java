@@ -99,7 +99,7 @@ class CreateCategoryUseCaseTest {
     }
 
     @Test
-    void Given_AnInvalidName_When_GatewayThrowsRandomException_Then_ReturnAException() {
+    void Given_AValidCommand_When_GatewayThrowsRandomException_Then_ReturnAException() {
         final String expectedName = "Filme";
         final var expectedDescription = "A categoria mais assistida";
         final var expectedIsActive = true;
