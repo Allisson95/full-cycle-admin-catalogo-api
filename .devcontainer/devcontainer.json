@@ -12,7 +12,7 @@
 			// Options
 			"INSTALL_MAVEN": "false",
 			"INSTALL_GRADLE": "true",
-			"NODE_VERSION": "none"
+			"NODE_VERSION": "16.18.0"
 		}
 	},
 
@@ -47,7 +47,9 @@
 				"naco-siren.gradle-language",
 				"vscjava.vscode-gradle",
 				"vscjava.vscode-lombok",
-				"SonarSource.sonarlint-vscode"
+				"SonarSource.sonarlint-vscode",
+				"redhat.vscode-yaml",
+				"Pivotal.vscode-boot-dev-pack"
 			]
 		}
 	},

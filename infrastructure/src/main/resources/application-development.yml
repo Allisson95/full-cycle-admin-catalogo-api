@@ -1,0 +1,5 @@
+server:
+  undertow:
+    threads:
+      worker: 16
+      io: 2
