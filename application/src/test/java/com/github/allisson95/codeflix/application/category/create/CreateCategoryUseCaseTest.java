@@ -5,12 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Objects;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,6 +29,11 @@ class CreateCategoryUseCaseTest {
 
     @InjectMocks
     private DefaultCreateCategoryUseCase useCase;
+
+    @BeforeEach
+    void cleanUp() {
+        reset(categoryGateway);
+    }
 
     @Test
     void Given_AValidCommand_When_CallCreateCategory_Then_ReturnCategoryId() {

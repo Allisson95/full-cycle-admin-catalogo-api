@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,6 +16,7 @@ import static org.mockito.Mockito.when;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,13 +29,18 @@ import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.exceptions.DomainException;
 
 @ExtendWith(MockitoExtension.class)
-public class UpdateCategoryUseCaseTest {
+class UpdateCategoryUseCaseTest {
 
     @Mock
     private CategoryGateway categoryGateway;
 
     @InjectMocks
     private DefaultUpdateCategoryUseCase useCase;
+
+    @BeforeEach
+    void cleanUp() {
+        reset(categoryGateway);
+    }
 
     @Test
     void Given_AValidCommand_When_CallUpdateCategory_Then_ReturnCategoryId() {
