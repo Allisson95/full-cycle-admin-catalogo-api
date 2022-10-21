@@ -1,0 +1,30 @@
+version: '3.9'
+
+networks:
+  codeflix-network:
+    driver: bridge
+
+services:
+  app:
+    image: ubuntu:latest
+    networks:
+      - codeflix-network
+    depends_on:
+      - db
+
+  db:
+    container_name: admin-catalogo-db
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_DATABASE=admin-catalogo
+    ports:
+      - 3306:3306
+    networks:
+      - codeflix-network
+    volumes:
+      - admin-catalogo-db:/var/lib/mysql
+
+volumes:
+  admin-catalogo-db:
+    driver: local

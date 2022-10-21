@@ -1,3 +1,9 @@
+mysql:
+  url: db:3306
+  schema: admin-catalogo
+  username: root
+  password: root
+
 server:
   undertow:
     threads:
