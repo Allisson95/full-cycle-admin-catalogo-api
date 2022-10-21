@@ -1,6 +1,6 @@
 mysql:
   url: db:3306
-  schema: admin-catalogo
+  schema: admin_catalogo
   username: root
   password: root
 

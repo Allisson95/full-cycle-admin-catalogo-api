@@ -1,7 +1,7 @@
 mysql:
   username: ${DATABASE_MYSQL_USERNAME:root}
   password: ${DATABASE_MYSQL_PASSWORD:root}
-  schema: admin-catalogo
+  schema: admin_catalogo
   url: ${DATABASE_MYSQL_URL:localhost:3306}
 
 spring:
