@@ -1,6 +1,7 @@
 package com.github.allisson95.codeflix.domain.category;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.github.allisson95.codeflix.domain.AggregateRoot;
 import com.github.allisson95.codeflix.domain.validation.ValidationHandler;
@@ -26,8 +27,8 @@ public class Category extends AggregateRoot<CategoryID> {
         this.name = aName;
         this.description = aDescription;
         this.active = isActive;
-        this.createdAt = aCreationDate;
-        this.updatedAt = anUpdateDate;
+        this.createdAt = Objects.requireNonNull(aCreationDate, "'createdAt' should not be null");
+        this.updatedAt = Objects.requireNonNull(anUpdateDate, "'updatedAt' should not be null");
         this.deletedAt = aDeleteDate;
     }
 

@@ -9,6 +9,7 @@ import com.github.allisson95.codeflix.domain.category.CategoryGateway;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.category.CategorySearchQuery;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
+import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryRepository;
 
 @Component
@@ -22,8 +23,7 @@ public class CategoryMySQLGateway implements CategoryGateway {
 
     @Override
     public Category create(Category aCategory) {
-        // TODO Auto-generated method stub
-        return null;
+        return this.repository.save(CategoryJpaEntity.from(aCategory)).toAggregate();
     }
 
     @Override
