@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.allisson95.codeflix.domain.category.Category;
+import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.infrastructure.MySQLGatewayTest;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryRepository;
@@ -106,6 +107,30 @@ class CategoryMySQLGatewayTest {
         assertEquals(aCategory.getCreatedAt(), createdCategoryJpaEntity.getCreatedAt());
         assertTrue(aCategory.getUpdatedAt().isBefore(createdCategoryJpaEntity.getUpdatedAt()));
         assertNull(createdCategoryJpaEntity.getDeletedAt());
+    }
+
+    @Test
+    void Given_APrePersistedCategoryAndValidCategoryId_When_TryToDeleteIt_Then_DeleteCategory() {
+        final var aCategory = Category.newCategory("Filme", null, true);
+
+        assertEquals(0, categoryRepository.count());
+
+        categoryRepository.saveAndFlush(CategoryJpaEntity.from(aCategory));
+
+        assertEquals(1, categoryRepository.count());
+
+        categoryGateway.deleteById(aCategory.getId());
+
+        assertEquals(0, categoryRepository.count());
+    }
+
+    @Test
+    void Given_AnIvalidCategoryId_When_TryToDeleteIt_Then_DeleteCategory() {
+        assertEquals(0, categoryRepository.count());
+
+        categoryGateway.deleteById(CategoryID.from("invalid"));
+
+        assertEquals(0, categoryRepository.count());
     }
 
 }
