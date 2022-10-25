@@ -1,7 +1,13 @@
 package com.github.allisson95.codeflix.infrastructure.category;
 
+import static com.github.allisson95.codeflix.infrastructure.utils.SpecificationUtils.like;
+
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import com.github.allisson95.codeflix.domain.category.Category;
@@ -40,9 +46,29 @@ public class CategoryMySQLGateway implements CategoryGateway {
     }
 
     @Override
-    public Pagination<Category> findAll(CategorySearchQuery aQuery) {
-        // TODO Auto-generated method stub
-        return null;
+    public Pagination<Category> findAll(final CategorySearchQuery aQuery) {
+        final var page = PageRequest.of(
+                aQuery.page(),
+                aQuery.perPage(),
+                Sort.by(Direction.fromString(aQuery.direction()), aQuery.sort()));
+
+        final var spec = Optional.ofNullable(aQuery.terms())
+                .filter(terms -> !terms.isBlank())
+                .map(terms -> {
+                    final Specification<CategoryJpaEntity> nameLike = like("name", terms);
+                    final Specification<CategoryJpaEntity> descriptionLike = like("description", terms);
+
+                    return nameLike.or(descriptionLike);
+                })
+                .orElse(null);
+
+        final var pageResult = this.repository.findAll(Specification.where(spec), page);
+
+        return new Pagination<>(
+                pageResult.getNumber(),
+                pageResult.getSize(),
+                pageResult.getTotalElements(),
+                pageResult.map(CategoryJpaEntity::toAggregate).toList());
     }
 
     @Override
