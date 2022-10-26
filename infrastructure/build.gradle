@@ -29,6 +29,8 @@ dependencies {
 
     runtimeOnly 'mysql:mysql-connector-java'
 
+    implementation 'io.vavr:vavr:0.10.4'
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: 'spring-boot-starter-tomcat'
