@@ -10,10 +10,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.github.allisson95.codeflix.MySQLGatewayTest;
 import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.category.CategorySearchQuery;
-import com.github.allisson95.codeflix.infrastructure.MySQLGatewayTest;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryRepository;
 
