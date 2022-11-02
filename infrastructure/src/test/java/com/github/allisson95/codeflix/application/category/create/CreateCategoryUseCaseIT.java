@@ -45,9 +45,9 @@ class CreateCategoryUseCaseIT {
         assertNotNull(createdCategory);
         assertNotNull(createdCategory.id());
 
-        final var createdCategoryJpaEntity = categoryRepository.findById(createdCategory.id().getValue()).get();
+        final var createdCategoryJpaEntity = categoryRepository.findById(createdCategory.id()).get();
 
-        assertEquals(createdCategory.id().getValue(), createdCategoryJpaEntity.getId());
+        assertEquals(createdCategory.id(), createdCategoryJpaEntity.getId());
         assertEquals(expectedName, createdCategoryJpaEntity.getName());
         assertEquals(expectedDescription, createdCategoryJpaEntity.getDescription());
         assertEquals(expectedIsActive, createdCategoryJpaEntity.isActive());
@@ -95,9 +95,9 @@ class CreateCategoryUseCaseIT {
         assertNotNull(createdCategory);
         assertNotNull(createdCategory.id());
 
-        final var createdCategoryJpaEntity = categoryRepository.findById(createdCategory.id().getValue()).get();
+        final var createdCategoryJpaEntity = categoryRepository.findById(createdCategory.id()).get();
 
-        assertEquals(createdCategory.id().getValue(), createdCategoryJpaEntity.getId());
+        assertEquals(createdCategory.id(), createdCategoryJpaEntity.getId());
         assertEquals(expectedName, createdCategoryJpaEntity.getName());
         assertEquals(expectedDescription, createdCategoryJpaEntity.getDescription());
         assertEquals(expectedIsActive, createdCategoryJpaEntity.isActive());
