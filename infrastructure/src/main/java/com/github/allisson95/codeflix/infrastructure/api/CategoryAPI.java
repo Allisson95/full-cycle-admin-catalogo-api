@@ -4,10 +4,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
+import com.github.allisson95.codeflix.infrastructure.category.models.CreateCategoryApiInput;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,18 +23,18 @@ public interface CategoryAPI {
     @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
     @Operation(summary = "Create a new category")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Created successfuly"),
-        @ApiResponse(responseCode = "422", description = "A validation error"),
-        @ApiResponse(responseCode = "500", description = "An internal server error"),
+            @ApiResponse(responseCode = "201", description = "Created successfuly"),
+            @ApiResponse(responseCode = "422", description = "A validation error"),
+            @ApiResponse(responseCode = "500", description = "An internal server error"),
     })
-    ResponseEntity<?> createCategory();
+    ResponseEntity<?> createCategory(@RequestBody CreateCategoryApiInput input);
 
     @GetMapping
     @Operation(summary = "List all categories paginated")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Listed successfuly"),
-        @ApiResponse(responseCode = "422", description = "An invalid parameter was received"),
-        @ApiResponse(responseCode = "500", description = "An internal server error"),
+            @ApiResponse(responseCode = "200", description = "Listed successfuly"),
+            @ApiResponse(responseCode = "422", description = "An invalid parameter was received"),
+            @ApiResponse(responseCode = "500", description = "An internal server error"),
     })
     Pagination<?> listCategories(
             @RequestParam(name = "search", required = false, defaultValue = "") final String search,
