@@ -10,7 +10,7 @@ import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.category.CategoryGateway;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.exceptions.DomainException;
-import com.github.allisson95.codeflix.domain.validation.Error;
+import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 import com.github.allisson95.codeflix.domain.validation.handler.Notification;
 
 import io.vavr.control.Either;
@@ -42,8 +42,7 @@ public class DefaultUpdateCategoryUseCase extends UpdateCategoryUseCase {
     }
 
     private Supplier<? extends DomainException> notFound(final CategoryID categoryId) {
-        return () -> DomainException
-                .with(new Error("Category with id %s was not found".formatted(categoryId.getValue())));
+        return () -> NotFoundException.with(Category.class, categoryId);
     }
 
     private Either<Notification, UpdateCategoryOutput> update(final Category aCategory) {

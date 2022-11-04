@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.infrastructure.category.models.CategoryApiOutput;
 import com.github.allisson95.codeflix.infrastructure.category.models.CreateCategoryApiInput;
+import com.github.allisson95.codeflix.infrastructure.category.models.UpdateCategoryApiInput;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -60,5 +62,19 @@ public interface CategoryAPI {
         @ApiResponse(responseCode = "500", description = "An internal server error"),
     })
     CategoryApiOutput getById(@PathVariable(name = "categoryId") String categoryId);
+
+    @PutMapping(
+        value = "{categoryId}",
+        consumes = { MediaType.APPLICATION_JSON_VALUE },
+        produces = { MediaType.APPLICATION_JSON_VALUE }
+    )
+    @Operation(summary = "Update a category by it's identifier")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Category updated successfuly"),
+        @ApiResponse(responseCode = "404", description = "Category was not found"),
+        @ApiResponse(responseCode = "422", description = "A validation error"),
+        @ApiResponse(responseCode = "500", description = "An internal server error"),
+    })
+    ResponseEntity<?> updateById(@PathVariable(name = "categoryId") String categoryId, @RequestBody UpdateCategoryApiInput input);
 
 }
