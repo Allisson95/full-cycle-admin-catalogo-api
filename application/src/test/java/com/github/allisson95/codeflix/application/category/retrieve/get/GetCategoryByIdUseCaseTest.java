@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.category.CategoryGateway;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
-import com.github.allisson95.codeflix.domain.exceptions.DomainException;
+import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class GetCategoryByIdUseCaseTest {
@@ -62,15 +62,13 @@ class GetCategoryByIdUseCaseTest {
     @Test
     void Given_AInvalidId_When_CallsGetCategoryById_Should_ReturnNotFound() {
         final var expectedId = CategoryID.from("123");
-        final var expectedErrorCount = 1;
         final var expectedErrorMessage = "Category with id 123 was not found";
 
         when(categoryGateway.findById(expectedId)).thenReturn(Optional.empty());
 
-        final var exception = assertThrows(DomainException.class, () -> useCase.execute(expectedId.getValue()));
+        final var exception = assertThrows(NotFoundException.class, () -> useCase.execute(expectedId.getValue()));
 
-        assertEquals(expectedErrorCount, exception.getErrors().size());
-        assertEquals(expectedErrorMessage, exception.getErrors().get(0).message());
+        assertEquals(expectedErrorMessage, exception.getMessage());
 
         verify(categoryGateway, times(1)).findById(expectedId);
     }

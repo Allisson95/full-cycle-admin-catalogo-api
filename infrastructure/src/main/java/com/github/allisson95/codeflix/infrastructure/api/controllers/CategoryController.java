@@ -11,18 +11,26 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.allisson95.codeflix.application.category.create.CreateCategoryCommand;
 import com.github.allisson95.codeflix.application.category.create.CreateCategoryOutput;
 import com.github.allisson95.codeflix.application.category.create.CreateCategoryUseCase;
+import com.github.allisson95.codeflix.application.category.retrieve.get.GetCategoryByIdUseCase;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.domain.validation.handler.Notification;
 import com.github.allisson95.codeflix.infrastructure.api.CategoryAPI;
+import com.github.allisson95.codeflix.infrastructure.category.models.CategoryApiOutput;
 import com.github.allisson95.codeflix.infrastructure.category.models.CreateCategoryApiInput;
+import com.github.allisson95.codeflix.infrastructure.category.presenters.CategoryApiPresenter;
 
 @RestController
 public class CategoryController implements CategoryAPI {
 
     private final CreateCategoryUseCase createCategoryUseCase;
+    private final GetCategoryByIdUseCase getCategoryByIdUseCase;
 
-    public CategoryController(final CreateCategoryUseCase createCategoryUseCase) {
+    public CategoryController(
+        final CreateCategoryUseCase createCategoryUseCase,
+        final GetCategoryByIdUseCase getCategoryByIdUseCase
+    ) {
         this.createCategoryUseCase = Objects.requireNonNull(createCategoryUseCase);
+        this.getCategoryByIdUseCase = Objects.requireNonNull(getCategoryByIdUseCase);
     }
 
     @Override
@@ -54,6 +62,11 @@ public class CategoryController implements CategoryAPI {
             final String sort,
             final String dir) {
         return null;
+    }
+
+    @Override
+    public CategoryApiOutput getById(final String categoryId) {
+        return CategoryApiPresenter.present(this.getCategoryByIdUseCase.execute(categoryId));
     }
 
 }
