@@ -7,10 +7,12 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -32,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.allisson95.codeflix.ControllerTest;
 import com.github.allisson95.codeflix.application.category.create.CreateCategoryOutput;
 import com.github.allisson95.codeflix.application.category.create.CreateCategoryUseCase;
+import com.github.allisson95.codeflix.application.category.delete.DeleteCategoryUseCase;
 import com.github.allisson95.codeflix.application.category.retrieve.get.CategoryOutput;
 import com.github.allisson95.codeflix.application.category.retrieve.get.GetCategoryByIdUseCase;
 import com.github.allisson95.codeflix.application.category.update.UpdateCategoryOutput;
@@ -62,6 +65,9 @@ class CategoryAPITest {
 
     @MockBean
     private UpdateCategoryUseCase updateCategoryUseCase;
+
+    @MockBean
+    private DeleteCategoryUseCase deleteCategoryUseCase;
 
     @Test
     void Given_AValidCommand_When_CallCreateCategory_Then_ReturnCategoryId() throws Exception {
@@ -320,6 +326,23 @@ class CategoryAPITest {
                 && Objects.equals(expectedDescription, cmd.description())
                 && Objects.equals(expectedIsActive, cmd.isActive())
         ));
+    }
+
+    @Test
+    void Given_AValidId_When_CallsDeleteCategory_Should_ReturnNoContent() throws Exception {
+        final var expectedId = CategoryID.unique().getValue();
+
+        doNothing().when(deleteCategoryUseCase).execute(expectedId);
+
+        final var request = delete("/categories/{categoryId}", expectedId)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        this.mockMvc.perform(request)
+            .andDo(print())
+            .andExpect(status().isNoContent());
+
+        verify(deleteCategoryUseCase, times(1)).execute(expectedId);
     }
 
 }
