@@ -16,7 +16,7 @@ import com.github.allisson95.codeflix.infrastructure.configuration.ObjectMapperC
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-@ActiveProfiles("test")
+@ActiveProfiles("test-integration")
 @WebMvcTest
 @Import(value = { ObjectMapperConfig.class })
 public @interface ControllerTest {

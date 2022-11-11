@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Admin Catalogo API",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.github.allisson95.codeflix.infrastructure.Main",
+            "projectName": "infrastructure",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

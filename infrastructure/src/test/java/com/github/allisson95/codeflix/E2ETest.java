@@ -7,20 +7,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import com.github.allisson95.codeflix.infrastructure.configuration.WebServerConfig;
 
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-@ActiveProfiles("test-integration")
-@ComponentScan(includeFilters = {
-        @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".[MySQLGateway]")
-})
-@DataJpaTest
+@ActiveProfiles("test-e2e")
+@SpringBootTest(classes = { WebServerConfig.class })
 @ExtendWith(MySQLCleanUpExtension.class)
-public @interface MySQLGatewayTest {
+public @interface E2ETest {
 
 }

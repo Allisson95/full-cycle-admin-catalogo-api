@@ -29,6 +29,8 @@ dependencies {
 
     runtimeOnly 'mysql:mysql-connector-java'
 
+    implementation platform('org.testcontainers:testcontainers-bom:1.17.5')
+
     implementation 'io.vavr:vavr:0.10.4'
 
     implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.6.12'
@@ -43,6 +45,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-undertow'
 
     testImplementation 'org.flywaydb:flyway-core'
+    testImplementation 'org.flywaydb:flyway-mysql'
+
+    testImplementation 'org.testcontainers:testcontainers'
+    testImplementation 'org.testcontainers:mysql'
+    testImplementation 'org.testcontainers:junit-jupiter'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     testRuntimeOnly 'com.h2database:h2'

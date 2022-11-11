@@ -11,6 +11,10 @@
 		"docker-compose.yml"
 	],
 
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:1": { }
+	},
+
 	// The 'service' property is the name of the service for the container that VS Code should
 	// use. Update this value and .devcontainer/docker-compose.yml to the real service name.
 	"service": "app",
@@ -25,6 +29,11 @@
 		"vscode": {
 			// Set *default* container specific settings.json values on container create.
 			"settings": { 
+				"[java]": {
+					"editor.detectIndentation": false,
+					"editor.insertSpaces": true,
+					"editor.tabSize": 4
+				},
 				"java.codeGeneration.hashCodeEquals.useJava7Objects": true,
 				"java.completion.favoriteStaticMembers": [
 					"org.hamcrest.Matchers.*",

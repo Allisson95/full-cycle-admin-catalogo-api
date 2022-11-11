@@ -1,0 +1,5 @@
+mysql:
+  url: ${mysql.host}:${mysql.port}
+  schema: admin_catalogo
+  username:
+  password:
