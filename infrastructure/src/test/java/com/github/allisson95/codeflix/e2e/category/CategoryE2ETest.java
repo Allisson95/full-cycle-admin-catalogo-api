@@ -1,5 +1,7 @@
 package com.github.allisson95.codeflix.e2e.category;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -8,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
@@ -16,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -71,6 +75,104 @@ class CategoryE2ETest {
         assertNull(category.deletedAt());
     }
 
+    @Test
+    void asACatalogAdminIShouldBeAbleToNavigateToAllCategories() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, categoryRepository.count());
+
+        givenACategory("Filmes", null, true);
+        givenACategory("Séries", null, true);
+        givenACategory("Documentários", null, true);
+
+        listCategories(0, 1)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page").value(equalTo(0)))
+                .andExpect(jsonPath("$.per_page").value(equalTo(1)))
+                .andExpect(jsonPath("$.total").value(equalTo(3)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").value(hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name").value(equalTo("Documentários")));
+
+        listCategories(1, 1)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page").value(equalTo(1)))
+                .andExpect(jsonPath("$.per_page").value(equalTo(1)))
+                .andExpect(jsonPath("$.total").value(equalTo(3)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").value(hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name").value(equalTo("Filmes")));
+
+        listCategories(2, 1)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page").value(equalTo(2)))
+                .andExpect(jsonPath("$.per_page").value(equalTo(1)))
+                .andExpect(jsonPath("$.total").value(equalTo(3)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").value(hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name").value(equalTo("Séries")));
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToSearchBetweenAllCategories() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, categoryRepository.count());
+
+        givenACategory("Filmes", null, true);
+        givenACategory("Séries", null, true);
+        givenACategory("Documentários", null, true);
+
+        listCategories(0, 3, "fil")
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page").value(equalTo(0)))
+                .andExpect(jsonPath("$.per_page").value(equalTo(3)))
+                .andExpect(jsonPath("$.total").value(equalTo(1)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").value(hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name").value(equalTo("Filmes")));
+
+        listCategories(0, 3, "doc")
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page").value(equalTo(0)))
+                .andExpect(jsonPath("$.per_page").value(equalTo(3)))
+                .andExpect(jsonPath("$.total").value(equalTo(1)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").value(hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name").value(equalTo("Documentários")));
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToSortAllCategoriesByDescriptionDesc() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, categoryRepository.count());
+
+        givenACategory("Filmes", "F", true);
+        givenACategory("Séries", "S", true);
+        givenACategory("Documentários", "D", true);
+
+        listCategories(0, 3, "", "description", "desc")
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page").value(equalTo(0)))
+                .andExpect(jsonPath("$.per_page").value(equalTo(3)))
+                .andExpect(jsonPath("$.total").value(equalTo(3)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").value(hasSize(3)))
+                .andExpect(jsonPath("$.items[0].name").value(equalTo("Séries")))
+                .andExpect(jsonPath("$.items[1].name").value(equalTo("Filmes")))
+                .andExpect(jsonPath("$.items[2].name").value(equalTo("Documentários")));
+    }
+
     private CategoryID givenACategory(final String name, final String description, final boolean isActive)
             throws Exception {
         final var aRequestBody = new CreateCategoryRequest(name, description, isActive);
@@ -105,6 +207,32 @@ class CategoryE2ETest {
                 .getContentAsString();
 
         return Json.readValue(category, CategoryResponse.class);
+    }
+
+    private ResultActions listCategories(
+            final int page,
+            final int perPage,
+            final String search,
+            final String sort,
+            final String dir) throws Exception {
+        final var aRequest = get("/categories")
+                .param("search", search)
+                .param("page", String.valueOf(page))
+                .param("perPage", String.valueOf(perPage))
+                .param("sort", sort)
+                .param("dir", dir)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        return this.mvc.perform(aRequest);
+    }
+
+    private ResultActions listCategories(final int page, final int perPage, final String search) throws Exception {
+        return this.listCategories(page, perPage, search, "", "");
+    }
+
+    private ResultActions listCategories(final int page, final int perPage) throws Exception {
+        return this.listCategories(page, perPage, "", "", "");
     }
 
 }
