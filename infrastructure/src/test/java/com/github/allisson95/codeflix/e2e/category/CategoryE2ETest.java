@@ -173,6 +173,48 @@ class CategoryE2ETest {
                 .andExpect(jsonPath("$.items[2].name").value(equalTo("Documentários")));
     }
 
+    @Test
+    void asACatalogAdminIShouldBeAbleToGetACategoryByItsIdentifier() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, categoryRepository.count());
+
+        final var expectedName = "Filme";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+
+        final var categoryId = givenACategory(expectedName, expectedDescription, expectedIsActive);
+
+        final var category = retrieveCategory(categoryId);
+
+        assertEquals(categoryId.getValue(), category.id());
+        assertEquals(expectedName, category.name());
+        assertEquals(expectedDescription, category.description());
+        assertEquals(expectedIsActive, category.active());
+        assertNotNull(category.createdAt());
+        assertNotNull(category.updatedAt());
+        assertNull(category.deletedAt());
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToSeeATreatedErrorByGettingANotFoundCategory() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, categoryRepository.count());
+
+        final var aRequest = get("/categories/{categoryId}", 123)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        this.mvc.perform(aRequest)
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.message").value(equalTo("Category with id 123 was not found")))
+                .andExpect(jsonPath("$.errors").exists())
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors").isEmpty());
+    }
+
     private CategoryID givenACategory(final String name, final String description, final boolean isActive)
             throws Exception {
         final var aRequestBody = new CreateCategoryRequest(name, description, isActive);
