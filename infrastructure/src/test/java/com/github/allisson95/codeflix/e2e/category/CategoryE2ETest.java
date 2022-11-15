@@ -2,10 +2,12 @@ package com.github.allisson95.codeflix.e2e.category;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -320,6 +322,24 @@ class CategoryE2ETest {
         assertNotNull(categoryJpaEntity.getCreatedAt());
         assertNotNull(categoryJpaEntity.getUpdatedAt());
         assertNull(categoryJpaEntity.getDeletedAt());
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToDeleteACategoryByItsIdentifier() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, categoryRepository.count());
+
+        final var categoryId = givenACategory("Filme", "A categoria mais assistida", true);
+
+        final var aRequest = delete("/categories/{categoryId}", categoryId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        this.mvc.perform(aRequest)
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assertFalse(this.categoryRepository.existsById(categoryId.getValue()));
     }
 
     private CategoryID givenACategory(final String name, final String description, final boolean isActive)
