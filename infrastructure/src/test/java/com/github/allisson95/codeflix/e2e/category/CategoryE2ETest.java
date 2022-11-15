@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,6 +29,7 @@ import com.github.allisson95.codeflix.E2ETest;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.infrastructure.category.models.CategoryResponse;
 import com.github.allisson95.codeflix.infrastructure.category.models.CreateCategoryRequest;
+import com.github.allisson95.codeflix.infrastructure.category.models.UpdateCategoryRequest;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryRepository;
 import com.github.allisson95.codeflix.infrastructure.configuration.json.Json;
 
@@ -213,6 +215,111 @@ class CategoryE2ETest {
                 .andExpect(jsonPath("$.errors").exists())
                 .andExpect(jsonPath("$.errors").isArray())
                 .andExpect(jsonPath("$.errors").isEmpty());
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToUpdateACategoryByItsIdentifier() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, categoryRepository.count());
+
+        final var categoryId = givenACategory("Movies", null, true);
+
+        final var expectedName = "Filme";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+
+        final var aRequestBody = new UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive);
+
+        final var aRequest = put("/categories/{categoryId}", categoryId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Json.writeValueAsString(aRequestBody));
+
+        this.mvc.perform(aRequest)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(equalTo(categoryId.getValue())));
+
+        final var categoryJpaEntity = this.categoryRepository.findById(categoryId.getValue()).get();
+
+        assertEquals(categoryId.getValue(), categoryJpaEntity.getId());
+        assertEquals(expectedName, categoryJpaEntity.getName());
+        assertEquals(expectedDescription, categoryJpaEntity.getDescription());
+        assertEquals(expectedIsActive, categoryJpaEntity.isActive());
+        assertNotNull(categoryJpaEntity.getCreatedAt());
+        assertNotNull(categoryJpaEntity.getUpdatedAt());
+        assertNull(categoryJpaEntity.getDeletedAt());
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToInactivateACategoryByItsIdentifier() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, categoryRepository.count());
+
+        final var expectedName = "Filme";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = false;
+
+        final var categoryId = givenACategory(expectedName, expectedDescription, true);
+
+        final var aRequestBody = new UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive);
+
+        final var aRequest = put("/categories/{categoryId}", categoryId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Json.writeValueAsString(aRequestBody));
+
+        this.mvc.perform(aRequest)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(equalTo(categoryId.getValue())));
+
+        final var categoryJpaEntity = this.categoryRepository.findById(categoryId.getValue()).get();
+
+        assertEquals(categoryId.getValue(), categoryJpaEntity.getId());
+        assertEquals(expectedName, categoryJpaEntity.getName());
+        assertEquals(expectedDescription, categoryJpaEntity.getDescription());
+        assertEquals(expectedIsActive, categoryJpaEntity.isActive());
+        assertNotNull(categoryJpaEntity.getCreatedAt());
+        assertNotNull(categoryJpaEntity.getUpdatedAt());
+        assertNotNull(categoryJpaEntity.getDeletedAt());
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToActivateACategoryByItsIdentifier() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, categoryRepository.count());
+
+        final var expectedName = "Filme";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+
+        final var categoryId = givenACategory(expectedName, expectedDescription, false);
+
+        final var aRequestBody = new UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive);
+
+        final var aRequest = put("/categories/{categoryId}", categoryId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Json.writeValueAsString(aRequestBody));
+
+        this.mvc.perform(aRequest)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(equalTo(categoryId.getValue())));
+
+        final var categoryJpaEntity = this.categoryRepository.findById(categoryId.getValue()).get();
+
+        assertEquals(categoryId.getValue(), categoryJpaEntity.getId());
+        assertEquals(expectedName, categoryJpaEntity.getName());
+        assertEquals(expectedDescription, categoryJpaEntity.getDescription());
+        assertEquals(expectedIsActive, categoryJpaEntity.isActive());
+        assertNotNull(categoryJpaEntity.getCreatedAt());
+        assertNotNull(categoryJpaEntity.getUpdatedAt());
+        assertNull(categoryJpaEntity.getDeletedAt());
     }
 
     private CategoryID givenACategory(final String name, final String description, final boolean isActive)
