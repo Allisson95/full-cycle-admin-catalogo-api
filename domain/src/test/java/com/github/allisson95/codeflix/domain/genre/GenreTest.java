@@ -7,8 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import com.github.allisson95.codeflix.domain.exceptions.DomainException;
-import com.github.allisson95.codeflix.domain.validation.handler.ThrowsValidationHandler;
+import com.github.allisson95.codeflix.domain.exceptions.NotificationException;
 
 class GenreTest {
 
