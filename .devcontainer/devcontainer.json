@@ -52,6 +52,15 @@
 					"org.springframework.test.web.servlet.result.MockMvcResultMatchers.*",
 					"io.vavr.API.*"
 				],
+				"java.configuration.runtimes": [
+					{
+						"name": "JavaSE-17",
+						"path": "/usr/lib/jvm/msopenjdk-17",
+						"sources": "/usr/lib/jvm/msopenjdk-17/lib/src.zip",
+						"javadoc": "https://docs.oracle.com/en/java/javase/17/docs/api/",
+						"default": true
+					}
+				],
 				"java.configuration.updateBuildConfiguration": "automatic",
 				"java.dependency.packagePresentation": "hierarchical",
 				"java.signatureHelp.description.enabled": true
