@@ -15,9 +15,9 @@ import com.github.allisson95.codeflix.domain.validation.handler.Notification;
 
 public class Genre extends AggregateRoot<GenreID> {
 
-    private final String name;
+    private String name;
     private boolean active;
-    private final List<CategoryID> categories;
+    private List<CategoryID> categories;
     private final Instant createdAt;
     private Instant updatedAt;
     private Instant deletedAt;
@@ -38,13 +38,7 @@ public class Genre extends AggregateRoot<GenreID> {
         this.updatedAt = Objects.requireNonNull(anUpdateDate, "'updatedAt' should not be null");
         this.deletedAt = aDeleteDate;
 
-        final var notification = Notification.create();
-
-        validate(notification);
-
-        if (notification.hasError()) {
-            throw new NotificationException("Failed to create Aggregate Genre", notification);
-        }
+        this.selfValidate();
     }
 
     public static Genre newGenre(final String aName, final boolean isActive) {
@@ -71,7 +65,7 @@ public class Genre extends AggregateRoot<GenreID> {
                 aGenre.id,
                 aGenre.name,
                 aGenre.active,
-                aGenre.categories,
+                new ArrayList<>(aGenre.categories),
                 aGenre.createdAt,
                 aGenre.updatedAt,
                 aGenre.deletedAt);
@@ -92,6 +86,22 @@ public class Genre extends AggregateRoot<GenreID> {
 
         this.active = false;
         this.updatedAt = InstantUtils.now();
+
+        return this;
+    }
+
+    public Genre update(final String aName, final boolean isActive, final List<CategoryID> categories) {
+        if (isActive) {
+            activate();
+        } else {
+            deactivate();
+        }
+
+        this.name = aName;
+        this.categories = new ArrayList<>(categories);
+        this.updatedAt = InstantUtils.now();
+
+        this.selfValidate();
 
         return this;
     }
@@ -133,6 +143,16 @@ public class Genre extends AggregateRoot<GenreID> {
     @Override
     public boolean equals(Object o) {
         return super.equals(o);
+    }
+
+    private void selfValidate() {
+        final var notification = Notification.create();
+
+        validate(notification);
+
+        if (notification.hasError()) {
+            throw new NotificationException("Failed to create Aggregate Genre", notification);
+        }
     }
 
 }
