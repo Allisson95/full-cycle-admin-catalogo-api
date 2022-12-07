@@ -16,11 +16,11 @@ import com.github.allisson95.codeflix.domain.validation.handler.Notification;
 public class Genre extends AggregateRoot<GenreID> {
 
     private final String name;
-    private final boolean active;
+    private boolean active;
     private final List<CategoryID> categories;
     private final Instant createdAt;
-    private final Instant updatedAt;
-    private final Instant deletedAt;
+    private Instant updatedAt;
+    private Instant deletedAt;
 
     private Genre(
             final GenreID anId,
@@ -75,6 +75,25 @@ public class Genre extends AggregateRoot<GenreID> {
                 aGenre.createdAt,
                 aGenre.updatedAt,
                 aGenre.deletedAt);
+    }
+
+    public Genre activate() {
+        this.deletedAt = null;
+        this.active = true;
+        this.updatedAt = InstantUtils.now();
+
+        return this;
+    }
+
+    public Genre deactivate() {
+        if (this.getDeletedAt() == null) {
+            this.deletedAt = InstantUtils.now();
+        }
+
+        this.active = false;
+        this.updatedAt = InstantUtils.now();
+
+        return this;
     }
 
     @Override

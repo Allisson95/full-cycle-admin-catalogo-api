@@ -1,9 +1,11 @@
 package com.github.allisson95.codeflix.domain.genre;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -76,6 +78,58 @@ class GenreTest {
 
         assertEquals(expectedErrorCount, actualException.getErrors().size());
         assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+    }
+
+    @Test
+    void Given_AnActiveGenre_When_CallsDeactivate_Should_ReturnOK() {
+        final var expectedName = "Ação";
+        final var expectedIsActive = false;
+        final var expectedCategoriesSize = 0;
+
+        final var actualGenre = Genre.newGenre(expectedName, true);
+
+        assertNotNull(actualGenre);
+        assertTrue(actualGenre.isActive());
+        assertNull(actualGenre.getDeletedAt());
+
+        final var createdAt = actualGenre.getCreatedAt();
+        final var updatedAt = actualGenre.getUpdatedAt();
+
+        actualGenre.deactivate();
+
+        assertNotNull(actualGenre.getId());
+        assertEquals(expectedName, actualGenre.getName());
+        assertEquals(expectedIsActive, actualGenre.isActive());
+        assertEquals(expectedCategoriesSize, actualGenre.getCategories().size());
+        assertEquals(createdAt, actualGenre.getCreatedAt());
+        assertTrue(updatedAt.isBefore(actualGenre.getUpdatedAt()));
+        assertNotNull(actualGenre.getDeletedAt());
+    }
+
+    @Test
+    void Given_AnInactiveGenre_When_CallsActivate_Should_ReturnOK() {
+        final var expectedName = "Ação";
+        final var expectedIsActive = true;
+        final var expectedCategoriesSize = 0;
+
+        final var actualGenre = Genre.newGenre(expectedName, false);
+
+        assertNotNull(actualGenre);
+        assertFalse(actualGenre.isActive());
+        assertNotNull(actualGenre.getDeletedAt());
+
+        final var createdAt = actualGenre.getCreatedAt();
+        final var updatedAt = actualGenre.getUpdatedAt();
+
+        actualGenre.activate();
+
+        assertNotNull(actualGenre.getId());
+        assertEquals(expectedName, actualGenre.getName());
+        assertEquals(expectedIsActive, actualGenre.isActive());
+        assertEquals(expectedCategoriesSize, actualGenre.getCategories().size());
+        assertEquals(createdAt, actualGenre.getCreatedAt());
+        assertTrue(updatedAt.isBefore(actualGenre.getUpdatedAt()));
+        assertNull(actualGenre.getDeletedAt());
     }
 
 }
