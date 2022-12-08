@@ -97,11 +97,38 @@ public class Genre extends AggregateRoot<GenreID> {
             deactivate();
         }
 
+        if (categories == null) {
+            this.categories = new ArrayList<>();
+        } else {
+            this.categories = new ArrayList<>(categories);
+        }
+
         this.name = aName;
-        this.categories = new ArrayList<>(categories);
         this.updatedAt = InstantUtils.now();
 
         this.selfValidate();
+
+        return this;
+    }
+
+    public Genre addCategory(final CategoryID aCategoryID) {
+        if (aCategoryID == null) {
+            return this;
+        }
+
+        this.categories.add(aCategoryID);
+        this.updatedAt = InstantUtils.now();
+
+        return this;
+    }
+
+    public Genre removeCategory(final CategoryID aCategoryID) {
+        if (aCategoryID == null) {
+            return this;
+        }
+
+        this.categories.remove(aCategoryID);
+        this.updatedAt = InstantUtils.now();
 
         return this;
     }
