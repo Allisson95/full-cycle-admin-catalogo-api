@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.github.allisson95.codeflix.MySQLGatewayTest;
 import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
-import com.github.allisson95.codeflix.domain.category.CategorySearchQuery;
+import com.github.allisson95.codeflix.domain.pagination.SearchQuery;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryRepository;
 
@@ -193,7 +193,7 @@ class CategoryMySQLGatewayTest {
 
         assertEquals(3, categoryRepository.count());
 
-        final var aQuery = new CategorySearchQuery(0, 1, "", "name", "asc");
+        final var aQuery = new SearchQuery(0, 1, "", "name", "asc");
         final var pageCategories = categoryGateway.findAll(aQuery);
 
         assertEquals(3, categoryRepository.count());
@@ -213,7 +213,7 @@ class CategoryMySQLGatewayTest {
 
         assertEquals(0, categoryRepository.count());
 
-        final var aQuery = new CategorySearchQuery(0, 1, "", "name", "asc");
+        final var aQuery = new SearchQuery(0, 1, "", "name", "asc");
         final var pageCategories = categoryGateway.findAll(aQuery);
 
         assertEquals(0, categoryRepository.count());
@@ -243,7 +243,7 @@ class CategoryMySQLGatewayTest {
 
         assertEquals(3, categoryRepository.count());
 
-        final var aQuery = new CategorySearchQuery(0, 1, "", "name", "desc");
+        final var aQuery = new SearchQuery(0, 1, "", "name", "desc");
         final var pageCategories = categoryGateway.findAll(aQuery);
 
         assertEquals(3, categoryRepository.count());
@@ -274,7 +274,7 @@ class CategoryMySQLGatewayTest {
 
         assertEquals(3, categoryRepository.count());
 
-        var aQuery = new CategorySearchQuery(0, 1, "", "name", "asc");
+        var aQuery = new SearchQuery(0, 1, "", "name", "asc");
         var pageCategories = categoryGateway.findAll(aQuery);
 
         assertEquals(3, categoryRepository.count());
@@ -288,7 +288,7 @@ class CategoryMySQLGatewayTest {
         // Page 1
         expectedPage = 1;
 
-        aQuery = new CategorySearchQuery(1, 1, "", "name", "asc");
+        aQuery = new SearchQuery(1, 1, "", "name", "asc");
         pageCategories = categoryGateway.findAll(aQuery);
 
         assertEquals(3, categoryRepository.count());
@@ -302,7 +302,7 @@ class CategoryMySQLGatewayTest {
         // Page 2
         expectedPage = 2;
 
-        aQuery = new CategorySearchQuery(2, 1, "", "name", "asc");
+        aQuery = new SearchQuery(2, 1, "", "name", "asc");
         pageCategories = categoryGateway.findAll(aQuery);
 
         assertEquals(3, categoryRepository.count());
@@ -333,7 +333,7 @@ class CategoryMySQLGatewayTest {
 
         assertEquals(3, categoryRepository.count());
 
-        final var aQuery = new CategorySearchQuery(0, 1, "doc", "name", "asc");
+        final var aQuery = new SearchQuery(0, 1, "doc", "name", "asc");
         final var pageCategories = categoryGateway.findAll(aQuery);
 
         assertEquals(3, categoryRepository.count());
@@ -364,7 +364,7 @@ class CategoryMySQLGatewayTest {
 
         assertEquals(3, categoryRepository.count());
 
-        final var aQuery = new CategorySearchQuery(0, 1, "MAIS ASSISTIDA", "name", "asc");
+        final var aQuery = new SearchQuery(0, 1, "MAIS ASSISTIDA", "name", "asc");
         final var pageCategories = categoryGateway.findAll(aQuery);
 
         assertEquals(3, categoryRepository.count());

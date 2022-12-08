@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.category.CategoryGateway;
-import com.github.allisson95.codeflix.domain.category.CategorySearchQuery;
+import com.github.allisson95.codeflix.domain.pagination.SearchQuery;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +45,7 @@ class ListCategoriesUseCaseTest {
         final var expectedSort = "createdAt";
         final var expectedDirection = "asc";
 
-        final var aQuery = new CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort,
+        final var aQuery = new SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort,
                 expectedDirection);
 
         final var expectedPagination = new Pagination<>(
@@ -78,7 +78,7 @@ class ListCategoriesUseCaseTest {
         final var expectedSort = "createdAt";
         final var expectedDirection = "asc";
 
-        final var aQuery = new CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort,
+        final var aQuery = new SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort,
                 expectedDirection);
 
         final var expectedPagination = new Pagination<>(
@@ -111,7 +111,7 @@ class ListCategoriesUseCaseTest {
 
         final var expectedErrorMessage = "Gateway error";
 
-        final var aQuery = new CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort,
+        final var aQuery = new SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort,
                 expectedDirection);
 
         when(categoryGateway.findAll(aQuery)).thenThrow(new IllegalStateException(expectedErrorMessage));

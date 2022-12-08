@@ -17,7 +17,7 @@ import com.github.allisson95.codeflix.application.category.retrieve.list.ListCat
 import com.github.allisson95.codeflix.application.category.update.UpdateCategoryCommand;
 import com.github.allisson95.codeflix.application.category.update.UpdateCategoryOutput;
 import com.github.allisson95.codeflix.application.category.update.UpdateCategoryUseCase;
-import com.github.allisson95.codeflix.domain.category.CategorySearchQuery;
+import com.github.allisson95.codeflix.domain.pagination.SearchQuery;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.domain.validation.handler.Notification;
 import com.github.allisson95.codeflix.infrastructure.api.CategoryAPI;
@@ -78,7 +78,7 @@ public class CategoryController implements CategoryAPI {
             final String sort,
             final String dir) {
         return this.listCategoriesUseCase
-                .execute(new CategorySearchQuery(page, perPage, search, sort, dir))
+                .execute(new SearchQuery(page, perPage, search, sort, dir))
                 .map(CategoryApiPresenter::present);
     }
 

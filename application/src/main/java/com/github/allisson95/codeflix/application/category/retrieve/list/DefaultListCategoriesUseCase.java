@@ -3,7 +3,7 @@ package com.github.allisson95.codeflix.application.category.retrieve.list;
 import java.util.Objects;
 
 import com.github.allisson95.codeflix.domain.category.CategoryGateway;
-import com.github.allisson95.codeflix.domain.category.CategorySearchQuery;
+import com.github.allisson95.codeflix.domain.pagination.SearchQuery;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 
 public class DefaultListCategoriesUseCase extends ListCategoriesUseCase {
@@ -15,7 +15,7 @@ public class DefaultListCategoriesUseCase extends ListCategoriesUseCase {
     }
 
     @Override
-    public Pagination<CategoryListOutput> execute(CategorySearchQuery aQuery) {
+    public Pagination<CategoryListOutput> execute(SearchQuery aQuery) {
         return this.categoryGateway.findAll(aQuery)
                 .map(CategoryListOutput::from);
     }

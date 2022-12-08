@@ -2,6 +2,7 @@ package com.github.allisson95.codeflix.domain.category;
 
 import java.util.Optional;
 
+import com.github.allisson95.codeflix.domain.pagination.SearchQuery;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 
 public interface CategoryGateway {
@@ -12,7 +13,7 @@ public interface CategoryGateway {
 
     Optional<Category> findById(CategoryID anId);
 
-    Pagination<Category> findAll(CategorySearchQuery aQuery);
+    Pagination<Category> findAll(SearchQuery aQuery);
 
     Category update(Category aCategory);
 
