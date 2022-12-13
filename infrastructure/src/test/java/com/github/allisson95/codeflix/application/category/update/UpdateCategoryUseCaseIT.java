@@ -20,7 +20,6 @@ import com.github.allisson95.codeflix.IntegrationTest;
 import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.category.CategoryGateway;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
-import com.github.allisson95.codeflix.domain.exceptions.DomainException;
 import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryRepository;

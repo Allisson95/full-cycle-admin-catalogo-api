@@ -26,7 +26,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.category.CategoryGateway;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
-import com.github.allisson95.codeflix.domain.exceptions.DomainException;
 import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 
 @ExtendWith(MockitoExtension.class)

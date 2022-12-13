@@ -2,6 +2,8 @@ package com.github.allisson95.codeflix.infrastructure.category;
 
 import static com.github.allisson95.codeflix.infrastructure.utils.SpecificationUtils.like;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
@@ -13,8 +15,8 @@ import org.springframework.stereotype.Component;
 import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.category.CategoryGateway;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
-import com.github.allisson95.codeflix.domain.pagination.SearchQuery;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
+import com.github.allisson95.codeflix.domain.pagination.SearchQuery;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryRepository;
 
@@ -78,6 +80,12 @@ public class CategoryMySQLGateway implements CategoryGateway {
 
     private Category save(final Category aCategory) {
         return this.repository.save(CategoryJpaEntity.from(aCategory)).toAggregate();
+    }
+
+    @Override
+    public List<CategoryID> existsByIds(final Iterable<CategoryID> ids) {
+        // TODO Será implementado junto com o módulo de infrastrutura de Genre.
+        return Collections.emptyList();
     }
 
 }
