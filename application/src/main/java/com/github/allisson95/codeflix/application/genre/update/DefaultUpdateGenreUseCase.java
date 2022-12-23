@@ -1,56 +1,67 @@
-package com.github.allisson95.codeflix.application.genre.create;
+package com.github.allisson95.codeflix.application.genre.update;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.github.allisson95.codeflix.domain.Identifier;
 import com.github.allisson95.codeflix.domain.category.CategoryGateway;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
+import com.github.allisson95.codeflix.domain.exceptions.DomainException;
+import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 import com.github.allisson95.codeflix.domain.exceptions.NotificationException;
 import com.github.allisson95.codeflix.domain.genre.Genre;
 import com.github.allisson95.codeflix.domain.genre.GenreGateway;
+import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.validation.Error;
 import com.github.allisson95.codeflix.domain.validation.ValidationHandler;
 import com.github.allisson95.codeflix.domain.validation.handler.Notification;
 
-public class DefaultCreateGenreUseCase extends CreateGenreUseCase {
+public class DefaultUpdateGenreUseCase extends UpdateGenreUseCase {
 
-    private final GenreGateway genreGateway;
     private final CategoryGateway categoryGateway;
+    private final GenreGateway genreGateway;
 
-    public DefaultCreateGenreUseCase(final GenreGateway genreGateway, final CategoryGateway categoryGateway) {
-        this.genreGateway = Objects.requireNonNull(genreGateway);
+    public DefaultUpdateGenreUseCase(final CategoryGateway categoryGateway, final GenreGateway genreGateway) {
         this.categoryGateway = Objects.requireNonNull(categoryGateway);
+        this.genreGateway = Objects.requireNonNull(genreGateway);
     }
 
     @Override
-    public CreateGenreOutput execute(final CreateGenreCommand aCommand) {
+    public UpdateGenreOutput execute(final UpdateGenreCommand aCommand) {
+        final var anId = GenreID.from(aCommand.id());
         final var aName = aCommand.name();
-        final var isActive = aCommand.active();
+        final var isActive = aCommand.isActive();
         final var categories = toCategory(aCommand.categories());
+
+        final var aGenre = this.genreGateway.findById(anId)
+                .orElseThrow(notFound(anId));
 
         final var notification = Notification.create();
 
         notification.append(validateCategoriesIds(categories));
 
-        final var aGenre = notification.validate(() -> Genre.newGenre(aName, isActive));
+        notification.validate(() -> aGenre.update(aName, isActive, categories));
 
         if (notification.hasError()) {
-            throw new NotificationException("Could not create Aggregate Genre", notification);
+            throw new NotificationException(
+                    "Could not update Aggregate Genre %s".formatted(aCommand.id()),
+                    notification);
         }
 
-        aGenre.addCategories(categories);
-
-        final var createdGenre = this.genreGateway.create(aGenre);
-
-        return CreateGenreOutput.from(createdGenre);
+        return UpdateGenreOutput.from(this.genreGateway.update(aGenre));
     }
 
     private List<CategoryID> toCategory(final List<String> ids) {
         return ids.stream()
                 .map(CategoryID::from)
                 .toList();
+    }
+
+    private Supplier<? extends DomainException> notFound(final Identifier anId) {
+        return () -> NotFoundException.with(Genre.class, anId);
     }
 
     private ValidationHandler validateCategoriesIds(final List<CategoryID> ids) {
