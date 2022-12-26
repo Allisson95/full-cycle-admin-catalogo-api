@@ -2,27 +2,24 @@ package com.github.allisson95.codeflix.application.category.retrieve.get;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.github.allisson95.codeflix.application.UseCaseTest;
 import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.category.CategoryGateway;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 
-@ExtendWith(MockitoExtension.class)
-class GetCategoryByIdUseCaseTest {
+class GetCategoryByIdUseCaseTest extends UseCaseTest {
 
     @Mock
     private CategoryGateway categoryGateway;
@@ -30,9 +27,9 @@ class GetCategoryByIdUseCaseTest {
     @InjectMocks
     private DefaultGetCategoryByIdUseCase useCase;
 
-    @BeforeEach
-    void cleanUp() {
-        reset(categoryGateway);
+    @Override
+    protected List<Object> getMocksForClean() {
+        return List.of(categoryGateway);
     }
 
     @Test

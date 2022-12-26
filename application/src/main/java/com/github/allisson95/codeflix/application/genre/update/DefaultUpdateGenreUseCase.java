@@ -51,7 +51,9 @@ public class DefaultUpdateGenreUseCase extends UpdateGenreUseCase {
                     notification);
         }
 
-        return UpdateGenreOutput.from(this.genreGateway.update(aGenre));
+        final var updatedGenre = this.genreGateway.update(aGenre);
+
+        return UpdateGenreOutput.from(updatedGenre);
     }
 
     private List<CategoryID> toCategory(final List<String> ids) {

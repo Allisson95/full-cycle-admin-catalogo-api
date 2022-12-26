@@ -16,19 +16,17 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.github.allisson95.codeflix.application.UseCaseTest;
 import com.github.allisson95.codeflix.domain.category.CategoryGateway;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.exceptions.NotificationException;
 import com.github.allisson95.codeflix.domain.genre.Genre;
 import com.github.allisson95.codeflix.domain.genre.GenreGateway;
 
-@ExtendWith(MockitoExtension.class)
-class UpdateGenreUseCaseTest {
+class UpdateGenreUseCaseTest extends UseCaseTest {
 
     @Mock
     private GenreGateway genreGateway;
@@ -38,6 +36,11 @@ class UpdateGenreUseCaseTest {
 
     @InjectMocks
     private DefaultUpdateGenreUseCase useCase;
+
+    @Override
+    protected List<Object> getMocksForClean() {
+        return List.of(genreGateway, categoryGateway);
+    }
 
     @Test
     void Given_AValidCommand_When_CallsUpdateGenre_Should_ReturnGenreId() {
