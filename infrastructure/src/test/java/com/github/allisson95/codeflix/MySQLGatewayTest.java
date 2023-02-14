@@ -16,9 +16,12 @@ import org.springframework.test.context.ActiveProfiles;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @ActiveProfiles("test-integration")
-@ComponentScan(includeFilters = {
+@ComponentScan(
+    basePackages = "com.github.allisson95.codeflix",
+    includeFilters = {
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".[MySQLGateway]")
-})
+    }
+)
 @DataJpaTest
 @ExtendWith(MySQLCleanUpExtension.class)
 public @interface MySQLGatewayTest {
