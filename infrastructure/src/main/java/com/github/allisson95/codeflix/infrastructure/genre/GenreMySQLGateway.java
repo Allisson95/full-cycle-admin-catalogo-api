@@ -24,9 +24,7 @@ public class GenreMySQLGateway implements GenreGateway {
 
     @Override
     public Genre create(final Genre aGenre) {
-        return this.genreRepository
-                .save(GenreJpaEntity.from(aGenre))
-                .toAggregate();
+        return save(aGenre);
     }
 
     @Override
@@ -48,9 +46,14 @@ public class GenreMySQLGateway implements GenreGateway {
     }
 
     @Override
-    public Genre update(Genre aCategory) {
-        // TODO Auto-generated method stub
-        return null;
+    public Genre update(final Genre aGenre) {
+        return save(aGenre);
+    }
+
+    private Genre save(final Genre aGenre) {
+        return this.genreRepository
+                .save(GenreJpaEntity.from(aGenre))
+                .toAggregate();
     }
 
 }

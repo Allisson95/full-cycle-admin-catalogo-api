@@ -15,6 +15,6 @@ public interface GenreGateway {
 
     Pagination<Genre> findAll(SearchQuery aQuery);
 
-    Genre update(Genre aCategory);
+    Genre update(Genre aGenre);
 
 }
