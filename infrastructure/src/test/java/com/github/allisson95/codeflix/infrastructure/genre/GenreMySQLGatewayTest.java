@@ -4,7 +4,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,6 +17,7 @@ import com.github.allisson95.codeflix.MySQLGatewayTest;
 import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.genre.Genre;
+import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.infrastructure.category.CategoryMySQLGateway;
 import com.github.allisson95.codeflix.infrastructure.genre.persistence.GenreJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.genre.persistence.GenreRepository;
@@ -291,6 +291,28 @@ class GenreMySQLGatewayTest {
         assertEquals(aGenre.getCreatedAt(), persistedGenre.getCreatedAt());
         assertTrue(aGenre.getUpdatedAt().isBefore(persistedGenre.getUpdatedAt()));
         assertNotNull(persistedGenre.getDeletedAt());
+    }
+
+    @Test
+    void Given_APrePersistedGenre_When_CallsDeleteById_Should_DeleteGenre() {
+        final var aGenre = Genre.newGenre("Ação", true);
+
+        genreRepository.saveAndFlush(GenreJpaEntity.from(aGenre));
+
+        assertEquals(1, this.genreRepository.count());
+
+        this.genreGateway.deleteById(aGenre.getId());
+
+        assertEquals(0, this.genreRepository.count());
+    }
+
+    @Test
+    void Given_AnInvalidGenre_When_CallsDeleteById_Should_BeOK() {
+        assertEquals(0, this.genreRepository.count());
+
+        this.genreGateway.deleteById(GenreID.from("123"));
+
+        assertEquals(0, this.genreRepository.count());
     }
 
 }
