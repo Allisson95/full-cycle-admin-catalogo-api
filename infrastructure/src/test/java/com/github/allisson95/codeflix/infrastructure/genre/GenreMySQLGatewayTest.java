@@ -315,4 +315,59 @@ class GenreMySQLGatewayTest {
         assertEquals(0, this.genreRepository.count());
     }
 
+    @Test
+    void Given_APrePersistedGenre_When_CallsFindById_Should_ReturnGenre() {
+        final var filmes = Category.newCategory("Filmes", null, true);
+        this.categoryGateway.create(filmes);
+        final var series = Category.newCategory("Séries", null, true);
+        this.categoryGateway.create(series);
+
+        final var expectedName = "Ação";
+        final var expectedIsActive = true;
+        final var expectedCategories = List.of(filmes.getId(), series.getId());
+
+        final var aGenre = Genre.newGenre(expectedName, expectedIsActive);
+        aGenre.addCategories(expectedCategories);
+
+        final var expectedId = aGenre.getId();
+
+        assertEquals(0, this.genreRepository.count());
+
+        genreRepository.saveAndFlush(GenreJpaEntity.from(aGenre));
+
+        assertEquals(1, this.genreRepository.count());
+
+        final var actualGenre = this.genreGateway.findById(expectedId).get();
+
+        assertEquals(1, this.genreRepository.count());
+
+        assertEquals(expectedId, actualGenre.getId());
+        assertEquals(expectedName, actualGenre.getName());
+        assertEquals(expectedIsActive, actualGenre.isActive());
+        assertEquals(expectedCategories, actualGenre.getCategories());
+        assertEquals(aGenre.getCreatedAt(), actualGenre.getCreatedAt());
+        assertEquals(aGenre.getUpdatedAt(), actualGenre.getUpdatedAt());
+        assertNull(actualGenre.getDeletedAt());
+
+        final var persistedGenre = genreRepository.findById(expectedId.getValue()).get();
+
+        assertEquals(expectedName, persistedGenre.getName());
+        assertEquals(expectedIsActive, persistedGenre.isActive());
+        assertEquals(expectedCategories, persistedGenre.getCategoryIDs());
+        assertEquals(aGenre.getCreatedAt(), persistedGenre.getCreatedAt());
+        assertEquals(aGenre.getUpdatedAt(), persistedGenre.getUpdatedAt());
+        assertNull(persistedGenre.getDeletedAt());
+    }
+
+    @Test
+    void Given_AInvalidGenreID_When_CallsFindById_Should_ReturnEmpty() {
+        assertEquals(0, this.genreRepository.count());
+
+        final var actualGenre = this.genreGateway.findById(GenreID.from("empty"));
+
+        assertEquals(0, this.genreRepository.count());
+
+        assertTrue(actualGenre.isEmpty());
+    }
+
 }
