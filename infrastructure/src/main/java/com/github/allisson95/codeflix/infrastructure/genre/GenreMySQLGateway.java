@@ -28,9 +28,11 @@ public class GenreMySQLGateway implements GenreGateway {
     }
 
     @Override
-    public void deleteById(GenreID anId) {
-        // TODO Auto-generated method stub
-
+    public void deleteById(final GenreID anId) {
+        final String anIdValue = anId.getValue();
+        if (this.genreRepository.existsById(anIdValue)) {
+            this.genreRepository.deleteById(anIdValue);
+        }
     }
 
     @Override
