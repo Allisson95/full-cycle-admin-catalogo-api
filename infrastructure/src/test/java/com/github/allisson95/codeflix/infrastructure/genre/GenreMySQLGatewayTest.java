@@ -151,7 +151,7 @@ class GenreMySQLGatewayTest {
 
         assertEquals(expectedName, persistedGenre.getName());
         assertEquals(expectedIsActive, persistedGenre.isActive());
-        assertThat(actualGenre.getCategories(), containsInAnyOrder(persistedGenre.getCategoryIDs().toArray()));
+        assertThat(persistedGenre.getCategoryIDs(), containsInAnyOrder(expectedCategories.toArray()));
         assertEquals(aGenre.getCreatedAt(), persistedGenre.getCreatedAt());
         assertTrue(aGenre.getUpdatedAt().isBefore(persistedGenre.getUpdatedAt()));
         assertEquals(aGenre.getDeletedAt(), persistedGenre.getDeletedAt());
@@ -344,7 +344,7 @@ class GenreMySQLGatewayTest {
         assertEquals(expectedId, actualGenre.getId());
         assertEquals(expectedName, actualGenre.getName());
         assertEquals(expectedIsActive, actualGenre.isActive());
-        assertEquals(expectedCategories, actualGenre.getCategories());
+        assertThat(actualGenre.getCategories(), containsInAnyOrder(expectedCategories.toArray()));
         assertEquals(aGenre.getCreatedAt(), actualGenre.getCreatedAt());
         assertEquals(aGenre.getUpdatedAt(), actualGenre.getUpdatedAt());
         assertNull(actualGenre.getDeletedAt());
@@ -353,7 +353,7 @@ class GenreMySQLGatewayTest {
 
         assertEquals(expectedName, persistedGenre.getName());
         assertEquals(expectedIsActive, persistedGenre.isActive());
-        assertEquals(expectedCategories, persistedGenre.getCategoryIDs());
+        assertThat(persistedGenre.getCategoryIDs(), containsInAnyOrder(expectedCategories.toArray()));
         assertEquals(aGenre.getCreatedAt(), persistedGenre.getCreatedAt());
         assertEquals(aGenre.getUpdatedAt(), persistedGenre.getUpdatedAt());
         assertNull(persistedGenre.getDeletedAt());

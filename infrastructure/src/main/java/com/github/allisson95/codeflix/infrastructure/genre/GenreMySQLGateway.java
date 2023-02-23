@@ -36,13 +36,13 @@ public class GenreMySQLGateway implements GenreGateway {
     }
 
     @Override
-    public Optional<Genre> findById(GenreID anId) {
-        // TODO Auto-generated method stub
-        return Optional.empty();
+    public Optional<Genre> findById(final GenreID anId) {
+        return this.genreRepository.findById(anId.getValue())
+                .map(GenreJpaEntity::toAggregate);
     }
 
     @Override
-    public Pagination<Genre> findAll(SearchQuery aQuery) {
+    public Pagination<Genre> findAll(final SearchQuery aQuery) {
         // TODO Auto-generated method stub
         return null;
     }
