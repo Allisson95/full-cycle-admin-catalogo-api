@@ -3,6 +3,10 @@ package com.github.allisson95.codeflix.infrastructure.genre;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import com.github.allisson95.codeflix.domain.genre.Genre;
@@ -12,6 +16,7 @@ import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.domain.pagination.SearchQuery;
 import com.github.allisson95.codeflix.infrastructure.genre.persistence.GenreJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.genre.persistence.GenreRepository;
+import com.github.allisson95.codeflix.infrastructure.utils.SpecificationUtils;
 
 @Component
 public class GenreMySQLGateway implements GenreGateway {
@@ -43,8 +48,23 @@ public class GenreMySQLGateway implements GenreGateway {
 
     @Override
     public Pagination<Genre> findAll(final SearchQuery aQuery) {
-        // TODO Auto-generated method stub
-        return null;
+        final var page = PageRequest.of(
+                aQuery.page(),
+                aQuery.perPage(),
+                Sort.by(Direction.fromString(aQuery.direction()), aQuery.sort()));
+
+        final var spec = Optional.ofNullable(aQuery.terms())
+                .filter(terms -> !terms.isBlank())
+                .map(terms -> SpecificationUtils.<GenreJpaEntity>like("name", terms))
+                .orElse(null);
+
+        final var pageResult = this.genreRepository.findAll(Specification.where(spec), page);
+
+        return new Pagination<>(
+                pageResult.getNumber(),
+                pageResult.getSize(),
+                pageResult.getTotalElements(),
+                pageResult.map(GenreJpaEntity::toAggregate).toList());
     }
 
     @Override
