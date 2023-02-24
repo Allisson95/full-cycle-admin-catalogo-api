@@ -21,12 +21,12 @@ import com.github.allisson95.codeflix.domain.validation.handler.Notification;
 
 public class DefaultUpdateGenreUseCase extends UpdateGenreUseCase {
 
-    private final CategoryGateway categoryGateway;
     private final GenreGateway genreGateway;
+    private final CategoryGateway categoryGateway;
 
-    public DefaultUpdateGenreUseCase(final CategoryGateway categoryGateway, final GenreGateway genreGateway) {
-        this.categoryGateway = Objects.requireNonNull(categoryGateway);
+    public DefaultUpdateGenreUseCase(final GenreGateway genreGateway, final CategoryGateway categoryGateway) {
         this.genreGateway = Objects.requireNonNull(genreGateway);
+        this.categoryGateway = Objects.requireNonNull(categoryGateway);
     }
 
     @Override
