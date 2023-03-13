@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -21,11 +20,6 @@ public class MySQLCleanUpExtension implements BeforeEachCallback {
         cleanUp(List.of(
                 applicationContext.getBean(GenreRepository.class),
                 applicationContext.getBean(CategoryRepository.class)));
-
-        final var entityManager = applicationContext.getBean(TestEntityManager.class);
-
-        entityManager.flush();
-        entityManager.clear();
     }
 
     private void cleanUp(final Collection<CrudRepository> repositories) {

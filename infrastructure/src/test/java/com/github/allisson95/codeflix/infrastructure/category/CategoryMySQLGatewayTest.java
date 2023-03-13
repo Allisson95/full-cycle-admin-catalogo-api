@@ -1,5 +1,7 @@
 package com.github.allisson95.codeflix.infrastructure.category;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -374,6 +376,33 @@ class CategoryMySQLGatewayTest {
         assertEquals(expectedTotal, pageCategories.total());
         assertEquals(expectedPerPage, pageCategories.items().size());
         assertEquals(filmes.getId(), pageCategories.items().get(0).getId());
+    }
+
+    @Test
+    void Given_PrePersistedCategories_When_CallsExistsByIds_Then_ReturnIds() {
+        final var filmes = Category.newCategory("Filmes", null, true);
+        final var series = Category.newCategory("Séries", null, true);
+        final var documentarios = Category.newCategory("Documentários", null, true);
+
+        final var expectedIds = List.of(filmes.getId(), series.getId());
+
+        assertEquals(0, categoryRepository.count());
+
+        categoryRepository.saveAllAndFlush(List.of(
+                CategoryJpaEntity.from(filmes),
+                CategoryJpaEntity.from(series),
+                CategoryJpaEntity.from(documentarios)));
+
+        assertEquals(3, categoryRepository.count());
+
+        final var actualIds = categoryGateway.existsByIds(List.of(
+                filmes.getId(),
+                series.getId(),
+                CategoryID.from("123")));
+
+        assertEquals(3, categoryRepository.count());
+
+        assertThat(actualIds, containsInAnyOrder(expectedIds.toArray()));
     }
 
 }

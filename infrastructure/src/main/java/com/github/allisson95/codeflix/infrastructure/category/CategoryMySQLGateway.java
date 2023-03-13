@@ -2,9 +2,9 @@ package com.github.allisson95.codeflix.infrastructure.category;
 
 import static com.github.allisson95.codeflix.infrastructure.utils.SpecificationUtils.like;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -83,9 +83,15 @@ public class CategoryMySQLGateway implements CategoryGateway {
     }
 
     @Override
-    public List<CategoryID> existsByIds(final Iterable<CategoryID> ids) {
-        // TODO Será implementado junto com o módulo de infrastrutura de Genre.
-        return Collections.emptyList();
+    public List<CategoryID> existsByIds(final Iterable<CategoryID> categoryIDs) {
+        final var ids = StreamSupport.stream(categoryIDs.spliterator(), false)
+                .map(CategoryID::getValue)
+                .toList();
+
+        return this.repository.existsByIds(ids)
+                .stream()
+                .map(CategoryID::from)
+                .toList();
     }
 
 }
