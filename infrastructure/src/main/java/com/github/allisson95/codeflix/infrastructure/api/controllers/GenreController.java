@@ -9,6 +9,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.github.allisson95.codeflix.application.genre.create.CreateGenreCommand;
 import com.github.allisson95.codeflix.application.genre.create.CreateGenreUseCase;
 import com.github.allisson95.codeflix.application.genre.retrieve.get.GetGenreByIdUseCase;
+import com.github.allisson95.codeflix.application.genre.update.UpdateGenreCommand;
+import com.github.allisson95.codeflix.application.genre.update.UpdateGenreUseCase;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.infrastructure.api.GenreAPI;
 import com.github.allisson95.codeflix.infrastructure.genre.models.CreateGenreRequest;
@@ -22,13 +24,16 @@ public class GenreController implements GenreAPI {
 
     private final CreateGenreUseCase createGenreUseCase;
     private final GetGenreByIdUseCase getGenreByIdUseCase;
+    private final UpdateGenreUseCase updateGenreUseCase;
 
     public GenreController(
         final CreateGenreUseCase createGenreUseCase,
-        final GetGenreByIdUseCase getGenreByIdUseCase
+        final GetGenreByIdUseCase getGenreByIdUseCase,
+        final UpdateGenreUseCase updateGenreUseCase
     ) {
         this.createGenreUseCase = Objects.requireNonNull(createGenreUseCase);
         this.getGenreByIdUseCase = Objects.requireNonNull(getGenreByIdUseCase);
+        this.updateGenreUseCase = Objects.requireNonNull(updateGenreUseCase);
     }
 
     @Override
@@ -62,7 +67,15 @@ public class GenreController implements GenreAPI {
 
     @Override
     public ResponseEntity<?> updateById(final String id, final UpdateGenreRequest input) {
-        throw new UnsupportedOperationException("Unimplemented method 'updateById'");
+        final var aCommand = UpdateGenreCommand.with(
+                id,
+                input.name(),
+                input.active(),
+                input.categories());
+
+        final var output = this.updateGenreUseCase.execute(aCommand);
+
+        return ResponseEntity.ok(output);
     }
 
     @Override
