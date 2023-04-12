@@ -5,9 +5,11 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -30,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.allisson95.codeflix.ControllerTest;
 import com.github.allisson95.codeflix.application.genre.create.CreateGenreOutput;
 import com.github.allisson95.codeflix.application.genre.create.CreateGenreUseCase;
+import com.github.allisson95.codeflix.application.genre.delete.DeleteGenreUseCase;
 import com.github.allisson95.codeflix.application.genre.retrieve.get.GenreOutput;
 import com.github.allisson95.codeflix.application.genre.retrieve.get.GetGenreByIdUseCase;
 import com.github.allisson95.codeflix.application.genre.update.UpdateGenreOutput;
@@ -62,6 +65,9 @@ class GenreAPITest {
 
     @MockBean
     private UpdateGenreUseCase updateGenreUseCase;
+
+    @MockBean
+    private DeleteGenreUseCase deleteGenreUseCase;
 
     @Test
     void Given_AValidCommand_When_CallCreateGenre_Then_ReturnGenreId() throws Exception {
@@ -265,6 +271,41 @@ class GenreAPITest {
                 argThat(cmd -> Objects.equals(expectedName, cmd.name())
                         && Objects.equals(asString(expectedCategories), cmd.categories())
                         && Objects.equals(expectedIsActive, cmd.isActive())));
+    }
+
+    @Test
+    void Given_AValidGenreID_When_CallsDeleteGenre_Should_BeOk() throws Exception {
+        final var aGenre = Genre.newGenre("Ação", true);
+        final var expectedId = aGenre.getId();
+
+        doNothing().when(deleteGenreUseCase).execute(expectedId.getValue());
+
+        final var request = delete("/genres/{genreId}", expectedId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        this.mockMvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        verify(deleteGenreUseCase, times(1)).execute(expectedId.getValue());
+    }
+
+    @Test
+    void Given_AnInvalidGenreID_When_CallsDeleteGenre_Should_BeOk() throws Exception {
+        final var expectedId = GenreID.from("invalid");
+
+        doNothing().when(deleteGenreUseCase).execute(expectedId.getValue());
+
+        final var request = delete("/genres/{genreId}", expectedId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        this.mockMvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        verify(deleteGenreUseCase, times(1)).execute(expectedId.getValue());
     }
 
     private List<String> asString(final List<CategoryID> categories) {
