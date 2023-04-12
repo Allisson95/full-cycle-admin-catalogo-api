@@ -8,20 +8,27 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.github.allisson95.codeflix.application.genre.create.CreateGenreCommand;
 import com.github.allisson95.codeflix.application.genre.create.CreateGenreUseCase;
+import com.github.allisson95.codeflix.application.genre.retrieve.get.GetGenreByIdUseCase;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.infrastructure.api.GenreAPI;
 import com.github.allisson95.codeflix.infrastructure.genre.models.CreateGenreRequest;
 import com.github.allisson95.codeflix.infrastructure.genre.models.GenreListResponse;
 import com.github.allisson95.codeflix.infrastructure.genre.models.GenreResponse;
 import com.github.allisson95.codeflix.infrastructure.genre.models.UpdateGenreRequest;
+import com.github.allisson95.codeflix.infrastructure.genre.presenters.GenreApiPresenter;
 
 @RestController
 public class GenreController implements GenreAPI {
 
     private final CreateGenreUseCase createGenreUseCase;
+    private final GetGenreByIdUseCase getGenreByIdUseCase;
 
-    public GenreController(final CreateGenreUseCase createGenreUseCase) {
+    public GenreController(
+        final CreateGenreUseCase createGenreUseCase,
+        final GetGenreByIdUseCase getGenreByIdUseCase
+    ) {
         this.createGenreUseCase = Objects.requireNonNull(createGenreUseCase);
+        this.getGenreByIdUseCase = Objects.requireNonNull(getGenreByIdUseCase);
     }
 
     @Override
@@ -50,7 +57,7 @@ public class GenreController implements GenreAPI {
 
     @Override
     public GenreResponse getById(final String id) {
-        throw new UnsupportedOperationException("Unimplemented method 'getById'");
+        return GenreApiPresenter.present(this.getGenreByIdUseCase.execute(id));
     }
 
     @Override
