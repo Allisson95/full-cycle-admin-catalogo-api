@@ -8,6 +8,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.github.allisson95.codeflix.application.genre.create.CreateGenreCommand;
 import com.github.allisson95.codeflix.application.genre.create.CreateGenreUseCase;
+import com.github.allisson95.codeflix.application.genre.delete.DeleteGenreUseCase;
 import com.github.allisson95.codeflix.application.genre.retrieve.get.GetGenreByIdUseCase;
 import com.github.allisson95.codeflix.application.genre.update.UpdateGenreCommand;
 import com.github.allisson95.codeflix.application.genre.update.UpdateGenreUseCase;
@@ -25,15 +26,18 @@ public class GenreController implements GenreAPI {
     private final CreateGenreUseCase createGenreUseCase;
     private final GetGenreByIdUseCase getGenreByIdUseCase;
     private final UpdateGenreUseCase updateGenreUseCase;
+    private final DeleteGenreUseCase deleteGenreUseCase;
 
     public GenreController(
         final CreateGenreUseCase createGenreUseCase,
         final GetGenreByIdUseCase getGenreByIdUseCase,
-        final UpdateGenreUseCase updateGenreUseCase
+        final UpdateGenreUseCase updateGenreUseCase,
+        final DeleteGenreUseCase deleteGenreUseCase
     ) {
         this.createGenreUseCase = Objects.requireNonNull(createGenreUseCase);
         this.getGenreByIdUseCase = Objects.requireNonNull(getGenreByIdUseCase);
         this.updateGenreUseCase = Objects.requireNonNull(updateGenreUseCase);
+        this.deleteGenreUseCase = Objects.requireNonNull(deleteGenreUseCase);
     }
 
     @Override
@@ -80,7 +84,7 @@ public class GenreController implements GenreAPI {
 
     @Override
     public void deleteById(final String id) {
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+        this.deleteGenreUseCase.execute(id);
     }
 
 }
