@@ -10,9 +10,11 @@ import com.github.allisson95.codeflix.application.genre.create.CreateGenreComman
 import com.github.allisson95.codeflix.application.genre.create.CreateGenreUseCase;
 import com.github.allisson95.codeflix.application.genre.delete.DeleteGenreUseCase;
 import com.github.allisson95.codeflix.application.genre.retrieve.get.GetGenreByIdUseCase;
+import com.github.allisson95.codeflix.application.genre.retrieve.list.ListGenreUseCase;
 import com.github.allisson95.codeflix.application.genre.update.UpdateGenreCommand;
 import com.github.allisson95.codeflix.application.genre.update.UpdateGenreUseCase;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
+import com.github.allisson95.codeflix.domain.pagination.SearchQuery;
 import com.github.allisson95.codeflix.infrastructure.api.GenreAPI;
 import com.github.allisson95.codeflix.infrastructure.genre.models.CreateGenreRequest;
 import com.github.allisson95.codeflix.infrastructure.genre.models.GenreListResponse;
@@ -27,17 +29,19 @@ public class GenreController implements GenreAPI {
     private final GetGenreByIdUseCase getGenreByIdUseCase;
     private final UpdateGenreUseCase updateGenreUseCase;
     private final DeleteGenreUseCase deleteGenreUseCase;
+    private final ListGenreUseCase listGenreUseCase;
 
     public GenreController(
-        final CreateGenreUseCase createGenreUseCase,
-        final GetGenreByIdUseCase getGenreByIdUseCase,
-        final UpdateGenreUseCase updateGenreUseCase,
-        final DeleteGenreUseCase deleteGenreUseCase
-    ) {
+            final CreateGenreUseCase createGenreUseCase,
+            final GetGenreByIdUseCase getGenreByIdUseCase,
+            final UpdateGenreUseCase updateGenreUseCase,
+            final DeleteGenreUseCase deleteGenreUseCase,
+            final ListGenreUseCase listGenreUseCase) {
         this.createGenreUseCase = Objects.requireNonNull(createGenreUseCase);
         this.getGenreByIdUseCase = Objects.requireNonNull(getGenreByIdUseCase);
         this.updateGenreUseCase = Objects.requireNonNull(updateGenreUseCase);
         this.deleteGenreUseCase = Objects.requireNonNull(deleteGenreUseCase);
+        this.listGenreUseCase = Objects.requireNonNull(listGenreUseCase);
     }
 
     @Override
@@ -61,7 +65,8 @@ public class GenreController implements GenreAPI {
             final int perPage,
             final String sort,
             final String dir) {
-        throw new UnsupportedOperationException("Unimplemented method 'list'");
+        return this.listGenreUseCase.execute(new SearchQuery(page, perPage, search, sort, dir))
+                .map(GenreApiPresenter::present);
     }
 
     @Override
