@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -31,6 +32,8 @@ import com.github.allisson95.codeflix.application.genre.create.CreateGenreOutput
 import com.github.allisson95.codeflix.application.genre.create.CreateGenreUseCase;
 import com.github.allisson95.codeflix.application.genre.retrieve.get.GenreOutput;
 import com.github.allisson95.codeflix.application.genre.retrieve.get.GetGenreByIdUseCase;
+import com.github.allisson95.codeflix.application.genre.update.UpdateGenreOutput;
+import com.github.allisson95.codeflix.application.genre.update.UpdateGenreUseCase;
 import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
@@ -38,7 +41,9 @@ import com.github.allisson95.codeflix.domain.exceptions.NotificationException;
 import com.github.allisson95.codeflix.domain.genre.Genre;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.validation.Error;
+import com.github.allisson95.codeflix.domain.validation.handler.Notification;
 import com.github.allisson95.codeflix.infrastructure.genre.models.CreateGenreRequest;
+import com.github.allisson95.codeflix.infrastructure.genre.models.UpdateGenreRequest;
 
 @ControllerTest(controllers = { GenreAPI.class })
 class GenreAPITest {
@@ -54,6 +59,9 @@ class GenreAPITest {
 
     @MockBean
     private GetGenreByIdUseCase getGenreByIdUseCase;
+
+    @MockBean
+    private UpdateGenreUseCase updateGenreUseCase;
 
     @Test
     void Given_AValidCommand_When_CallCreateGenre_Then_ReturnGenreId() throws Exception {
@@ -182,6 +190,81 @@ class GenreAPITest {
                 .andExpect(jsonPath("$.errors").isEmpty());
 
         verify(getGenreByIdUseCase, times(1)).execute(expectedId.getValue());
+    }
+
+    @Test
+    void Given_AValidCommand_When_CallsUpdateGenre_Should_ReturnGenreId() throws Exception {
+        final var filmes = Category.newCategory("Filmes", null, true);
+        final var series = Category.newCategory("Séries", null, true);
+
+        final var expectedName = "Ação";
+        final var expectedIsActive = true;
+        final var expectedCategories = List.of(filmes.getId(), series.getId());
+
+        final var aGenre = Genre.newGenre(expectedName, expectedIsActive);
+        final var expectedId = aGenre.getId();
+
+        final var anInput = new UpdateGenreRequest(expectedName, asString(expectedCategories), expectedIsActive);
+
+        when(updateGenreUseCase.execute(any())).thenReturn(UpdateGenreOutput.from(aGenre));
+
+        final var request = put("/genres/{genreId}", expectedId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsBytes(anInput));
+
+        this.mockMvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.id").isString())
+                .andExpect(jsonPath("$.id", equalTo(expectedId.getValue())));
+
+        verify(updateGenreUseCase, times(1)).execute(
+                argThat(cmd -> Objects.equals(expectedName, cmd.name())
+                        && Objects.equals(asString(expectedCategories), cmd.categories())
+                        && Objects.equals(expectedIsActive, cmd.isActive())));
+    }
+
+    @Test
+    void Given_AnInvalidCommandWithNullName_When_CallsUpdateGenre_Should_ReturnDomainException() throws Exception {
+        final var filmes = Category.newCategory("Filmes", null, true);
+        final var series = Category.newCategory("Séries", null, true);
+
+        final String expectedName = null;
+        final var expectedIsActive = true;
+        final var expectedCategories = List.of(filmes.getId(), series.getId());
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "'name' should not be null";
+
+        final var aGenre = Genre.newGenre("Ação", expectedIsActive);
+        final var expectedId = aGenre.getId();
+
+        final var anInput = new UpdateGenreRequest(expectedName, asString(expectedCategories), expectedIsActive);
+
+        when(updateGenreUseCase.execute(any()))
+                .thenThrow(
+                        new NotificationException("Error", Notification.create(new Error(expectedErrorMessage))));
+
+        final var request = put("/genres/{genreId}", expectedId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsBytes(anInput));
+
+        this.mockMvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.errors").exists())
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors", hasSize(expectedErrorCount)))
+                .andExpect(jsonPath("$.errors[0].message", equalTo(expectedErrorMessage)));
+
+        verify(updateGenreUseCase, times(1)).execute(
+                argThat(cmd -> Objects.equals(expectedName, cmd.name())
+                        && Objects.equals(asString(expectedCategories), cmd.categories())
+                        && Objects.equals(expectedIsActive, cmd.isActive())));
     }
 
     private List<String> asString(final List<CategoryID> categories) {
