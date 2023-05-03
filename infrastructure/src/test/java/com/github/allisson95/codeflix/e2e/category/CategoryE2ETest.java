@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -29,15 +28,15 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.github.allisson95.codeflix.E2ETest;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
+import com.github.allisson95.codeflix.e2e.MockDsl;
 import com.github.allisson95.codeflix.infrastructure.category.models.CategoryResponse;
-import com.github.allisson95.codeflix.infrastructure.category.models.CreateCategoryRequest;
 import com.github.allisson95.codeflix.infrastructure.category.models.UpdateCategoryRequest;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryRepository;
 import com.github.allisson95.codeflix.infrastructure.configuration.json.Json;
 
 @E2ETest
 @Testcontainers
-class CategoryE2ETest {
+class CategoryE2ETest implements MockDsl {
 
     @Autowired
     private MockMvc mvc;
@@ -55,6 +54,11 @@ class CategoryE2ETest {
         registry.add("mysql.port", () -> MYSQL_CONTAINER.getMappedPort(MySQLContainer.MYSQL_PORT));
         registry.add("mysql.username", MYSQL_CONTAINER::getUsername);
         registry.add("mysql.password", MYSQL_CONTAINER::getPassword);
+    }
+
+    @Override
+    public MockMvc mvc() {
+        return this.mvc;
     }
 
     @Test
@@ -340,26 +344,6 @@ class CategoryE2ETest {
                 .andExpect(status().isNoContent());
 
         assertFalse(this.categoryRepository.existsById(categoryId.getValue()));
-    }
-
-    private CategoryID givenACategory(final String name, final String description, final boolean isActive)
-            throws Exception {
-        final var aRequestBody = new CreateCategoryRequest(name, description, isActive);
-
-        final var aRequest = post("/categories")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(Json.writeValueAsString(aRequestBody));
-
-        final var categoryId = this.mvc.perform(aRequest)
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andReturn()
-                .getResponse()
-                .getHeader("Location").replace("/categories/", "");
-
-        return CategoryID.from(categoryId);
     }
 
     private CategoryResponse retrieveCategory(final CategoryID categoryId) throws Exception {
