@@ -64,6 +64,18 @@ public interface MockDsl {
         return GenreID.from(genreId);
     }
 
+    default ResultActions listGenres(final int page, final int perPage, final String search, final String sort, final String dir) throws Exception {
+        return this.list("/genres", page, perPage, search, sort, dir);
+    }
+
+    default ResultActions listGenres(final int page, final int perPage, final String search) throws Exception {
+        return this.listGenres(page, perPage, search, "", "");
+    }
+
+    default ResultActions listGenres(final int page, final int perPage) throws Exception {
+        return this.listGenres(page, perPage, "", "", "");
+    }
+
     default <A, D> List<D> mapTo(final List<A> values, final Function<A, D> mapper) {
         return values.stream()
                 .map(mapper)
