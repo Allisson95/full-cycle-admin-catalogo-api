@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -21,15 +20,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.github.allisson95.codeflix.E2ETest;
-import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.e2e.MockDsl;
-import com.github.allisson95.codeflix.infrastructure.category.models.CategoryResponse;
 import com.github.allisson95.codeflix.infrastructure.category.models.UpdateCategoryRequest;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryRepository;
 import com.github.allisson95.codeflix.infrastructure.configuration.json.Json;
@@ -236,13 +232,7 @@ class CategoryE2ETest implements MockDsl {
 
         final var aRequestBody = new UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive);
 
-        final var aRequest = put("/categories/{categoryId}", categoryId.getValue())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(Json.writeValueAsString(aRequestBody));
-
-        this.mvc.perform(aRequest)
-                .andDo(print())
+        updateCategory(categoryId, aRequestBody)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(equalTo(categoryId.getValue())));
@@ -271,13 +261,7 @@ class CategoryE2ETest implements MockDsl {
 
         final var aRequestBody = new UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive);
 
-        final var aRequest = put("/categories/{categoryId}", categoryId.getValue())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(Json.writeValueAsString(aRequestBody));
-
-        this.mvc.perform(aRequest)
-                .andDo(print())
+        updateCategory(categoryId, aRequestBody)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(equalTo(categoryId.getValue())));
@@ -306,13 +290,7 @@ class CategoryE2ETest implements MockDsl {
 
         final var aRequestBody = new UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive);
 
-        final var aRequest = put("/categories/{categoryId}", categoryId.getValue())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(Json.writeValueAsString(aRequestBody));
-
-        this.mvc.perform(aRequest)
-                .andDo(print())
+        updateCategory(categoryId, aRequestBody)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(equalTo(categoryId.getValue())));
@@ -335,57 +313,10 @@ class CategoryE2ETest implements MockDsl {
 
         final var categoryId = givenACategory("Filme", "A categoria mais assistida", true);
 
-        final var aRequest = delete("/categories/{categoryId}", categoryId.getValue())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON);
-
-        this.mvc.perform(aRequest)
-                .andDo(print())
+        deleteACategory(categoryId)
                 .andExpect(status().isNoContent());
 
         assertFalse(this.categoryRepository.existsById(categoryId.getValue()));
-    }
-
-    private CategoryResponse retrieveCategory(final CategoryID categoryId) throws Exception {
-        final var aRequest = get("/categories/{categoryId}", categoryId.getValue())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON);
-
-        final var category = this.mvc.perform(aRequest)
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        return Json.readValue(category, CategoryResponse.class);
-    }
-
-    private ResultActions listCategories(
-            final int page,
-            final int perPage,
-            final String search,
-            final String sort,
-            final String dir) throws Exception {
-        final var aRequest = get("/categories")
-                .param("search", search)
-                .param("page", String.valueOf(page))
-                .param("perPage", String.valueOf(perPage))
-                .param("sort", sort)
-                .param("dir", dir)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON);
-
-        return this.mvc.perform(aRequest);
-    }
-
-    private ResultActions listCategories(final int page, final int perPage, final String search) throws Exception {
-        return this.listCategories(page, perPage, search, "", "");
-    }
-
-    private ResultActions listCategories(final int page, final int perPage) throws Exception {
-        return this.listCategories(page, perPage, "", "", "");
     }
 
 }
