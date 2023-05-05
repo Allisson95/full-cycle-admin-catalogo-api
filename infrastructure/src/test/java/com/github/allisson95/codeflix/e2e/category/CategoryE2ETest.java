@@ -24,6 +24,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.github.allisson95.codeflix.E2ETest;
+import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.e2e.MockDsl;
 import com.github.allisson95.codeflix.infrastructure.category.models.UpdateCategoryRequest;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryRepository;
@@ -315,6 +316,17 @@ class CategoryE2ETest implements MockDsl {
                 .andExpect(status().isNoContent());
 
         assertFalse(this.categoryRepository.existsById(categoryId.getValue()));
+    }
+
+    @Test
+    void asACatalogAdminIShouldNotSeeAnErrorByDeletingANotExistentCategory() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, categoryRepository.count());
+
+        deleteACategory(CategoryID.from("123"))
+                .andExpect(status().isNoContent());
+
+        assertEquals(0, categoryRepository.count());
     }
 
 }

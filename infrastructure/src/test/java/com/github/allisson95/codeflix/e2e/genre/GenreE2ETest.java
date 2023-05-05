@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -28,6 +29,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.github.allisson95.codeflix.E2ETest;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
+import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.e2e.MockDsl;
 import com.github.allisson95.codeflix.infrastructure.genre.models.UpdateGenreRequest;
 import com.github.allisson95.codeflix.infrastructure.genre.persistence.GenreRepository;
@@ -332,6 +334,31 @@ class GenreE2ETest implements MockDsl {
         assertNotNull(genreJpaEntity.getCreatedAt());
         assertNotNull(genreJpaEntity.getUpdatedAt());
         assertNull(genreJpaEntity.getDeletedAt());
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToDeleteAGenreByItsIdentifier() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, genreRepository.count());
+
+        final var genreId = givenAGenre("Ação", List.<CategoryID>of(), true);
+
+        deleteAGenre(genreId)
+                .andExpect(status().isNoContent());
+
+        assertFalse(this.genreRepository.existsById(genreId.getValue()));
+        assertEquals(0, genreRepository.count());
+    }
+
+    @Test
+    void asACatalogAdminIShouldNotSeeAnErrorByDeletingANotExistentGenre() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, genreRepository.count());
+
+        deleteAGenre(GenreID.from("123"))
+                .andExpect(status().isNoContent());
+
+        assertEquals(0, genreRepository.count());
     }
 
 }

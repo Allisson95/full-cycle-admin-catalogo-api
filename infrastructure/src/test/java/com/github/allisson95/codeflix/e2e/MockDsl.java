@@ -61,6 +61,10 @@ public interface MockDsl {
         return this.update("/categories/{categoryID}", categoryID, aRequestBody);
     }
 
+    default ResultActions deleteAGenre(final GenreID genreID) throws Exception {
+        return this.delete("/genres/{genreID}", genreID);
+    }
+
     default GenreID givenAGenre(final String name, final List<CategoryID> categories, final boolean isActive) throws Exception {
         final var aRequestBody = new CreateGenreRequest(name, mapTo(categories, CategoryID::getValue), isActive);
         final var genreId = this.given("/genres", aRequestBody);
