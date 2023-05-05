@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -62,7 +63,7 @@ class GenreE2ETest implements MockDsl {
         assertTrue(MYSQL_CONTAINER.isRunning());
         assertEquals(0, genreRepository.count());
 
-        final var expectedName = "Filme";
+        final var expectedName = "Ação";
         final var expectedCategories = List.<CategoryID>of();
         final var expectedIsActive = true;
 
@@ -85,7 +86,7 @@ class GenreE2ETest implements MockDsl {
         assertEquals(0, genreRepository.count());
 
         final var filmes = givenACategory("Filmes", null, true);
-        final var expectedName = "Filme";
+        final var expectedName = "Ação";
         final var expectedCategories = List.<CategoryID>of(filmes);
         final var expectedIsActive = true;
 
@@ -198,6 +199,49 @@ class GenreE2ETest implements MockDsl {
                 .andExpect(jsonPath("$.items[0].name").value(equalTo("Esportes")))
                 .andExpect(jsonPath("$.items[1].name").value(equalTo("Drama")))
                 .andExpect(jsonPath("$.items[2].name").value(equalTo("Ação")));
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToGetAGenreByItsIdentifier() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, genreRepository.count());
+
+        final var filmes = givenACategory("Filmes", null, true);
+        final var expectedName = "Ação";
+        final var expectedCategories = List.<CategoryID>of(filmes);
+        final var expectedIsActive = true;
+
+        final var genreId = givenAGenre(expectedName, expectedCategories, expectedIsActive);
+
+        final var genre = retrieveGenre(genreId);
+
+        assertEquals(genreId.getValue(), genre.id());
+        assertEquals(expectedName, genre.name());
+        assertThat(genre.categories(), containsInAnyOrder(mapTo(expectedCategories, CategoryID::getValue).toArray()));
+        assertEquals(expectedIsActive, genre.active());
+        assertNotNull(genre.createdAt());
+        assertNotNull(genre.updatedAt());
+        assertNull(genre.deletedAt());
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToSeeATreatedErrorByGettingANotFoundGenre() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, genreRepository.count());
+
+        final var aRequest = get("/genres/{genreID}", 123)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        this.mvc.perform(aRequest)
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.message").value(equalTo("Genre with id 123 was not found")))
+                .andExpect(jsonPath("$.errors").exists())
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors").isEmpty());
     }
 
 }

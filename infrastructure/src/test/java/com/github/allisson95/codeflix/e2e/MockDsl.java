@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Function;
 
@@ -23,6 +24,7 @@ import com.github.allisson95.codeflix.infrastructure.category.models.CreateCateg
 import com.github.allisson95.codeflix.infrastructure.category.models.UpdateCategoryRequest;
 import com.github.allisson95.codeflix.infrastructure.configuration.json.Json;
 import com.github.allisson95.codeflix.infrastructure.genre.models.CreateGenreRequest;
+import com.github.allisson95.codeflix.infrastructure.genre.models.GenreResponse;
 
 public interface MockDsl {
 
@@ -50,12 +52,12 @@ public interface MockDsl {
         return this.listCategories(page, perPage, "", "", "");
     }
 
-    default CategoryResponse retrieveCategory(final CategoryID categoryId) throws Exception {
-        return this.retrieve("/categories/{categoryID}", categoryId, CategoryResponse.class);
+    default CategoryResponse retrieveCategory(final CategoryID categoryID) throws Exception {
+        return this.retrieve("/categories/{categoryID}", categoryID, CategoryResponse.class);
     }
 
-    default ResultActions updateCategory(final CategoryID categoryId, final UpdateCategoryRequest aRequestBody) throws Exception {
-        return this.update("/categories/{categoryID}", categoryId, aRequestBody);
+    default ResultActions updateCategory(final CategoryID categoryID, final UpdateCategoryRequest aRequestBody) throws Exception {
+        return this.update("/categories/{categoryID}", categoryID, aRequestBody);
     }
 
     default GenreID givenAGenre(final String name, final List<CategoryID> categories, final boolean isActive) throws Exception {
@@ -74,6 +76,10 @@ public interface MockDsl {
 
     default ResultActions listGenres(final int page, final int perPage) throws Exception {
         return this.listGenres(page, perPage, "", "", "");
+    }
+
+    default GenreResponse retrieveGenre(final GenreID genreID) throws Exception {
+        return this.retrieve("/genres/{genreID}", genreID, GenreResponse.class);
     }
 
     default <A, D> List<D> mapTo(final List<A> values, final Function<A, D> mapper) {
@@ -132,7 +138,7 @@ public interface MockDsl {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
 
         return Json.readValue(json, clazz);
     }
