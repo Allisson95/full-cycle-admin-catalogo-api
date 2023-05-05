@@ -25,6 +25,7 @@ import com.github.allisson95.codeflix.infrastructure.category.models.UpdateCateg
 import com.github.allisson95.codeflix.infrastructure.configuration.json.Json;
 import com.github.allisson95.codeflix.infrastructure.genre.models.CreateGenreRequest;
 import com.github.allisson95.codeflix.infrastructure.genre.models.GenreResponse;
+import com.github.allisson95.codeflix.infrastructure.genre.models.UpdateGenreRequest;
 
 public interface MockDsl {
 
@@ -80,6 +81,10 @@ public interface MockDsl {
 
     default GenreResponse retrieveGenre(final GenreID genreID) throws Exception {
         return this.retrieve("/genres/{genreID}", genreID, GenreResponse.class);
+    }
+
+    default ResultActions updateGenre(final GenreID genreID, final UpdateGenreRequest aRequestBody) throws Exception {
+        return this.update("/genres/{genreID}", genreID, aRequestBody);
     }
 
     default <A, D> List<D> mapTo(final List<A> values, final Function<A, D> mapper) {

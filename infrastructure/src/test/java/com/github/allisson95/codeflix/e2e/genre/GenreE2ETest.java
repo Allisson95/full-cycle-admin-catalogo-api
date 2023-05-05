@@ -29,6 +29,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import com.github.allisson95.codeflix.E2ETest;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.e2e.MockDsl;
+import com.github.allisson95.codeflix.infrastructure.genre.models.UpdateGenreRequest;
 import com.github.allisson95.codeflix.infrastructure.genre.persistence.GenreRepository;
 
 @E2ETest
@@ -242,6 +243,95 @@ class GenreE2ETest implements MockDsl {
                 .andExpect(jsonPath("$.errors").exists())
                 .andExpect(jsonPath("$.errors").isArray())
                 .andExpect(jsonPath("$.errors").isEmpty());
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToUpdateAGenreByItsIdentifier() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, genreRepository.count());
+
+        final var filmes = givenACategory("Filmes", null, true);
+
+        final var expectedName = "Ação";
+        final var expectedCategories = List.<CategoryID>of(filmes);
+        final var expectedIsActive = true;
+
+        final var genreId = givenAGenre("acao", expectedCategories, expectedIsActive);
+
+        final var aRequestBody = new UpdateGenreRequest(expectedName, mapTo(expectedCategories, CategoryID::getValue), expectedIsActive);
+
+        updateGenre(genreId, aRequestBody)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(equalTo(genreId.getValue())));
+
+        final var genreJpaEntity = this.genreRepository.findById(genreId.getValue()).get();
+
+        assertEquals(genreId.getValue(), genreJpaEntity.getId());
+        assertEquals(expectedName, genreJpaEntity.getName());
+        assertThat(genreJpaEntity.getCategoryIDs(), containsInAnyOrder(expectedCategories.toArray(new CategoryID[expectedCategories.size()])));
+        assertEquals(expectedIsActive, genreJpaEntity.isActive());
+        assertNotNull(genreJpaEntity.getCreatedAt());
+        assertNotNull(genreJpaEntity.getUpdatedAt());
+        assertNull(genreJpaEntity.getDeletedAt());
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToInactivateAGenreByItsIdentifier() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, genreRepository.count());
+
+        final var expectedName = "Ação";
+        final var expectedCategories = List.<CategoryID>of();
+        final var expectedIsActive = false;
+
+        final var genreId = givenAGenre(expectedName, expectedCategories, true);
+
+        final var aRequestBody = new UpdateGenreRequest(expectedName, mapTo(expectedCategories, CategoryID::getValue), expectedIsActive);
+
+        updateGenre(genreId, aRequestBody)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(equalTo(genreId.getValue())));
+
+        final var genreJpaEntity = this.genreRepository.findById(genreId.getValue()).get();
+
+        assertEquals(genreId.getValue(), genreJpaEntity.getId());
+        assertEquals(expectedName, genreJpaEntity.getName());
+        assertThat(genreJpaEntity.getCategoryIDs(), containsInAnyOrder(expectedCategories.toArray(new CategoryID[expectedCategories.size()])));
+        assertEquals(expectedIsActive, genreJpaEntity.isActive());
+        assertNotNull(genreJpaEntity.getCreatedAt());
+        assertNotNull(genreJpaEntity.getUpdatedAt());
+        assertNotNull(genreJpaEntity.getDeletedAt());
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToActivateAGenreByItsIdentifier() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, genreRepository.count());
+
+        final var expectedName = "Ação";
+        final var expectedCategories = List.<CategoryID>of();
+        final var expectedIsActive = true;
+
+        final var genreId = givenAGenre(expectedName, expectedCategories, false);
+
+        final var aRequestBody = new UpdateGenreRequest(expectedName, mapTo(expectedCategories, CategoryID::getValue), expectedIsActive);
+
+        updateGenre(genreId, aRequestBody)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(equalTo(genreId.getValue())));
+
+        final var genreJpaEntity = this.genreRepository.findById(genreId.getValue()).get();
+
+        assertEquals(genreId.getValue(), genreJpaEntity.getId());
+        assertEquals(expectedName, genreJpaEntity.getName());
+        assertThat(genreJpaEntity.getCategoryIDs(), containsInAnyOrder(expectedCategories.toArray(new CategoryID[expectedCategories.size()])));
+        assertEquals(expectedIsActive, genreJpaEntity.isActive());
+        assertNotNull(genreJpaEntity.getCreatedAt());
+        assertNotNull(genreJpaEntity.getUpdatedAt());
+        assertNull(genreJpaEntity.getDeletedAt());
     }
 
 }
