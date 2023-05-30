@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import com.github.allisson95.codeflix.application.Fixture;
 import com.github.allisson95.codeflix.application.UseCaseTest;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberGateway;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
@@ -37,8 +38,8 @@ class CreateCastMemberUseCaseTest extends UseCaseTest {
 
     @Test
     void Given_AValidCommand_When_CallCreateCastMember_Should_ReturnCastMemberId() {
-        final var expectedName = "Vin Diesel";
-        final var expectedType = CastMemberType.ACTOR;
+        final var expectedName = Fixture.name();
+        final var expectedType = Fixture.CastMember.type();
 
         final var aCommand = CreateCastMemberCommand.with(expectedName, expectedType);
 
@@ -61,7 +62,7 @@ class CreateCastMemberUseCaseTest extends UseCaseTest {
     @Test
     void Given_AInvalidNullName_When_CallsCreateCastMember_Should_ReceiveNotificationException() {
         final String expectedName = null;
-        final var expectedType = CastMemberType.ACTOR;
+        final var expectedType = Fixture.CastMember.type();
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be null";
 
@@ -81,7 +82,7 @@ class CreateCastMemberUseCaseTest extends UseCaseTest {
     @Test
     void Given_AInvalidEmptyName_WhenCallsCreateCastMember_Should_ReceiveNotificationException() {
         final var expectedName = " ";
-        final var expectedType = CastMemberType.ACTOR;
+        final var expectedType = Fixture.CastMember.type();
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be empty";
 
@@ -105,7 +106,7 @@ class CreateCastMemberUseCaseTest extends UseCaseTest {
                     Nunca é demais lembrar o peso e o significado destes problemas, uma vez que a hegemonia do ambiente político desafia a
                     capacidade de equalização de todos os recursos funcionais envolvidos.
                 """;
-        final var expectedType = CastMemberType.ACTOR;
+        final var expectedType = Fixture.CastMember.type();
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' must be between 3 and 255 characteres";
 
@@ -124,7 +125,7 @@ class CreateCastMemberUseCaseTest extends UseCaseTest {
 
     @Test
     void Given_AInvalidType_When_CallsCreateCastMember_Should_ReceiveNotificationException() {
-        final var expectedName = "Vin Diesel";
+        final var expectedName = Fixture.name();
         final CastMemberType expectedType = null;
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'type' should not be null";
