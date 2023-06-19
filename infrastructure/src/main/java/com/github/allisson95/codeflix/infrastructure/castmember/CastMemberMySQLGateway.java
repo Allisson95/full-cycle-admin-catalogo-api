@@ -10,6 +10,7 @@ import com.github.allisson95.codeflix.domain.castmember.CastMemberGateway;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.domain.pagination.SearchQuery;
+import com.github.allisson95.codeflix.infrastructure.castmember.persistence.CastMemberJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.castmember.persistence.CastMemberRepository;
 
 @Component
@@ -23,8 +24,7 @@ public class CastMemberMySQLGateway implements CastMemberGateway {
 
     @Override
     public CastMember create(final CastMember aCastMember) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'create'");
+        return save(aCastMember);
     }
 
     @Override
@@ -47,8 +47,10 @@ public class CastMemberMySQLGateway implements CastMemberGateway {
 
     @Override
     public CastMember update(final CastMember aCastMember) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    }
+
+    private CastMember save(final CastMember aCastMember) {
+        return this.castMemberRepository.save(CastMemberJpaEntity.from(aCastMember)).toAggregate();
     }
 
 }
