@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.github.allisson95.codeflix.Fixture;
 import com.github.allisson95.codeflix.MySQLGatewayTest;
 import com.github.allisson95.codeflix.domain.castmember.CastMember;
+import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
 import com.github.allisson95.codeflix.infrastructure.castmember.persistence.CastMemberJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.castmember.persistence.CastMemberRepository;
@@ -74,7 +75,8 @@ class CastMemberMySQLGatewayTest {
         assertEquals("vind", prePersistedMember.getName());
         assertEquals(CastMemberType.DIRECTOR, prePersistedMember.getType());
 
-        final var actualMember = this.castMemberMySQLGateway.update(CastMember.with(aMember).update(expectedName, expectedType));
+        final var actualMember = this.castMemberMySQLGateway
+                .update(CastMember.with(aMember).update(expectedName, expectedType));
 
         assertEquals(1, this.castMemberRepository.count());
 
@@ -91,6 +93,33 @@ class CastMemberMySQLGatewayTest {
         assertEquals(expectedType, persistedMember.getType());
         assertEquals(aMember.getCreatedAt(), persistedMember.getCreatedAt());
         assertTrue(aMember.getUpdatedAt().isBefore(persistedMember.getUpdatedAt()));
+    }
+
+    @Test
+    void Given_AValidCastMemberID_When_CallsDeleteById_Should_RemoveIt() {
+        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+        final var expectedId = aMember.getId();
+
+        this.castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember));
+
+        assertEquals(1, this.castMemberRepository.count());
+
+        this.castMemberMySQLGateway.deleteById(expectedId);
+
+        assertEquals(0, this.castMemberRepository.count());
+    }
+
+    @Test
+    void Given_AInvalidCastMemberID_When_CallsDeleteById_Should_DoNothing() {
+        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+
+        this.castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember));
+
+        assertEquals(1, this.castMemberRepository.count());
+
+        this.castMemberMySQLGateway.deleteById(CastMemberID.from("123"));
+
+        assertEquals(1, this.castMemberRepository.count());
     }
 
 }
