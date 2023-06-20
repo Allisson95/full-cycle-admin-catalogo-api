@@ -29,8 +29,10 @@ public class CastMemberMySQLGateway implements CastMemberGateway {
 
     @Override
     public void deleteById(final CastMemberID anId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+        final var anIdValue = anId.getValue();
+        if (this.castMemberRepository.existsById(anIdValue)) {
+            this.castMemberRepository.deleteById(anIdValue);
+        }
     }
 
     @Override
