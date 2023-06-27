@@ -122,4 +122,43 @@ class CastMemberMySQLGatewayTest {
         assertEquals(1, this.castMemberRepository.count());
     }
 
+    @Test
+    void Given_AValidCastMemberID_When_CallsFindById_Should_ReturnIt() {
+        final var expectedName = Fixture.name();
+        final var expectedType = Fixture.CastMember.type();
+        final var aMember = CastMember.newMember(expectedName, expectedType);
+        final var expectedId = aMember.getId();
+
+        final var prePersistedMember = this.castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember));
+
+        assertEquals(1, this.castMemberRepository.count());
+
+        assertEquals(expectedId.getValue(), prePersistedMember.getId());
+        assertEquals(expectedName, prePersistedMember.getName());
+        assertEquals(expectedType, prePersistedMember.getType());
+        assertEquals(aMember.getCreatedAt(), prePersistedMember.getCreatedAt());
+        assertEquals(aMember.getUpdatedAt(), prePersistedMember.getUpdatedAt());
+
+        final var actualMember = this.castMemberMySQLGateway.findById(expectedId).get();
+
+        assertEquals(expectedId, actualMember.getId());
+        assertEquals(expectedName, actualMember.getName());
+        assertEquals(expectedType, actualMember.getType());
+        assertEquals(aMember.getCreatedAt(), actualMember.getCreatedAt());
+        assertEquals(aMember.getUpdatedAt(), actualMember.getUpdatedAt());
+    }
+
+    @Test
+    void Given_AInvalidCastMemberID_When_CallsFindById_Should_ReturnEmpty() {
+        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+
+        this.castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember));
+
+        assertEquals(1, this.castMemberRepository.count());
+
+        final var actualMember = this.castMemberMySQLGateway.findById(CastMemberID.from("123"));
+
+        assertTrue(actualMember.isEmpty());
+    }
+
 }
