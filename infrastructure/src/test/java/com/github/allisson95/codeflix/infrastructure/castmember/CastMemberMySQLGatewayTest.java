@@ -4,7 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.allisson95.codeflix.Fixture;
@@ -12,6 +16,7 @@ import com.github.allisson95.codeflix.MySQLGatewayTest;
 import com.github.allisson95.codeflix.domain.castmember.CastMember;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
+import com.github.allisson95.codeflix.domain.pagination.SearchQuery;
 import com.github.allisson95.codeflix.infrastructure.castmember.persistence.CastMemberJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.castmember.persistence.CastMemberRepository;
 
@@ -159,6 +164,160 @@ class CastMemberMySQLGatewayTest {
         final var actualMember = this.castMemberMySQLGateway.findById(CastMemberID.from("123"));
 
         assertTrue(actualMember.isEmpty());
+    }
+
+    @Test
+    void Given_EmptyCastMembers_When_CallsFindAll_Should_ReturnEmpty() {
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "";
+        final var expectedSort = "name";
+        final var expectedDirection = "asc";
+        final var expectedTotal = 0;
+
+        final var aQuery = new SearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection);
+
+        assertEquals(0, this.castMemberRepository.count());
+
+        final var actualPage = this.castMemberMySQLGateway.findAll(aQuery);
+
+        assertEquals(0, this.castMemberRepository.count());
+
+        assertNotNull(actualPage);
+        assertEquals(expectedPage, actualPage.currentPage());
+        assertEquals(expectedPerPage, actualPage.perPage());
+        assertEquals(expectedTotal, actualPage.total());
+        assertEquals(expectedTotal, actualPage.items().size());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "ste,0,10,1,1,Steven Spielberg",
+        "nic,0,10,1,1,Nicolas Cage",
+        "ith,0,10,1,1,Will Smith",
+        "anu,0,10,1,1,Keanu Reeves",
+        "tar,0,10,1,1,Quentin Tarantino",
+    })
+    void Given_AValidTerm_When_CallsFindAll_Should_ReturnFiltered(
+        final String expectedTerms,
+        final int expectedPage,
+        final int expectedPerPage,
+        final int expectedItemsCount,
+        final int expectedTotal,
+        final String expectedName
+    ) {
+        mockMembers();
+
+        final var expectedSort = "name";
+        final var expectedDirection = "asc";
+
+        final var aQuery = new SearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection);
+
+        final var actualPage = this.castMemberMySQLGateway.findAll(aQuery);
+
+        assertNotNull(actualPage);
+        assertEquals(expectedPage, actualPage.currentPage());
+        assertEquals(expectedPerPage, actualPage.perPage());
+        assertEquals(expectedTotal, actualPage.total());
+        assertEquals(expectedItemsCount, actualPage.items().size());
+        assertEquals(expectedName, actualPage.items().get(0).getName());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "name,asc,0,10,5,5,Keanu Reeves",
+        "name,desc,0,10,5,5,Will Smith",
+        "createdAt,asc,0,10,5,5,Nicolas Cage",
+        "createdAt,desc,0,10,5,5,Quentin Tarantino",
+    })
+    void Given_AValidSortAndDirection_When_CallsFindAll_Should_ReturnSorted(
+        final String expectedSort,
+        final String expectedDirection,
+        final int expectedPage,
+        final int expectedPerPage,
+        final int expectedItemsCount,
+        final int expectedTotal,
+        final String expectedName
+    ) {
+        mockMembers();
+
+        final var expectedTerms = "";
+
+        final var aQuery = new SearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection);
+
+        final var actualPage = this.castMemberMySQLGateway.findAll(aQuery);
+
+        assertNotNull(actualPage);
+        assertEquals(expectedPage, actualPage.currentPage());
+        assertEquals(expectedPerPage, actualPage.perPage());
+        assertEquals(expectedTotal, actualPage.total());
+        assertEquals(expectedItemsCount, actualPage.items().size());
+        assertEquals(expectedName, actualPage.items().get(0).getName());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "0,2,2,5,Keanu Reeves;Nicolas Cage",
+        "1,2,2,5,Quentin Tarantino;Steven Spielberg",
+        "2,2,1,5,Will Smith",
+    })
+    void Given_AValidPagination_When_CallsFindAll_Should_ReturnPaginated(
+        final int expectedPage,
+        final int expectedPerPage,
+        final int expectedItemsCount,
+        final int expectedTotal,
+        final String expectedNames
+    ) {
+        mockMembers();
+
+        final var expectedTerms = "";
+        final String expectedSort = "name";
+        final String expectedDirection = "asc";
+
+        final var aQuery = new SearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection);
+
+        final var actualPage = this.castMemberMySQLGateway.findAll(aQuery);
+
+        assertNotNull(actualPage);
+        assertEquals(expectedPage, actualPage.currentPage());
+        assertEquals(expectedPerPage, actualPage.perPage());
+        assertEquals(expectedTotal, actualPage.total());
+        assertEquals(expectedItemsCount, actualPage.items().size());
+
+        int index = 0;
+        for (final String expectedName : expectedNames.split(";")) {
+            assertEquals(expectedName, actualPage.items().get(index++).getName());
+        }
+    }
+
+    private void mockMembers() {
+        this.castMemberRepository.saveAllAndFlush(List.of(
+            CastMemberJpaEntity.from(CastMember.newMember("Nicolas Cage", CastMemberType.ACTOR)),
+            CastMemberJpaEntity.from(CastMember.newMember("Will Smith", CastMemberType.ACTOR)),
+            CastMemberJpaEntity.from(CastMember.newMember("Steven Spielberg", CastMemberType.DIRECTOR)),
+            CastMemberJpaEntity.from(CastMember.newMember("Keanu Reeves", CastMemberType.ACTOR)),
+            CastMemberJpaEntity.from(CastMember.newMember("Quentin Tarantino", CastMemberType.DIRECTOR))
+        ));
     }
 
 }
