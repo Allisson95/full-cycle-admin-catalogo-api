@@ -3,6 +3,10 @@ package com.github.allisson95.codeflix.infrastructure.castmember;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import com.github.allisson95.codeflix.domain.castmember.CastMember;
@@ -12,6 +16,7 @@ import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.domain.pagination.SearchQuery;
 import com.github.allisson95.codeflix.infrastructure.castmember.persistence.CastMemberJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.castmember.persistence.CastMemberRepository;
+import com.github.allisson95.codeflix.infrastructure.utils.SpecificationUtils;
 
 @Component
 public class CastMemberMySQLGateway implements CastMemberGateway {
@@ -44,8 +49,23 @@ public class CastMemberMySQLGateway implements CastMemberGateway {
 
     @Override
     public Pagination<CastMember> findAll(final SearchQuery aQuery) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+        final var page = PageRequest.of(
+                aQuery.page(),
+                aQuery.perPage(),
+                Sort.by(Direction.fromString(aQuery.direction()), aQuery.sort()));
+
+        final var spec = Optional.ofNullable(aQuery.terms())
+                .filter(terms -> !terms.isBlank())
+                .map(terms -> SpecificationUtils.<CastMemberJpaEntity>like("name", terms))
+                .orElse(null);
+
+        final var pageResult = this.castMemberRepository.findAll(Specification.where(spec), page);
+
+        return new Pagination<>(
+                pageResult.getNumber(),
+                pageResult.getSize(),
+                pageResult.getTotalElements(),
+                pageResult.map(CastMemberJpaEntity::toAggregate).toList());
     }
 
     @Override
