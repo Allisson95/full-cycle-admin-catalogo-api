@@ -71,12 +71,13 @@
 			// Add the IDs of extensions you want installed when the container is created.
 			"extensions": [
 				"vscjava.vscode-java-pack",
+				"vmware.vscode-boot-dev-pack",
 				"naco-siren.gradle-language",
 				"vscjava.vscode-gradle",
 				"vscjava.vscode-lombok",
 				"SonarSource.sonarlint-vscode",
 				"redhat.vscode-yaml",
-				"Pivotal.vscode-boot-dev-pack"
+				"eamodio.gitlens"
 			]
 		}
 	},
