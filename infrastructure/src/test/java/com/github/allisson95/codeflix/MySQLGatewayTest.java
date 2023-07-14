@@ -19,7 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ComponentScan(
     basePackages = "com.github.allisson95.codeflix",
     includeFilters = {
-        @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".[MySQLGateway]")
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*MySQLGateway")
     }
 )
 @DataJpaTest
