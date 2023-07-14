@@ -11,8 +11,8 @@ buildscript {
 plugins {
     id 'java'
     id 'application'
-    id 'org.springframework.boot' version '2.7.4'
-    id 'io.spring.dependency-management' version '1.0.14.RELEASE'
+    id 'org.springframework.boot' version '2.7.13'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id 'org.flywaydb.flyway' version '9.5.0'
 }
 
@@ -27,7 +27,7 @@ dependencies {
     implementation project(':domain')
     implementation project(':application')
 
-    runtimeOnly 'mysql:mysql-connector-java'
+    runtimeOnly 'com.mysql:mysql-connector-j'
 
     implementation platform('org.testcontainers:testcontainers-bom:1.17.5')
 
