@@ -6,7 +6,7 @@ import com.github.allisson95.codeflix.domain.castmember.CastMemberGateway;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.domain.pagination.SearchQuery;
 
-public final class DefaultListCastMembersUseCase extends ListCastMembersUseCase {
+public non-sealed class DefaultListCastMembersUseCase extends ListCastMembersUseCase {
 
     private final CastMemberGateway castMemberGateway;
 

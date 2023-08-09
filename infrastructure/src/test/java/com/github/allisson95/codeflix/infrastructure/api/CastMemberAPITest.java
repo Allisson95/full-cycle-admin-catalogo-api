@@ -25,14 +25,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.allisson95.codeflix.ControllerTest;
 import com.github.allisson95.codeflix.Fixture;
 import com.github.allisson95.codeflix.application.castmember.create.CreateCastMemberOutput;
-import com.github.allisson95.codeflix.application.castmember.create.CreateCastMemberUseCase;
-import com.github.allisson95.codeflix.application.castmember.delete.DeleteCastMemberUseCase;
-import com.github.allisson95.codeflix.application.castmember.retrieve.get.GetCastMemberByIdUseCase;
-import com.github.allisson95.codeflix.application.castmember.retrieve.list.ListCastMembersUseCase;
-import com.github.allisson95.codeflix.application.castmember.update.UpdateCastMemberUseCase;
+import com.github.allisson95.codeflix.application.castmember.create.DefaultCreateCastMemberUseCase;
+import com.github.allisson95.codeflix.application.castmember.delete.DefaultDeleteCastMemberUseCase;
+import com.github.allisson95.codeflix.application.castmember.retrieve.get.DefaultGetCastMemberByIdUseCase;
+import com.github.allisson95.codeflix.application.castmember.retrieve.list.DefaultListCastMembersUseCase;
+import com.github.allisson95.codeflix.application.castmember.update.DefaultUpdateCastMemberUseCase;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.exceptions.NotificationException;
 import com.github.allisson95.codeflix.domain.validation.Error;
+import com.github.allisson95.codeflix.infrastructure.castmember.models.CreateCastMemberRequest;
 
 @ControllerTest(controllers = CastMemberAPI.class)
 class CastMemberAPITest {
@@ -44,19 +45,19 @@ class CastMemberAPITest {
     private ObjectMapper mapper;
 
     @MockBean
-    private CreateCastMemberUseCase createCastMemberUseCase;
+    private DefaultCreateCastMemberUseCase createCastMemberUseCase;
 
     @MockBean
-    private DeleteCastMemberUseCase deleteCastMemberUseCase;
+    private DefaultDeleteCastMemberUseCase deleteCastMemberUseCase;
 
     @MockBean
-    private GetCastMemberByIdUseCase getCastMemberByIdUseCase;
+    private DefaultGetCastMemberByIdUseCase getCastMemberByIdUseCase;
 
     @MockBean
-    private ListCastMembersUseCase listCastMembersUseCase;
+    private DefaultListCastMembersUseCase listCastMembersUseCase;
 
     @MockBean
-    private UpdateCastMemberUseCase updateCastMemberUseCase;
+    private DefaultUpdateCastMemberUseCase updateCastMemberUseCase;
 
     @Test
     void Given_AValidCommand_When_CallsCreateCastMember_Should_ReturnItsIdentifier() throws Exception {
@@ -69,7 +70,7 @@ class CastMemberAPITest {
         when(createCastMemberUseCase.execute(any()))
                 .thenReturn(CreateCastMemberOutput.with(expectedId));
 
-        final var request = post("cast_members")
+        final var request = post("/cast_members")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(aCommand));
@@ -100,7 +101,7 @@ class CastMemberAPITest {
         when(createCastMemberUseCase.execute(any()))
                 .thenThrow(NotificationException.with(new Error(expectedErrorMessage)));
 
-        final var request = post("cast_members")
+        final var request = post("/cast_members")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(aCommand));

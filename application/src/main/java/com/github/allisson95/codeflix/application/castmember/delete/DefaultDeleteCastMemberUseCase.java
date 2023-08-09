@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberGateway;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 
-public final class DefaultDeleteCastMemberUseCase extends DeleteCastMemberUseCase {
+public non-sealed class DefaultDeleteCastMemberUseCase extends DeleteCastMemberUseCase {
 
     private final CastMemberGateway castMemberGateway;
 
