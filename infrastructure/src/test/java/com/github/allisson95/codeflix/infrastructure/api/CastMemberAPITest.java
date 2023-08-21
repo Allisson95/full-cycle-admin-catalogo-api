@@ -41,6 +41,7 @@ import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 import com.github.allisson95.codeflix.domain.exceptions.NotificationException;
 import com.github.allisson95.codeflix.domain.validation.Error;
 import com.github.allisson95.codeflix.infrastructure.castmember.models.CreateCastMemberRequest;
+import com.github.allisson95.codeflix.infrastructure.castmember.models.UpdateCastMemberRequest;
 
 @ControllerTest(controllers = CastMemberAPI.class)
 class CastMemberAPITest {
