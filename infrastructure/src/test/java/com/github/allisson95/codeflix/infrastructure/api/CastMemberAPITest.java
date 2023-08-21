@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -32,8 +33,10 @@ import com.github.allisson95.codeflix.application.castmember.retrieve.get.CastMe
 import com.github.allisson95.codeflix.application.castmember.retrieve.get.DefaultGetCastMemberByIdUseCase;
 import com.github.allisson95.codeflix.application.castmember.retrieve.list.DefaultListCastMembersUseCase;
 import com.github.allisson95.codeflix.application.castmember.update.DefaultUpdateCastMemberUseCase;
+import com.github.allisson95.codeflix.application.castmember.update.UpdateCastMemberOutput;
 import com.github.allisson95.codeflix.domain.castmember.CastMember;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
+import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
 import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 import com.github.allisson95.codeflix.domain.exceptions.NotificationException;
 import com.github.allisson95.codeflix.domain.validation.Error;
@@ -178,6 +181,107 @@ class CastMemberAPITest {
                 .andExpect(jsonPath("$.errors").isEmpty());
 
         verify(getCastMemberByIdUseCase).execute(expectedId.getValue());
+    }
+
+    @Test
+    void Given_AValidCommand_When_CallsUpdateCastMember_Should_ReturnItsIdentifier() throws Exception {
+        final var expectedName = Fixture.name();
+        final var expectedType = Fixture.CastMember.type();
+
+        final var actualMember = CastMember.newMember("Vin Dis", CastMemberType.DIRECTOR);
+        final var expectedId = actualMember.getId();
+
+        final var aCommand = new UpdateCastMemberRequest(expectedName, expectedType);
+
+        when(updateCastMemberUseCase.execute(any()))
+                .thenReturn(UpdateCastMemberOutput.with(expectedId));
+
+        final var request = put("/cast_members/{castMemberId}", expectedId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(aCommand));
+
+        this.mvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.id").isString())
+                .andExpect(jsonPath("$.id", equalTo(expectedId.getValue())));
+
+        verify(updateCastMemberUseCase).execute(
+                argThat(cmd -> Objects.equals(expectedId.getValue(), cmd.id())
+                        && Objects.equals(expectedName, cmd.name())
+                        && Objects.equals(expectedType, cmd.type())));
+    }
+
+    @Test
+    void Given_AInvalidCommand_When_CallsUpdateCastMember_Should_ReturnNotificationException() throws Exception {
+        final String expectedName = null;
+        final var expectedType = Fixture.CastMember.type();
+
+        final var actualMember = CastMember.newMember("Vin Dis", CastMemberType.DIRECTOR);
+        final var expectedId = actualMember.getId();
+
+        final var expectedErrorMessage = "'name' should not be null";
+
+        final var aCommand = new UpdateCastMemberRequest(expectedName, expectedType);
+
+        when(updateCastMemberUseCase.execute(any()))
+                .thenThrow(NotificationException.with(new Error(expectedErrorMessage)));
+
+        final var request = put("/cast_members/{castMemberId}", expectedId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(aCommand));
+
+        this.mvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.errors").exists())
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].message", equalTo(expectedErrorMessage)));
+
+        verify(updateCastMemberUseCase).execute(
+                argThat(cmd -> Objects.equals(expectedId.getValue(), cmd.id())
+                        && Objects.equals(expectedName, cmd.name())
+                        && Objects.equals(expectedType, cmd.type())));
+    }
+
+    @Test
+    void Given_AInvalidId_When_CallsUpdateCastMember_Should_ReturnNotFound() throws Exception {
+        final var expectedName = Fixture.name();
+        final var expectedType = Fixture.CastMember.type();
+        final var expectedId = CastMemberID.from("123");
+        final var expectedErrorMessage = "CastMember with id 123 was not found";
+
+        final var aCommand = new UpdateCastMemberRequest(expectedName, expectedType);
+
+        when(updateCastMemberUseCase.execute(any()))
+                .thenThrow(
+                        NotFoundException.with(CastMember.class, expectedId));
+
+        final var request = put("/cast_members/{castMemberId}", expectedId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(aCommand));
+
+        this.mvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)))
+                .andExpect(jsonPath("$.errors").exists())
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors").isEmpty());
+
+        verify(updateCastMemberUseCase).execute(
+                argThat(cmd -> Objects.equals(expectedId.getValue(), cmd.id())
+                        && Objects.equals(expectedName, cmd.name())
+                        && Objects.equals(expectedType, cmd.type())));
     }
 
 }
