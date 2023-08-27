@@ -1,13 +1,16 @@
 package com.github.allisson95.codeflix.infrastructure.api;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.github.allisson95.codeflix.infrastructure.castmember.models.CastMemberResponse;
 import com.github.allisson95.codeflix.infrastructure.castmember.models.CreateCastMemberRequest;
@@ -60,5 +63,14 @@ public interface CastMemberAPI {
         @ApiResponse(responseCode = "500", description = "An internal server error was thrown"),
     })
     ResponseEntity<?> updateById(@PathVariable(name = "castMemberId") String castMemberId, @RequestBody UpdateCastMemberRequest input);
+
+    @DeleteMapping(value = "{castMemberId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete a cast member by it's identifier")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Cast member deleted"),
+        @ApiResponse(responseCode = "500", description = "An internal server error was thrown"),
+    })
+    void deleteById(@PathVariable(name = "castMemberId") String castMemberId);
 
 }
