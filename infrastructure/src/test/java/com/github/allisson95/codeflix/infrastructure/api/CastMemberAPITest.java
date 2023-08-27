@@ -4,8 +4,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -283,6 +285,23 @@ class CastMemberAPITest {
                 argThat(cmd -> Objects.equals(expectedId.getValue(), cmd.id())
                         && Objects.equals(expectedName, cmd.name())
                         && Objects.equals(expectedType, cmd.type())));
+    }
+
+    @Test
+    void Given_AValidId_When_CallsDeleteById_Should_ReturnNoContent() throws Exception {
+        final var expectedId = CastMemberID.unique();
+
+        doNothing().when(deleteCastMemberUseCase).execute(any());
+
+        final var request = delete("/cast_members/{id}", expectedId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        this.mvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        verify(deleteCastMemberUseCase).execute(expectedId.getValue());
     }
 
 }
