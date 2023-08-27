@@ -2,9 +2,11 @@ package com.github.allisson95.codeflix.infrastructure.api;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -17,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
@@ -33,6 +36,7 @@ import com.github.allisson95.codeflix.application.castmember.create.DefaultCreat
 import com.github.allisson95.codeflix.application.castmember.delete.DefaultDeleteCastMemberUseCase;
 import com.github.allisson95.codeflix.application.castmember.retrieve.get.CastMemberOutput;
 import com.github.allisson95.codeflix.application.castmember.retrieve.get.DefaultGetCastMemberByIdUseCase;
+import com.github.allisson95.codeflix.application.castmember.retrieve.list.CastMemberListOutput;
 import com.github.allisson95.codeflix.application.castmember.retrieve.list.DefaultListCastMembersUseCase;
 import com.github.allisson95.codeflix.application.castmember.update.DefaultUpdateCastMemberUseCase;
 import com.github.allisson95.codeflix.application.castmember.update.UpdateCastMemberOutput;
@@ -41,6 +45,7 @@ import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
 import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 import com.github.allisson95.codeflix.domain.exceptions.NotificationException;
+import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.domain.validation.Error;
 import com.github.allisson95.codeflix.infrastructure.castmember.models.CreateCastMemberRequest;
 import com.github.allisson95.codeflix.infrastructure.castmember.models.UpdateCastMemberRequest;
@@ -302,6 +307,107 @@ class CastMemberAPITest {
                 .andExpect(status().isNoContent());
 
         verify(deleteCastMemberUseCase).execute(expectedId.getValue());
+    }
+
+    @Test
+    void Given_ValidParams_When_CallListCastMembers_Should_ReturnIt() throws Exception {
+        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+
+        final var expectedPage = 1;
+        final var expectedPerPage = 20;
+        final var expectedTerms = "Alg";
+        final var expectedSort = "type";
+        final var expectedDirection = "desc";
+
+        final var expectedItemsCount = 1;
+        final var expectedTotal = 1;
+
+        final var expectedItems = List.of(CastMemberListOutput.from(aMember));
+
+        when(listCastMembersUseCase.execute(any()))
+                .thenReturn(new Pagination<>(
+                        expectedPage,
+                        expectedPerPage,
+                        expectedTotal,
+                        expectedItems));
+
+        final var request = get("/cast_members")
+                .param("search", expectedTerms)
+                .param("page", String.valueOf(expectedPage))
+                .param("perPage", String.valueOf(expectedPerPage))
+                .param("sort", expectedSort)
+                .param("dir", expectedDirection)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        this.mvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
+                .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
+                .andExpect(jsonPath("$.total", equalTo(expectedTotal)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items", hasSize(expectedItemsCount)))
+                .andExpect(jsonPath("$.items[0].id", equalTo(aMember.getId().getValue())))
+                .andExpect(jsonPath("$.items[0].name", equalTo(aMember.getName())))
+                .andExpect(jsonPath("$.items[0].type", equalTo(aMember.getType().name())))
+                .andExpect(jsonPath("$.items[0].created_at", equalTo(aMember.getCreatedAt().toString())));
+
+        verify(listCastMembersUseCase, times(1)).execute(argThat(cmd -> 
+            Objects.equals(expectedPage, cmd.page())
+                && Objects.equals(expectedPerPage, cmd.perPage())
+                && Objects.equals(expectedTerms, cmd.terms())
+                && Objects.equals(expectedSort, cmd.sort())
+                && Objects.equals(expectedDirection, cmd.direction())));
+    }
+
+    @Test
+    void Given_EmptyParams_When_CallListCastMembers_Should_UseDefaultsAndReturnIt() throws Exception {
+        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "";
+        final var expectedSort = "name";
+        final var expectedDirection = "asc";
+
+        final var expectedItemsCount = 1;
+        final var expectedTotal = 1;
+
+        final var expectedItems = List.of(CastMemberListOutput.from(aMember));
+
+        when(listCastMembersUseCase.execute(any()))
+                .thenReturn(new Pagination<>(
+                        expectedPage,
+                        expectedPerPage,
+                        expectedTotal,
+                        expectedItems));
+
+        final var request = get("/cast_members")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        this.mvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
+                .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
+                .andExpect(jsonPath("$.total", equalTo(expectedTotal)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items", hasSize(expectedItemsCount)))
+                .andExpect(jsonPath("$.items[0].id", equalTo(aMember.getId().getValue())))
+                .andExpect(jsonPath("$.items[0].name", equalTo(aMember.getName())))
+                .andExpect(jsonPath("$.items[0].type", equalTo(aMember.getType().name())))
+                .andExpect(jsonPath("$.items[0].created_at", equalTo(aMember.getCreatedAt().toString())));
+
+        verify(listCastMembersUseCase, times(1)).execute(argThat(cmd -> 
+            Objects.equals(expectedPage, cmd.page())
+                && Objects.equals(expectedPerPage, cmd.perPage())
+                && Objects.equals(expectedTerms, cmd.terms())
+                && Objects.equals(expectedSort, cmd.sort())
+                && Objects.equals(expectedDirection, cmd.direction())));
     }
 
 }
