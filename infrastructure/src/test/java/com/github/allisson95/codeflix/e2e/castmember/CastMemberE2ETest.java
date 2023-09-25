@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -23,6 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.github.allisson95.codeflix.E2ETest;
 import com.github.allisson95.codeflix.Fixture;
+import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
 import com.github.allisson95.codeflix.e2e.MockDsl;
 import com.github.allisson95.codeflix.infrastructure.castmember.models.UpdateCastMemberRequest;
@@ -246,6 +248,30 @@ class CastMemberE2ETest implements MockDsl {
         assertEquals(expectedType, castMemberJpaEntity.getType());
         assertNotNull(castMemberJpaEntity.getCreatedAt());
         assertNotNull(castMemberJpaEntity.getUpdatedAt());
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToDeleteACastMemberByItsIdentifier() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, this.castMemberRepository.count());
+
+        final var castMemberId = givenACastMember(Fixture.name(), Fixture.CastMember.type());
+
+        deleteACastMember(castMemberId)
+                .andExpect(status().isNoContent());
+
+        assertFalse(this.castMemberRepository.existsById(castMemberId.getValue()));
+    }
+
+    @Test
+    void asACatalogAdminIShouldNotSeeAnErrorByDeletingANotExistentCastMember() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, this.castMemberRepository.count());
+
+        deleteACastMember(CastMemberID.from("123"))
+                .andExpect(status().isNoContent());
+
+        assertEquals(0, this.castMemberRepository.count());
     }
 
 }

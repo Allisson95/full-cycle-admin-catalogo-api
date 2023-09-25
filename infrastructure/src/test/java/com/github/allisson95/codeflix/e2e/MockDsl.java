@@ -37,10 +37,14 @@ public interface MockDsl {
     MockMvc mvc();
 
     // CastMember
+    default ResultActions deleteACastMember(final CastMemberID castMemberID) throws Exception {
+        return this.delete("/cast_members/{castMemberID}", castMemberID);
+    }
+
     default CastMemberID givenACastMember(final String name, final CastMemberType type) throws Exception {
         final var aRequestBody = new CreateCastMemberRequest(name, type);
-        final var categoryId = this.given("/cast_members", aRequestBody);
-        return CastMemberID.from(categoryId);
+        final var castMemberID = this.given("/cast_members", aRequestBody);
+        return CastMemberID.from(castMemberID);
     }
 
     default ResultActions listCastMembers(final int page, final int perPage, final String search, final String sort, final String dir) throws Exception {
