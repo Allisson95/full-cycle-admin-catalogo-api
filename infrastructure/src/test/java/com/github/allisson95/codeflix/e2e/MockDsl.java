@@ -17,8 +17,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.github.allisson95.codeflix.domain.Identifier;
+import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
+import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
+import com.github.allisson95.codeflix.infrastructure.castmember.models.CastMemberResponse;
+import com.github.allisson95.codeflix.infrastructure.castmember.models.CreateCastMemberRequest;
 import com.github.allisson95.codeflix.infrastructure.category.models.CategoryResponse;
 import com.github.allisson95.codeflix.infrastructure.category.models.CreateCategoryRequest;
 import com.github.allisson95.codeflix.infrastructure.category.models.UpdateCategoryRequest;
@@ -31,6 +35,18 @@ public interface MockDsl {
 
     MockMvc mvc();
 
+    // CastMember
+    default CastMemberID givenACastMember(final String name, final CastMemberType type) throws Exception {
+        final var aRequestBody = new CreateCastMemberRequest(name, type);
+        final var categoryId = this.given("/cast_members", aRequestBody);
+        return CastMemberID.from(categoryId);
+    }
+
+    default CastMemberResponse retrieveCastMember(final CastMemberID castMemberID) throws Exception {
+        return this.retrieve("/cast_members/{castMemberID}", castMemberID, CastMemberResponse.class);
+    }
+
+    // Category
     default ResultActions deleteACategory(final CategoryID categoryID) throws Exception {
         return this.delete("/categories/{categoryID}", categoryID);
     }
@@ -61,6 +77,7 @@ public interface MockDsl {
         return this.update("/categories/{categoryID}", categoryID, aRequestBody);
     }
 
+    // Genre
     default ResultActions deleteAGenre(final GenreID genreID) throws Exception {
         return this.delete("/genres/{genreID}", genreID);
     }
