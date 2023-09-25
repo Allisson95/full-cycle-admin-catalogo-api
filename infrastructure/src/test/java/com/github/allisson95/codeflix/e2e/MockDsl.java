@@ -23,6 +23,7 @@ import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.infrastructure.castmember.models.CastMemberResponse;
 import com.github.allisson95.codeflix.infrastructure.castmember.models.CreateCastMemberRequest;
+import com.github.allisson95.codeflix.infrastructure.castmember.models.UpdateCastMemberRequest;
 import com.github.allisson95.codeflix.infrastructure.category.models.CategoryResponse;
 import com.github.allisson95.codeflix.infrastructure.category.models.CreateCategoryRequest;
 import com.github.allisson95.codeflix.infrastructure.category.models.UpdateCategoryRequest;
@@ -56,6 +57,10 @@ public interface MockDsl {
 
     default CastMemberResponse retrieveCastMember(final CastMemberID castMemberID) throws Exception {
         return this.retrieve("/cast_members/{castMemberID}", castMemberID, CastMemberResponse.class);
+    }
+
+    default ResultActions updateCastMember(final CastMemberID castMemberID, final UpdateCastMemberRequest aRequestBody) throws Exception {
+        return this.update("/cast_members/{castMemberID}", castMemberID, aRequestBody);
     }
 
     // Category

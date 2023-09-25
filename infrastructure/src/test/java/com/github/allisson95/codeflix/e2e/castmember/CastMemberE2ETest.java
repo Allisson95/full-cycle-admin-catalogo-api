@@ -25,6 +25,7 @@ import com.github.allisson95.codeflix.E2ETest;
 import com.github.allisson95.codeflix.Fixture;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
 import com.github.allisson95.codeflix.e2e.MockDsl;
+import com.github.allisson95.codeflix.infrastructure.castmember.models.UpdateCastMemberRequest;
 import com.github.allisson95.codeflix.infrastructure.castmember.persistence.CastMemberRepository;
 
 @E2ETest
@@ -219,6 +220,32 @@ class CastMemberE2ETest implements MockDsl {
                 .andExpect(jsonPath("$.errors").exists())
                 .andExpect(jsonPath("$.errors").isArray())
                 .andExpect(jsonPath("$.errors").isEmpty());
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToUpdateACastMemberByItsIdentifier() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, this.castMemberRepository.count());
+
+        final var castMemberId = givenACastMember("Vi Diesel", CastMemberType.DIRECTOR);
+
+        final var expectedName = "Vin Diesel";
+        final var expectedType = CastMemberType.ACTOR;
+
+        final var aRequestBody = new UpdateCastMemberRequest(expectedName, expectedType);
+
+        updateCastMember(castMemberId, aRequestBody)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(equalTo(castMemberId.getValue())));
+
+        final var castMemberJpaEntity = this.castMemberRepository.findById(castMemberId.getValue()).get();
+
+        assertEquals(castMemberId.getValue(), castMemberJpaEntity.getId());
+        assertEquals(expectedName, castMemberJpaEntity.getName());
+        assertEquals(expectedType, castMemberJpaEntity.getType());
+        assertNotNull(castMemberJpaEntity.getCreatedAt());
+        assertNotNull(castMemberJpaEntity.getUpdatedAt());
     }
 
 }
