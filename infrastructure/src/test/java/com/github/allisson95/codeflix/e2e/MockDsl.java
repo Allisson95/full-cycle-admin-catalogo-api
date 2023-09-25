@@ -42,6 +42,18 @@ public interface MockDsl {
         return CastMemberID.from(categoryId);
     }
 
+    default ResultActions listCastMembers(final int page, final int perPage, final String search, final String sort, final String dir) throws Exception {
+        return this.list("/cast_members", page, perPage, search, sort, dir);
+    }
+
+    default ResultActions listCastMembers(final int page, final int perPage, final String search) throws Exception {
+        return this.listCastMembers(page, perPage, search, "", "");
+    }
+
+    default ResultActions listCastMembers(final int page, final int perPage) throws Exception {
+        return this.listCastMembers(page, perPage, "", "", "");
+    }
+
     default CastMemberResponse retrieveCastMember(final CastMemberID castMemberID) throws Exception {
         return this.retrieve("/cast_members/{castMemberID}", castMemberID, CastMemberResponse.class);
     }

@@ -1,11 +1,18 @@
 package com.github.allisson95.codeflix.e2e.castmember;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -15,6 +22,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.github.allisson95.codeflix.E2ETest;
 import com.github.allisson95.codeflix.Fixture;
+import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
 import com.github.allisson95.codeflix.e2e.MockDsl;
 import com.github.allisson95.codeflix.infrastructure.castmember.persistence.CastMemberRepository;
 
@@ -62,6 +70,115 @@ class CastMemberE2ETest implements MockDsl {
         assertNotNull(actualMember.createdAt());
         assertNotNull(actualMember.updatedAt());
         assertEquals(actualMember.createdAt(), actualMember.updatedAt());
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToNavigateToAllCastMembers() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, this.castMemberRepository.count());
+
+        givenACastMember("Vin Diesel", CastMemberType.ACTOR);
+        givenACastMember("Steven Spielberg", CastMemberType.DIRECTOR);
+        givenACastMember("Nicolas Cage", CastMemberType.ACTOR);
+
+        listCastMembers(0, 1)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page").value(equalTo(0)))
+                .andExpect(jsonPath("$.per_page").value(equalTo(1)))
+                .andExpect(jsonPath("$.total").value(equalTo(3)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").value(hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name").value(equalTo("Nicolas Cage")));
+
+        listCastMembers(1, 1)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page").value(equalTo(1)))
+                .andExpect(jsonPath("$.per_page").value(equalTo(1)))
+                .andExpect(jsonPath("$.total").value(equalTo(3)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").value(hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name").value(equalTo("Steven Spielberg")));
+
+        listCastMembers(2, 1)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page").value(equalTo(2)))
+                .andExpect(jsonPath("$.per_page").value(equalTo(1)))
+                .andExpect(jsonPath("$.total").value(equalTo(3)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").value(hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name").value(equalTo("Vin Diesel")));
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToSearchBetweenAllCastMembers() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, this.castMemberRepository.count());
+
+        givenACastMember("Vin Diesel", CastMemberType.ACTOR);
+        givenACastMember("Steven Spielberg", CastMemberType.DIRECTOR);
+        givenACastMember("Nicolas Cage", CastMemberType.ACTOR);
+
+        listCastMembers(0, 3, "rg")
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page").value(equalTo(0)))
+                .andExpect(jsonPath("$.per_page").value(equalTo(3)))
+                .andExpect(jsonPath("$.total").value(equalTo(1)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").value(hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name").value(equalTo("Steven Spielberg")));
+
+        listCastMembers(0, 3, "di")
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page").value(equalTo(0)))
+                .andExpect(jsonPath("$.per_page").value(equalTo(3)))
+                .andExpect(jsonPath("$.total").value(equalTo(1)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").value(hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name").value(equalTo("Vin Diesel")));
+
+        listCastMembers(0, 3, "ge")
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page").value(equalTo(0)))
+                .andExpect(jsonPath("$.per_page").value(equalTo(3)))
+                .andExpect(jsonPath("$.total").value(equalTo(1)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").value(hasSize(1)))
+                .andExpect(jsonPath("$.items[0].name").value(equalTo("Nicolas Cage")));
+    }
+
+    @Test
+    void asACatalogAdminIShouldBeAbleToSortAllCastMembersByNameDesc() throws Exception {
+        assertTrue(MYSQL_CONTAINER.isRunning());
+        assertEquals(0, this.castMemberRepository.count());
+
+        givenACastMember("Nicolas Cage", CastMemberType.ACTOR);
+        givenACastMember("Vin Diesel", CastMemberType.ACTOR);
+        givenACastMember("Steven Spielberg", CastMemberType.DIRECTOR);
+
+        listCastMembers(0, 3, "", "name", "desc")
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.current_page").value(equalTo(0)))
+                .andExpect(jsonPath("$.per_page").value(equalTo(3)))
+                .andExpect(jsonPath("$.total").value(equalTo(3)))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items").value(hasSize(3)))
+                .andExpect(jsonPath("$.items[0].name").value(equalTo("Vin Diesel")))
+                .andExpect(jsonPath("$.items[1].name").value(equalTo("Steven Spielberg")))
+                .andExpect(jsonPath("$.items[2].name").value(equalTo("Nicolas Cage")));
     }
 
 }
