@@ -135,6 +135,65 @@ public class Video extends AggregateRoot<VideoID> {
                 new HashSet<>(video.getCastMembers()));
     }
 
+    public Video setBanner(final ImageMedia aBanner) {
+        this.banner = aBanner;
+        this.updatedAt = InstantUtils.now();
+        return this;
+    }
+
+    public Video setThumbnail(final ImageMedia aThumbnail) {
+        this.thumbnail = aThumbnail;
+        this.updatedAt = InstantUtils.now();
+        return this;
+    }
+
+    public Video setThumbnailHalf(final ImageMedia aThumbnailHalf) {
+        this.thumbnailHalf = aThumbnailHalf;
+        this.updatedAt = InstantUtils.now();
+        return this;
+    }
+
+    public Video setTrailer(final VideoMedia aTrailer) {
+        this.trailer = aTrailer;
+        this.updatedAt = InstantUtils.now();
+        return this;
+    }
+
+    public Video setVideo(final VideoMedia aVideo) {
+        this.video = aVideo;
+        this.updatedAt = InstantUtils.now();
+        return this;
+    }
+
+    public Video update(
+            final String aTitle,
+            final String aDescription,
+            final Year aLaunchedYear,
+            final double aDuration,
+            final Rating aRating,
+            final boolean wasOpened,
+            final boolean wasPublished,
+            final Set<CategoryID> categories,
+            final Set<GenreID> genres,
+            final Set<CastMemberID> castMembers) {
+
+        this.title = aTitle;
+        this.description = aDescription;
+        this.launchedAt = aLaunchedYear;
+        this.duration = aDuration;
+        this.rating = aRating;
+        this.opened = wasOpened;
+        this.published = wasPublished;
+
+        this.setCategories(categories);
+        this.setGenres(genres);
+        this.setCastMembers(castMembers);
+
+        this.updatedAt = InstantUtils.now();
+
+        return this;
+    }
+
     @Override
     public void validate(ValidationHandler aHandler) {
     }
@@ -205,6 +264,18 @@ public class Video extends AggregateRoot<VideoID> {
 
     public Set<CastMemberID> getCastMembers() {
         return this.castMembers != null ? Collections.unmodifiableSet(castMembers) : Collections.emptySet();
+    }
+
+    private void setCategories(final Set<CategoryID> categories) {
+        this.categories = categories != null ? new HashSet<>(categories) : Collections.emptySet();
+    }
+
+    private void setGenres(final Set<GenreID> genres) {
+        this.genres = genres != null ? new HashSet<>(genres) : Collections.emptySet();
+    }
+
+    private void setCastMembers(final Set<CastMemberID> castMembers) {
+        this.castMembers = castMembers != null ? new HashSet<>(castMembers) : Collections.emptySet();
     }
 
 }
