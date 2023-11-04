@@ -37,7 +37,7 @@ class GetCastMemberByIdUseCaseTest extends UseCaseTest {
     @Test
     void Given_AValidAndExistingId_When_CallsGetCastMemberById_Should_ReturnCastMember() {
         final var expectedName = Fixture.name();
-        final var expectedType = Fixture.CastMember.type();
+        final var expectedType = Fixture.CastMembers.type();
         final var aMember = CastMember.newMember(expectedName, expectedType);
         final var expectedId = aMember.getId();
 
@@ -77,7 +77,7 @@ class GetCastMemberByIdUseCaseTest extends UseCaseTest {
     @Test
     void Given_AValidId_When_GatewayThrowsException_Should_ReturnException() {
         final var expectedName = Fixture.name();
-        final var expectedType = Fixture.CastMember.type();
+        final var expectedType = Fixture.CastMembers.type();
         final var aMember = CastMember.newMember(expectedName, expectedType);
         final var expectedId = aMember.getId();
         final var expectedErrorMessage = "Gateway error";

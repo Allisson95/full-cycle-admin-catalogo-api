@@ -1,5 +1,6 @@
 package com.github.allisson95.codeflix.infrastructure.castmember;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -71,6 +72,11 @@ public class CastMemberMySQLGateway implements CastMemberGateway {
     @Override
     public CastMember update(final CastMember aCastMember) {
         return save(aCastMember);
+    }
+
+    @Override
+    public List<CastMemberID> existsByIds(final Iterable<CastMemberID> ids) {
+        throw new UnsupportedOperationException("Unimplemented method 'existsByIds'");
     }
 
     private CastMember save(final CastMember aCastMember) {

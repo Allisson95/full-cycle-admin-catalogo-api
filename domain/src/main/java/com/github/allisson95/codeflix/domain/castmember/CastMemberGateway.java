@@ -1,5 +1,6 @@
 package com.github.allisson95.codeflix.domain.castmember;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
@@ -16,5 +17,7 @@ public interface CastMemberGateway {
     Pagination<CastMember> findAll(SearchQuery aQuery);
 
     CastMember update(CastMember aCastMember);
+
+    List<CastMemberID> existsByIds(Iterable<CastMemberID> ids);
 
 }

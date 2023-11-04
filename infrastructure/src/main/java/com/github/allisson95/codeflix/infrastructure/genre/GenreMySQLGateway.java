@@ -1,5 +1,6 @@
 package com.github.allisson95.codeflix.infrastructure.genre;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -70,6 +71,11 @@ public class GenreMySQLGateway implements GenreGateway {
     @Override
     public Genre update(final Genre aGenre) {
         return save(aGenre);
+    }
+
+    @Override
+    public List<GenreID> existsByIds(final Iterable<GenreID> ids) {
+        throw new UnsupportedOperationException("Unimplemented method 'existsByIds'");
     }
 
     private Genre save(final Genre aGenre) {

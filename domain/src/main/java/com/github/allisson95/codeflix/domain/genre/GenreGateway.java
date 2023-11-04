@@ -1,5 +1,6 @@
 package com.github.allisson95.codeflix.domain.genre;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
@@ -16,5 +17,7 @@ public interface GenreGateway {
     Pagination<Genre> findAll(SearchQuery aQuery);
 
     Genre update(Genre aGenre);
+
+    List<GenreID> existsByIds(Iterable<GenreID> ids);
 
 }

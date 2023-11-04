@@ -39,7 +39,7 @@ class CreateCastMemberUseCaseTest extends UseCaseTest {
     @Test
     void Given_AValidCommand_When_CallCreateCastMember_Should_ReturnCastMemberId() {
         final var expectedName = Fixture.name();
-        final var expectedType = Fixture.CastMember.type();
+        final var expectedType = Fixture.CastMembers.type();
 
         final var aCommand = CreateCastMemberCommand.with(expectedName, expectedType);
 
@@ -62,7 +62,7 @@ class CreateCastMemberUseCaseTest extends UseCaseTest {
     @Test
     void Given_AInvalidNullName_When_CallsCreateCastMember_Should_ReceiveNotificationException() {
         final String expectedName = null;
-        final var expectedType = Fixture.CastMember.type();
+        final var expectedType = Fixture.CastMembers.type();
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be null";
 
@@ -82,7 +82,7 @@ class CreateCastMemberUseCaseTest extends UseCaseTest {
     @Test
     void Given_AInvalidEmptyName_WhenCallsCreateCastMember_Should_ReceiveNotificationException() {
         final var expectedName = " ";
-        final var expectedType = Fixture.CastMember.type();
+        final var expectedType = Fixture.CastMembers.type();
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be empty";
 
@@ -106,7 +106,7 @@ class CreateCastMemberUseCaseTest extends UseCaseTest {
                     Nunca é demais lembrar o peso e o significado destes problemas, uma vez que a hegemonia do ambiente político desafia a
                     capacidade de equalização de todos os recursos funcionais envolvidos.
                 """;
-        final var expectedType = Fixture.CastMember.type();
+        final var expectedType = Fixture.CastMembers.type();
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' must be between 3 and 255 characteres";
 

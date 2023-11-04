@@ -196,6 +196,7 @@ public class Video extends AggregateRoot<VideoID> {
 
     @Override
     public void validate(ValidationHandler aHandler) {
+        throw new UnsupportedOperationException();
     }
 
     public String getTitle() {
@@ -276,6 +277,16 @@ public class Video extends AggregateRoot<VideoID> {
 
     private void setCastMembers(final Set<CastMemberID> castMembers) {
         this.castMembers = castMembers != null ? new HashSet<>(castMembers) : Collections.emptySet();
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
     }
 
 }

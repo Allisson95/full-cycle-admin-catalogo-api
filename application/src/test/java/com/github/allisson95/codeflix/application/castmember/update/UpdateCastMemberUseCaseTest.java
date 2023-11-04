@@ -105,7 +105,7 @@ class UpdateCastMemberUseCaseTest extends UseCaseTest {
 
     @Test
     void Given_AInvalidType_When_CallsUpdateCastMember_Should_ThrowsNotificationException() {
-        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type());
 
         final var expectedId = aMember.getId();
         final var expectedName = Fixture.name();
@@ -135,11 +135,9 @@ class UpdateCastMemberUseCaseTest extends UseCaseTest {
 
     @Test
     void Given_AInvalidId_When_CallsUpdateCastMember_Should_ThrowsNotFoundException() {
-        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
-
         final var expectedId = CastMemberID.from("123");
         final var expectedName = Fixture.name();
-        final var expectedType = Fixture.CastMember.type();
+        final var expectedType = Fixture.CastMembers.type();
         final var expectedErrorMessage = "CastMember with id 123 was not found";
 
         final var aCommand = UpdateCastMemberCommand.with(
