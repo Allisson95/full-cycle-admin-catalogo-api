@@ -10,6 +10,7 @@ import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
 import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.genre.Genre;
 import com.github.allisson95.codeflix.domain.video.Rating;
+import com.github.allisson95.codeflix.domain.video.Resource;
 
 import net.datafaker.Faker;
 
@@ -180,7 +181,7 @@ public final class Fixture {
 
         public static Resource resource(final Resource.Type type) {
             final String contentType = Match(type).of(
-                Case($(List(Type.VIDEO, Type.TRAILER)), "video/mp4"),
+                Case($(List(Resource.Type.VIDEO, Resource.Type.TRAILER)::contains), "video/mp4"),
                 Case($(), "image/jpg")
             );
 

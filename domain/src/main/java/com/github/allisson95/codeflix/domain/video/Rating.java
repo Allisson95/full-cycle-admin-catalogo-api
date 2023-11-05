@@ -25,7 +25,7 @@ public enum Rating {
 
     public static Optional<Rating> of(final String label) {
         return Arrays.stream(Rating.values())
-                .filter(it -> it.name().equalsIgnoreCase(label))
+                .filter(it -> it.getName().equalsIgnoreCase(label))
                 .findFirst();
     }
 

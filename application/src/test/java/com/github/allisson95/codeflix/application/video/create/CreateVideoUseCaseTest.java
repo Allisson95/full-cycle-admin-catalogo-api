@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
@@ -26,8 +26,12 @@ import com.github.allisson95.codeflix.domain.category.CategoryGateway;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.genre.GenreGateway;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
-import com.github.allisson95.codeflix.domain.video.Video;
+import com.github.allisson95.codeflix.domain.video.ImageMedia;
+import com.github.allisson95.codeflix.domain.video.MediaResourceGateway;
+import com.github.allisson95.codeflix.domain.video.MediaStatus;
+import com.github.allisson95.codeflix.domain.video.Resource;
 import com.github.allisson95.codeflix.domain.video.VideoGateway;
+import com.github.allisson95.codeflix.domain.video.VideoMedia;
 
 class CreateVideoUseCaseTest extends UseCaseTest {
 
@@ -36,6 +40,9 @@ class CreateVideoUseCaseTest extends UseCaseTest {
 
     @Mock
     private VideoGateway videoGateway;
+
+    @Mock
+    private MediaResourceGateway mediaResourceGateway;
 
     @Mock
     private CategoryGateway categoryGateway;
@@ -48,14 +55,19 @@ class CreateVideoUseCaseTest extends UseCaseTest {
 
     @Override
     protected List<Object> getMocksForClean() {
-        throw new UnsupportedOperationException("Unimplemented method 'getMocksForClean'");
+        return List.of(
+                videoGateway,
+                mediaResourceGateway,
+                categoryGateway,
+                castMemberGateway,
+                genreGateway);
     }
 
     @Test
     void Given_AValidCommand_When_CallsCreateVideo_Should_ReturnVideoId() {
         final var expectedTitle = Fixture.title();
         final var expectedDescription = Fixture.Videos.description();
-        final var expectedLaunchedYear = Year.of(Fixture.year());
+        final var expectedLaunchedAt = Year.of(Fixture.year());
         final var expectedDuration = Fixture.duration();
         final var expectedRating = Fixture.Videos.rating();
         final var expectedOpened = Fixture.bool();
@@ -66,18 +78,18 @@ class CreateVideoUseCaseTest extends UseCaseTest {
                 Fixture.CastMembers.clintEastwood().getId(),
                 Fixture.CastMembers.morganFreeman().getId());
 
-        final Resource expectedBanner = Fixture.Videos.resource(Type.BANNER);
-        final Resource expectedThumbnail = Fixture.Videos.resource(Type.THUMBNAIL);
-        final Resource expectedThumbnailHalf = Fixture.Videos.resource(Type.THUMBNAIL_HALF);
-        final Resource expectedTrailer = Fixture.Videos.resource(Type.TRAILER);
-        final Resource expectedVideo = Fixture.Videos.resource(Type.VIDEO);
+        final Resource expectedBanner = Fixture.Videos.resource(Resource.Type.BANNER);
+        final Resource expectedThumbnail = Fixture.Videos.resource(Resource.Type.THUMBNAIL);
+        final Resource expectedThumbnailHalf = Fixture.Videos.resource(Resource.Type.THUMBNAIL_HALF);
+        final Resource expectedTrailer = Fixture.Videos.resource(Resource.Type.TRAILER);
+        final Resource expectedVideo = Fixture.Videos.resource(Resource.Type.VIDEO);
 
         final var aCommand = CreateVideoCommand.with(
                 expectedTitle,
                 expectedDescription,
-                expectedLaunchedYear,
+                expectedLaunchedAt.getValue(),
                 expectedDuration,
-                expectedRating,
+                expectedRating.getName(),
                 expectedOpened,
                 expectedPublished,
                 asString(expectedCategories),
@@ -98,6 +110,18 @@ class CreateVideoUseCaseTest extends UseCaseTest {
         when(genreGateway.existsByIds(any()))
                 .thenReturn(new ArrayList<>(expectedGenres));
 
+        when(mediaResourceGateway.storeImage(any(), any()))
+                .then(it -> {
+                    final var aResource = it.getArgument(1, Resource.class);
+                    return ImageMedia.with(UUID.randomUUID().toString(), aResource.name(), "/images");
+                });
+
+        when(mediaResourceGateway.storeVideo(any(), any()))
+                .then(it -> {
+                    final var aResource = it.getArgument(1, Resource.class);
+                    return VideoMedia.with(UUID.randomUUID().toString(), aResource.name(), "/videos", "/encoded", MediaStatus.PENDING);
+                });
+
         when(videoGateway.create(any()))
                 .thenAnswer(returnsFirstArg());
 
@@ -108,7 +132,7 @@ class CreateVideoUseCaseTest extends UseCaseTest {
 
         verify(videoGateway).create(argThat(actualVideo -> Objects.equals(expectedTitle, actualVideo.getTitle())
                 && Objects.equals(expectedDescription, actualVideo.getDescription())
-                && Objects.equals(expectedLaunchedYear, actualVideo.getLaunchedAt())
+                && Objects.equals(expectedLaunchedAt, actualVideo.getLaunchedAt())
                 && Objects.equals(expectedDuration, actualVideo.getDuration())
                 && Objects.equals(expectedRating, actualVideo.getRating())
                 && Objects.equals(expectedOpened, actualVideo.isOpened())
@@ -117,10 +141,15 @@ class CreateVideoUseCaseTest extends UseCaseTest {
                 && Objects.equals(expectedGenres, actualVideo.getGenres())
                 && Objects.equals(expectedCastMembers, actualVideo.getCastMembers())
                 && actualVideo.getBanner().isPresent()
+                && Objects.equals(expectedBanner.name(), actualVideo.getBanner().get().name())
                 && actualVideo.getThumbnail().isPresent()
+                && Objects.equals(expectedThumbnail.name(), actualVideo.getThumbnail().get().name())
                 && actualVideo.getThumbnailHalf().isPresent()
+                && Objects.equals(expectedThumbnailHalf.name(), actualVideo.getThumbnailHalf().get().name())
                 && actualVideo.getTrailer().isPresent()
-                && actualVideo.getVideo().isPresent()));
+                && Objects.equals(expectedTrailer.name(), actualVideo.getTrailer().get().name())
+                && actualVideo.getVideo().isPresent()
+                && Objects.equals(expectedVideo.name(), actualVideo.getVideo().get().name())));
     }
 
 }
