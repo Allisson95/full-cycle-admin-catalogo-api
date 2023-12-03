@@ -90,14 +90,14 @@ class GetVideoByIdUseCaseTest extends UseCaseTest {
         assertEquals(expectedId.getValue(), actualVideo.id());
         assertEquals(expectedTitle, actualVideo.title());
         assertEquals(expectedDescription, actualVideo.description());
-        assertEquals(expectedLaunchedAt, actualVideo.launchedAt());
+        assertEquals(expectedLaunchedAt.getValue(), actualVideo.launchedAt());
         assertEquals(expectedDuration, actualVideo.duration());
         assertEquals(expectedRating, actualVideo.rating());
         assertEquals(expectedOpened, actualVideo.opened());
         assertEquals(expectedPublished, actualVideo.published());
-        assertEquals(expectedCategories, actualVideo.categories());
-        assertEquals(expectedGenres, actualVideo.genres());
-        assertEquals(expectedCastMembers, actualVideo.castMembers());
+        assertEquals(asString(expectedCategories), actualVideo.categories());
+        assertEquals(asString(expectedGenres), actualVideo.genres());
+        assertEquals(asString(expectedCastMembers), actualVideo.castMembers());
         assertEquals(expectedBanner, actualVideo.banner());
         assertEquals(expectedThumbnail, actualVideo.thumbnail());
         assertEquals(expectedThumbnailHalf, actualVideo.thumbnailHalf());
@@ -109,7 +109,7 @@ class GetVideoByIdUseCaseTest extends UseCaseTest {
 
     @Test
     void Given_InvalidId_When_CallsGetVideo_Should_ReturnNotFound() {
-        final var expectedErrorMessage = "Video with ID 123 was not found";
+        final var expectedErrorMessage = "Video with id 123 was not found";
 
         final var expectedId = VideoID.from("123");
 
