@@ -5,12 +5,16 @@ import static io.vavr.API.Case;
 import static io.vavr.API.List;
 import static io.vavr.API.Match;
 
+import java.time.Year;
+import java.util.Set;
+
 import com.github.allisson95.codeflix.domain.castmember.CastMember;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
 import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.genre.Genre;
 import com.github.allisson95.codeflix.domain.video.Rating;
 import com.github.allisson95.codeflix.domain.video.Resource;
+import com.github.allisson95.codeflix.domain.video.Video;
 
 import net.datafaker.Faker;
 
@@ -162,6 +166,20 @@ public final class Fixture {
     }
 
     public static class Videos {
+
+        public static Video random() {
+            return Video.newVideo(
+                    Fixture.title(),
+                    description(),
+                    Year.of(Fixture.year()),
+                    Fixture.duration(),
+                    rating(),
+                    Fixture.bool(),
+                    Fixture.bool(),
+                    Set.of(Fixture.Categories.random().getId()),
+                    Set.of(Fixture.Genres.random().getId()),
+                    Set.of(Fixture.CastMembers.random().getId()));
+        }
 
         private Videos() throws IllegalAccessException {
             throw new IllegalAccessException("Cannot construct a instance of Fixture.Videos");
