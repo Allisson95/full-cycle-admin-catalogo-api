@@ -2,13 +2,18 @@ package com.github.allisson95.codeflix.infrastructure.video.persistence;
 
 import java.time.Instant;
 import java.time.Year;
+import java.util.Optional;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.github.allisson95.codeflix.domain.video.Rating;
@@ -50,6 +55,14 @@ public class VideoJpaEntity {
     @Column(name = "updated_at", nullable = false, columnDefinition = "DATETIME(6)")
     private Instant updatedAt;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "trailer_id")
+    private VideoMediaJpaEntity trailer;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "video_id")
+    private VideoMediaJpaEntity video;
+
     public VideoJpaEntity() {
     }
 
@@ -63,7 +76,9 @@ public class VideoJpaEntity {
             final boolean opened,
             final boolean published,
             final Instant createdAt,
-            final Instant updatedAt) {
+            final Instant updatedAt,
+            final VideoMediaJpaEntity trailer,
+            final VideoMediaJpaEntity video) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -74,6 +89,8 @@ public class VideoJpaEntity {
         this.published = published;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.trailer = trailer;
+        this.video = video;
     }
 
     public static VideoJpaEntity from(final Video aVideo) {
@@ -87,7 +104,9 @@ public class VideoJpaEntity {
                 aVideo.isOpened(),
                 aVideo.isPublished(),
                 aVideo.getCreatedAt(),
-                aVideo.getUpdatedAt());
+                aVideo.getUpdatedAt(),
+                aVideo.getTrailer().map(VideoMediaJpaEntity::from).orElse(null),
+                aVideo.getVideo().map(VideoMediaJpaEntity::from).orElse(null));
     }
 
     public Video toAggregate() {
@@ -105,8 +124,8 @@ public class VideoJpaEntity {
                 null,
                 null,
                 null,
-                null,
-                null,
+                Optional.ofNullable(getTrailer()).map(VideoMediaJpaEntity::toDomain).orElse(null),
+                Optional.ofNullable(getVideo()).map(VideoMediaJpaEntity::toDomain).orElse(null),
                 null,
                 null,
                 null);
@@ -190,6 +209,22 @@ public class VideoJpaEntity {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public VideoMediaJpaEntity getTrailer() {
+        return trailer;
+    }
+
+    public void setTrailer(VideoMediaJpaEntity trailer) {
+        this.trailer = trailer;
+    }
+
+    public VideoMediaJpaEntity getVideo() {
+        return video;
+    }
+
+    public void setVideo(VideoMediaJpaEntity video) {
+        this.video = video;
     }
 
 }
