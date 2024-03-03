@@ -26,7 +26,7 @@ class ListVideoUseCaseTest extends UseCaseTest {
     private VideoGateway videoGateway;
 
     @InjectMocks
-    private DefaultListVideosUseCase useCase;
+    private DefaultListVideoUseCase useCase;
 
     @Override
     protected List<Object> getMocksForClean() {
