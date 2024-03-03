@@ -135,6 +135,46 @@ public class Video extends AggregateRoot<VideoID> {
                 new HashSet<>(video.getCastMembers()));
     }
 
+    public static Video with(
+            final VideoID anId,
+            final String aTitle,
+            final String aDescription,
+            final Year aLaunchedYear,
+            final double aDuration,
+            final Rating aRating,
+            final boolean wasOpened,
+            final boolean wasPublished,
+            final Instant aCreationDate,
+            final Instant aUpdateDate,
+            final ImageMedia aBanner,
+            final ImageMedia aThumbnail,
+            final ImageMedia aThumbnailHalf,
+            final VideoMedia aTrailer,
+            final VideoMedia aVideo,
+            final Set<CategoryID> categories,
+            final Set<GenreID> genres,
+            final Set<CastMemberID> castMembers) {
+        return new Video(
+                anId,
+                aTitle,
+                aDescription,
+                aLaunchedYear,
+                aDuration,
+                aRating,
+                wasOpened,
+                wasPublished,
+                aCreationDate,
+                aUpdateDate,
+                aBanner,
+                aThumbnail,
+                aThumbnailHalf,
+                aTrailer,
+                aVideo,
+                categories,
+                genres,
+                castMembers);
+    }
+
     public Video setBanner(final ImageMedia aBanner) {
         this.banner = aBanner;
         this.updatedAt = InstantUtils.now();
