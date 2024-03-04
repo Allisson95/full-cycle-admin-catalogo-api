@@ -10,38 +10,38 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
-import com.github.allisson95.codeflix.domain.genre.GenreID;
+import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 
-@Entity(name = "VideoGenre")
-@Table(name = "videos_genres")
-public class VideoGenreJpaEntity {
+@Entity(name = "VideoCastMember")
+@Table(name = "videos_cast_members")
+public class VideoCastMemberJpaEntity {
 
     @EmbeddedId
-    private VideoGenreID id;
+    private VideoCastMemberID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("videoId")
     private VideoJpaEntity video;
 
-    public VideoGenreJpaEntity() {
+    public VideoCastMemberJpaEntity() {
     }
 
-    private VideoGenreJpaEntity(final VideoGenreID id, final VideoJpaEntity video) {
+    private VideoCastMemberJpaEntity(VideoCastMemberID id, VideoJpaEntity video) {
         this.id = id;
         this.video = video;
     }
 
-    public static VideoGenreJpaEntity from(final VideoJpaEntity video, final GenreID genreID) {
-        return new VideoGenreJpaEntity(
-                VideoGenreID.from(video.getId(), UUID.fromString(genreID.getValue())),
+    public static VideoCastMemberJpaEntity from(final VideoJpaEntity video, final CastMemberID castMemberId) {
+        return new VideoCastMemberJpaEntity(
+                VideoCastMemberID.from(video.getId(), UUID.fromString(castMemberId.getValue())),
                 video);
     }
 
-    public VideoGenreID getId() {
+    public VideoCastMemberID getId() {
         return id;
     }
 
-    public void setId(VideoGenreID id) {
+    public void setId(VideoCastMemberID id) {
         this.id = id;
     }
 
@@ -66,7 +66,7 @@ public class VideoGenreJpaEntity {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        VideoGenreJpaEntity other = (VideoGenreJpaEntity) obj;
+        VideoCastMemberJpaEntity other = (VideoCastMemberJpaEntity) obj;
         return Objects.equals(getId(), other.getId()) && Objects.equals(getVideo(), other.getVideo());
     }
 

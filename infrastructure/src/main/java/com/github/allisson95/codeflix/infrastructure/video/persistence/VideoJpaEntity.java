@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.video.Rating;
@@ -87,9 +88,13 @@ public class VideoJpaEntity {
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<VideoGenreJpaEntity> genres;
 
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<VideoCastMemberJpaEntity> castMembers;
+
     public VideoJpaEntity() {
         this.categories = new HashSet<>(3);
         this.genres = new HashSet<>(3);
+        this.castMembers = new HashSet<>(3);
     }
 
     private VideoJpaEntity(
@@ -125,6 +130,7 @@ public class VideoJpaEntity {
         this.video = video;
         this.categories = new HashSet<>(3);
         this.genres = new HashSet<>(3);
+        this.castMembers = new HashSet<>(3);
     }
 
     public static VideoJpaEntity from(final Video aVideo) {
@@ -147,6 +153,7 @@ public class VideoJpaEntity {
 
         aVideo.getCategories().forEach(entity::addCategory);
         aVideo.getGenres().forEach(entity::addGenre);
+        aVideo.getCastMembers().forEach(entity::addCastMember);
 
         return entity;
     }
@@ -174,7 +181,9 @@ public class VideoJpaEntity {
                 getGenres().stream()
                         .map(it -> GenreID.from(it.getId().getGenreId()))
                         .collect(Collectors.toSet()),
-                null);
+                getCastMembers().stream()
+                        .map(it -> CastMemberID.from(it.getId().getCastMemberId()))
+                        .collect(Collectors.toSet()));
     }
 
     public void addCategory(final CategoryID categoryId) {
@@ -183,6 +192,10 @@ public class VideoJpaEntity {
 
     public void addGenre(final GenreID genreId) {
         this.genres.add(VideoGenreJpaEntity.from(this, genreId));
+    }
+
+    public void addCastMember(final CastMemberID castMemberId) {
+        this.castMembers.add(VideoCastMemberJpaEntity.from(this, castMemberId));
     }
 
     public UUID getId() {
@@ -319,6 +332,14 @@ public class VideoJpaEntity {
 
     public void setGenres(Set<VideoGenreJpaEntity> genres) {
         this.genres = genres;
+    }
+
+    public Set<VideoCastMemberJpaEntity> getCastMembers() {
+        return castMembers;
+    }
+
+    public void setCastMembers(Set<VideoCastMemberJpaEntity> castMembers) {
+        this.castMembers = castMembers;
     }
 
 }
