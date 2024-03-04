@@ -56,6 +56,18 @@ public class VideoJpaEntity {
     private Instant updatedAt;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "banner_id")
+    private ImageMediaJpaEntity banner;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "thumbnail_id")
+    private ImageMediaJpaEntity thumbnail;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "thumbnail_half_id")
+    private ImageMediaJpaEntity thumbnailHalf;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "trailer_id")
     private VideoMediaJpaEntity trailer;
 
@@ -77,6 +89,9 @@ public class VideoJpaEntity {
             final boolean published,
             final Instant createdAt,
             final Instant updatedAt,
+            final ImageMediaJpaEntity banner,
+            final ImageMediaJpaEntity thumbnail,
+            final ImageMediaJpaEntity thumbnailHalf,
             final VideoMediaJpaEntity trailer,
             final VideoMediaJpaEntity video) {
         this.id = id;
@@ -89,6 +104,9 @@ public class VideoJpaEntity {
         this.published = published;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.banner = banner;
+        this.thumbnail = thumbnail;
+        this.thumbnailHalf = thumbnailHalf;
         this.trailer = trailer;
         this.video = video;
     }
@@ -105,6 +123,9 @@ public class VideoJpaEntity {
                 aVideo.isPublished(),
                 aVideo.getCreatedAt(),
                 aVideo.getUpdatedAt(),
+                aVideo.getBanner().map(ImageMediaJpaEntity::from).orElse(null),
+                aVideo.getThumbnail().map(ImageMediaJpaEntity::from).orElse(null),
+                aVideo.getThumbnailHalf().map(ImageMediaJpaEntity::from).orElse(null),
                 aVideo.getTrailer().map(VideoMediaJpaEntity::from).orElse(null),
                 aVideo.getVideo().map(VideoMediaJpaEntity::from).orElse(null));
     }
@@ -121,9 +142,9 @@ public class VideoJpaEntity {
                 isPublished(),
                 getCreatedAt(),
                 getUpdatedAt(),
-                null,
-                null,
-                null,
+                Optional.ofNullable(getBanner()).map(ImageMediaJpaEntity::toDomain).orElse(null),
+                Optional.ofNullable(getThumbnail()).map(ImageMediaJpaEntity::toDomain).orElse(null),
+                Optional.ofNullable(getThumbnailHalf()).map(ImageMediaJpaEntity::toDomain).orElse(null),
                 Optional.ofNullable(getTrailer()).map(VideoMediaJpaEntity::toDomain).orElse(null),
                 Optional.ofNullable(getVideo()).map(VideoMediaJpaEntity::toDomain).orElse(null),
                 null,
@@ -209,6 +230,30 @@ public class VideoJpaEntity {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public ImageMediaJpaEntity getBanner() {
+        return banner;
+    }
+
+    public void setBanner(ImageMediaJpaEntity banner) {
+        this.banner = banner;
+    }
+
+    public ImageMediaJpaEntity getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(ImageMediaJpaEntity thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public ImageMediaJpaEntity getThumbnailHalf() {
+        return thumbnailHalf;
+    }
+
+    public void setThumbnailHalf(ImageMediaJpaEntity thumbnailHalf) {
+        this.thumbnailHalf = thumbnailHalf;
     }
 
     public VideoMediaJpaEntity getTrailer() {
