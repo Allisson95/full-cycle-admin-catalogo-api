@@ -9,7 +9,6 @@ import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -21,6 +20,7 @@ import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
+import com.github.allisson95.codeflix.domain.utils.IdUtils;
 import com.github.allisson95.codeflix.domain.video.ImageMedia;
 import com.github.allisson95.codeflix.domain.video.MediaStatus;
 import com.github.allisson95.codeflix.domain.video.Resource;
@@ -124,7 +124,7 @@ class GetVideoByIdUseCaseTest extends UseCaseTest {
     }
 
     private ImageMedia imageMedia(final Resource.Type type) {
-        final var checksum = UUID.randomUUID().toString();
+        final var checksum = IdUtils.uuid();
         return ImageMedia.with(
                 checksum,
                 type.name().toLowerCase(),
@@ -132,7 +132,7 @@ class GetVideoByIdUseCaseTest extends UseCaseTest {
     }
 
     private VideoMedia videoMedia(final Resource.Type type) {
-        final var checksum = UUID.randomUUID().toString();
+        final var checksum = IdUtils.uuid();
         return VideoMedia.with(
                 checksum,
                 type.name().toLowerCase(),

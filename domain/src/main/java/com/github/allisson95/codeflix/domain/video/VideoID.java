@@ -1,9 +1,9 @@
 package com.github.allisson95.codeflix.domain.video;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import com.github.allisson95.codeflix.domain.Identifier;
+import com.github.allisson95.codeflix.domain.utils.IdUtils;
 
 public class VideoID extends Identifier {
 
@@ -17,12 +17,8 @@ public class VideoID extends Identifier {
         return new VideoID(anId.toLowerCase());
     }
 
-    public static VideoID from(final UUID anId) {
-        return from(anId.toString());
-    }
-
     public static VideoID unique() {
-        return from(UUID.randomUUID());
+        return from(IdUtils.uuid());
     }
 
     @Override

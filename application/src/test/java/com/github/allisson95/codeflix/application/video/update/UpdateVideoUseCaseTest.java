@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -33,6 +32,7 @@ import com.github.allisson95.codeflix.domain.exceptions.DomainException;
 import com.github.allisson95.codeflix.domain.exceptions.InternalErrorException;
 import com.github.allisson95.codeflix.domain.genre.GenreGateway;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
+import com.github.allisson95.codeflix.domain.utils.IdUtils;
 import com.github.allisson95.codeflix.domain.video.ImageMedia;
 import com.github.allisson95.codeflix.domain.video.MediaResourceGateway;
 import com.github.allisson95.codeflix.domain.video.MediaStatus;
@@ -128,13 +128,13 @@ class UpdateVideoUseCaseTest extends UseCaseTest {
         when(mediaResourceGateway.storeImage(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return ImageMedia.with(UUID.randomUUID().toString(), aResource.name(), "/images");
+                    return ImageMedia.with(IdUtils.uuid(), aResource.name(), "/images");
                 });
 
         when(mediaResourceGateway.storeVideo(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return VideoMedia.with(UUID.randomUUID().toString(), aResource.name(), "/videos", "/encoded",
+                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos", "/encoded",
                             MediaStatus.PENDING);
                 });
 
@@ -227,13 +227,13 @@ class UpdateVideoUseCaseTest extends UseCaseTest {
         when(mediaResourceGateway.storeImage(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return ImageMedia.with(UUID.randomUUID().toString(), aResource.name(), "/images");
+                    return ImageMedia.with(IdUtils.uuid(), aResource.name(), "/images");
                 });
 
         when(mediaResourceGateway.storeVideo(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return VideoMedia.with(UUID.randomUUID().toString(), aResource.name(), "/videos", "/encoded",
+                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos", "/encoded",
                             MediaStatus.PENDING);
                 });
 
@@ -321,13 +321,13 @@ class UpdateVideoUseCaseTest extends UseCaseTest {
         when(mediaResourceGateway.storeImage(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return ImageMedia.with(UUID.randomUUID().toString(), aResource.name(), "/images");
+                    return ImageMedia.with(IdUtils.uuid(), aResource.name(), "/images");
                 });
 
         when(mediaResourceGateway.storeVideo(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return VideoMedia.with(UUID.randomUUID().toString(), aResource.name(), "/videos", "/encoded",
+                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos", "/encoded",
                             MediaStatus.PENDING);
                 });
 
@@ -417,13 +417,13 @@ class UpdateVideoUseCaseTest extends UseCaseTest {
         when(mediaResourceGateway.storeImage(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return ImageMedia.with(UUID.randomUUID().toString(), aResource.name(), "/images");
+                    return ImageMedia.with(IdUtils.uuid(), aResource.name(), "/images");
                 });
 
         when(mediaResourceGateway.storeVideo(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return VideoMedia.with(UUID.randomUUID().toString(), aResource.name(), "/videos", "/encoded",
+                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos", "/encoded",
                             MediaStatus.PENDING);
                 });
 
@@ -1185,13 +1185,13 @@ class UpdateVideoUseCaseTest extends UseCaseTest {
         when(mediaResourceGateway.storeImage(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return ImageMedia.with(UUID.randomUUID().toString(), aResource.name(), "/images");
+                    return ImageMedia.with(IdUtils.uuid(), aResource.name(), "/images");
                 });
 
         when(mediaResourceGateway.storeVideo(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return VideoMedia.with(UUID.randomUUID().toString(), aResource.name(), "/videos", "/encoded",
+                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos", "/encoded",
                             MediaStatus.PENDING);
                 });
 

@@ -1,9 +1,9 @@
 package com.github.allisson95.codeflix.domain.castmember;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import com.github.allisson95.codeflix.domain.Identifier;
+import com.github.allisson95.codeflix.domain.utils.IdUtils;
 
 public class CastMemberID extends Identifier {
 
@@ -14,16 +14,12 @@ public class CastMemberID extends Identifier {
         this.value = anId;
     }
 
-    public static CastMemberID unique() {
-        return from(UUID.randomUUID());
-    }
-
     public static CastMemberID from(final String anId) {
         return new CastMemberID(anId);
     }
 
-    public static CastMemberID from(final UUID anId) {
-        return new CastMemberID(anId.toString().toLowerCase());
+    public static CastMemberID unique() {
+        return from(IdUtils.uuid());
     }
 
     @Override

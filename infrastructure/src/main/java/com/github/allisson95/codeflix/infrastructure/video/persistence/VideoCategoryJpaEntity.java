@@ -1,7 +1,6 @@
 package com.github.allisson95.codeflix.infrastructure.video.persistence;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -33,7 +32,7 @@ public class VideoCategoryJpaEntity {
 
     public static VideoCategoryJpaEntity from(final VideoJpaEntity video, final CategoryID categoryID) {
         return new VideoCategoryJpaEntity(
-                VideoCategoryID.from(video.getId(), UUID.fromString(categoryID.getValue())),
+                VideoCategoryID.from(video.getId(), categoryID.getValue()),
                 video);
     }
 
