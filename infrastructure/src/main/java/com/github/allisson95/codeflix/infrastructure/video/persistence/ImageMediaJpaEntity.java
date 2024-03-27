@@ -7,8 +7,8 @@ import javax.persistence.Table;
 
 import com.github.allisson95.codeflix.domain.video.ImageMedia;
 
-@Table(name = "videos_image_media")
 @Entity(name = "ImageMedia")
+@Table(name = "videos_image_media")
 public class ImageMediaJpaEntity {
 
     @Id
