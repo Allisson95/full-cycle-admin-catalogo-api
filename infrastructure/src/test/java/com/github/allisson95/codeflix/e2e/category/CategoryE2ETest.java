@@ -40,7 +40,7 @@ class CategoryE2ETest implements MockDsl {
     private CategoryRepository categoryRepository;
 
     @Container
-    private static final MySQLContainer<?> MYSQL_CONTAINER = new MySQLContainer<>("mysql:8.2")
+    private static final MySQLContainer<?> MYSQL_CONTAINER = new MySQLContainer<>("mysql:8.0")
             .withDatabaseName("admin_catalogo");
 
     @DynamicPropertySource
