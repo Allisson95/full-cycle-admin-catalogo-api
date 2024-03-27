@@ -35,10 +35,11 @@ public class DefaultVideoGateway implements VideoGateway {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Video> findById(VideoID anId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+        return this.videoRepository.findById(anId.getValue())
+                .map(VideoJpaEntity::toAggregate);
     }
 
     @Override
