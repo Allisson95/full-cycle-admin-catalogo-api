@@ -24,8 +24,7 @@ public class DefaultVideoGateway implements VideoGateway {
     @Transactional
     @Override
     public Video create(final Video aVideo) {
-        return this.videoRepository.save(VideoJpaEntity.from(aVideo))
-                .toAggregate();
+        return save(aVideo);
     }
 
     @Override
@@ -48,10 +47,15 @@ public class DefaultVideoGateway implements VideoGateway {
         throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 
+    @Transactional
     @Override
     public Video update(Video aVideo) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        return save(aVideo);
+    }
+
+    private Video save(final Video aVideo) {
+        return this.videoRepository.save(VideoJpaEntity.from(aVideo))
+                .toAggregate();
     }
 
 }
