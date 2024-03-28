@@ -44,7 +44,7 @@ dependencies {
     }
     implementation 'org.springframework.boot:spring-boot-starter-undertow'
 
-    testImplementation 'net.datafaker:datafaker:1.9.0'
+    testImplementation project(path: ':domain', configuration: 'testClasses')
 
     testImplementation 'org.flywaydb:flyway-core'
     testImplementation 'org.flywaydb:flyway-mysql'

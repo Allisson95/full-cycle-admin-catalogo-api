@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
-import com.github.allisson95.codeflix.Fixture;
+import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.IntegrationTest;
 import com.github.allisson95.codeflix.domain.castmember.CastMember;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberGateway;
@@ -38,8 +38,8 @@ class ListCastMembersUseCaseIT {
     @Test
     void Given_AValidQuery_When_CallsListCastMembers_Should_ReturnAll() {
         final var members = List.of(
-            CastMember.newMember(Fixture.name(), Fixture.CastMember.type()),
-            CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+            CastMember.newMember(Fixture.name(), Fixture.CastMembers.type()),
+            CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
         );
 
         this.castMemberRepository.saveAllAndFlush(members.stream().map(CastMemberJpaEntity::from).toList());
@@ -109,8 +109,8 @@ class ListCastMembersUseCaseIT {
     @Test
     void Given_AValidQuery_When_CallsListCastMembersAndGatewayThrowsException_Then_ReturnException() {
         final var members = List.of(
-            CastMember.newMember(Fixture.name(), Fixture.CastMember.type()),
-            CastMember.newMember(Fixture.name(), Fixture.CastMember.type())
+            CastMember.newMember(Fixture.name(), Fixture.CastMembers.type()),
+            CastMember.newMember(Fixture.name(), Fixture.CastMembers.type())
         );
 
         this.castMemberRepository.saveAllAndFlush(members.stream().map(CastMemberJpaEntity::from).toList());

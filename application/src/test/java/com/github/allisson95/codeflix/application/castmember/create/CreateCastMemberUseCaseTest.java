@@ -17,8 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import com.github.allisson95.codeflix.application.Fixture;
 import com.github.allisson95.codeflix.application.UseCaseTest;
+import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberGateway;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
 import com.github.allisson95.codeflix.domain.exceptions.NotificationException;

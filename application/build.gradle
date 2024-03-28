@@ -17,7 +17,7 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
-    testImplementation 'net.datafaker:datafaker:1.9.0'
+    testImplementation project(path: ':domain', configuration: 'testClasses')
 }
 
 tasks.named('test') {

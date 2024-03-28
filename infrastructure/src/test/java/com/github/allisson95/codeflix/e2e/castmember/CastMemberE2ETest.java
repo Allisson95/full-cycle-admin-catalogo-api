@@ -23,7 +23,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.github.allisson95.codeflix.E2ETest;
-import com.github.allisson95.codeflix.Fixture;
+import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
 import com.github.allisson95.codeflix.e2e.MockDsl;
@@ -63,7 +63,7 @@ class CastMemberE2ETest implements MockDsl {
         assertEquals(0, this.castMemberRepository.count());
 
         final var expectedName = Fixture.name();
-        final var expectedType = Fixture.CastMember.type();
+        final var expectedType = Fixture.CastMembers.type();
 
         final var actualMemberId = givenACastMember(expectedName, expectedType);
 
@@ -191,7 +191,7 @@ class CastMemberE2ETest implements MockDsl {
         assertEquals(0, this.castMemberRepository.count());
 
         final var expectedName = Fixture.name();
-        final var expectedType = Fixture.CastMember.type();
+        final var expectedType = Fixture.CastMembers.type();
 
         final var actualMemberId = givenACastMember(expectedName, expectedType);
 
@@ -255,7 +255,7 @@ class CastMemberE2ETest implements MockDsl {
         assertTrue(MYSQL_CONTAINER.isRunning());
         assertEquals(0, this.castMemberRepository.count());
 
-        final var castMemberId = givenACastMember(Fixture.name(), Fixture.CastMember.type());
+        final var castMemberId = givenACastMember(Fixture.name(), Fixture.CastMembers.type());
 
         deleteACastMember(castMemberId)
                 .andExpect(status().isNoContent());

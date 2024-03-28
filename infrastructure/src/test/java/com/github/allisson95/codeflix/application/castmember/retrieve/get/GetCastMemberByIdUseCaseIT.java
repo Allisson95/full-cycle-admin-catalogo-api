@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
-import com.github.allisson95.codeflix.Fixture;
+import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.IntegrationTest;
 import com.github.allisson95.codeflix.domain.castmember.CastMember;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberGateway;
@@ -35,7 +35,7 @@ class GetCastMemberByIdUseCaseIT {
     @Test
     void Given_AValidAndExistingId_When_CallsGetCastMemberById_Should_ReturnCastMember() {
         final var expectedName = Fixture.name();
-        final var expectedType = Fixture.CastMember.type();
+        final var expectedType = Fixture.CastMembers.type();
         final var aMember = CastMember.newMember(expectedName, expectedType);
         this.castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember));
         final var expectedId = aMember.getId();
@@ -70,7 +70,7 @@ class GetCastMemberByIdUseCaseIT {
     @Test
     void Given_AValidId_When_GatewayThrowsException_Should_ReturnException() {
         final var expectedName = Fixture.name();
-        final var expectedType = Fixture.CastMember.type();
+        final var expectedType = Fixture.CastMembers.type();
         final var aMember = CastMember.newMember(expectedName, expectedType);
         final var expectedId = aMember.getId();
         final var expectedErrorMessage = "Gateway error";

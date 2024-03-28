@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
-import com.github.allisson95.codeflix.Fixture;
+import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.IntegrationTest;
 import com.github.allisson95.codeflix.domain.castmember.CastMember;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberGateway;
@@ -103,7 +103,7 @@ class UpdateCastMemberUseCaseIT {
 
     @Test
     void Given_AInvalidType_When_CallsUpdateCastMember_Should_ThrowsNotificationException() {
-        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type());
         this.castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember));
 
         final var expectedId = aMember.getId();
@@ -135,12 +135,12 @@ class UpdateCastMemberUseCaseIT {
 
     @Test
     void Given_AInvalidId_When_CallsUpdateCastMember_Should_ThrowsNotFoundException() {
-        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type());
         this.castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember));
 
         final var expectedId = CastMemberID.from("123");
         final var expectedName = Fixture.name();
-        final var expectedType = Fixture.CastMember.type();
+        final var expectedType = Fixture.CastMembers.type();
         final var expectedErrorMessage = "CastMember with id 123 was not found";
 
         final var aCommand = UpdateCastMemberCommand.with(

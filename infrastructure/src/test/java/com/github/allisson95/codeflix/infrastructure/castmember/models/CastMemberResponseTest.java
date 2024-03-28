@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.JacksonTester;
 
-import com.github.allisson95.codeflix.Fixture;
+import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.JacksonTest;
 
 @JacksonTest
@@ -20,7 +20,7 @@ class CastMemberResponseTest {
     void testMarshall() throws Exception {
         final var expectedId = "123";
         final var expectedName = Fixture.name();
-        final var expectedType = Fixture.CastMember.type();
+        final var expectedType = Fixture.CastMembers.type();
         final var expectedCreatedAt = Instant.now();
         final var expectedUpdatedAt = Instant.now();
 

@@ -1,4 +1,4 @@
-package com.github.allisson95.codeflix.application;
+package com.github.allisson95.codeflix.domain;
 
 import static io.vavr.API.$;
 import static io.vavr.API.Case;

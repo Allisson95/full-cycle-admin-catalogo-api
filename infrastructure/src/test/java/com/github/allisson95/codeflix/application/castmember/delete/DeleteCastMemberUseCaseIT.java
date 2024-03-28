@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import com.github.allisson95.codeflix.IntegrationTest;
-import com.github.allisson95.codeflix.Fixture;
+import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.domain.castmember.CastMember;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberGateway;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
@@ -33,7 +33,7 @@ class DeleteCastMemberUseCaseIT {
 
     @Test
     void Given_AValidId_When_CallsDeleteCastMember_Should_Be_Ok() {
-        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type());
         this.castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember));
 
         final var expectedId = aMember.getId();
@@ -49,7 +49,7 @@ class DeleteCastMemberUseCaseIT {
 
     @Test
     void Given_AInvalidId_When_CallsDeleteCastMember_Should_Be_Ok() {
-        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type());
         this.castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember));
 
         final var expectedId = CastMemberID.from("invalid");
@@ -65,7 +65,7 @@ class DeleteCastMemberUseCaseIT {
 
     @Test
     void Given_AValidId_When_CallsDeleteCastMemberAndGatewayThrowsException_Should_ReturnException() {
-        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+        final var aMember = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type());
         this.castMemberRepository.saveAndFlush(CastMemberJpaEntity.from(aMember));
         final var expectedId = aMember.getId();
         final var expectedErrorMessage = "Gateway error";
