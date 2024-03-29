@@ -22,6 +22,7 @@ import com.github.allisson95.codeflix.domain.genre.GenreGateway;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.video.ImageMedia;
 import com.github.allisson95.codeflix.domain.video.Video;
+import com.github.allisson95.codeflix.domain.video.VideoID;
 import com.github.allisson95.codeflix.domain.video.VideoMedia;
 import com.github.allisson95.codeflix.infrastructure.video.persistence.VideoRepository;
 
@@ -318,6 +319,52 @@ class DefaultVideoGatewayTest {
         assertNotNull(persistedVideo.getCreatedAt());
         assertNotNull(persistedVideo.getUpdatedAt());
         assertTrue(persistedVideo.getUpdatedAt().isAfter(persistedVideo.getCreatedAt()));
+    }
+
+    @Test
+    void Given_AValidVideoId_When_CallsDeleteById_Should_DeleteIt() {
+        final var aVideo = this.videoGateway.create(Video.newVideo(
+                Fixture.title(),
+                Fixture.Videos.description(),
+                Year.of(Fixture.year()),
+                Fixture.duration(),
+                Fixture.Videos.rating(),
+                Fixture.bool(),
+                Fixture.bool(),
+                Set.<CategoryID>of(),
+                Set.<GenreID>of(),
+                Set.<CastMemberID>of()));
+
+        final var anId = aVideo.getId();
+
+        assertEquals(1, this.videoRepository.count());
+
+        this.videoGateway.deleteById(anId);
+
+        assertEquals(0, this.videoRepository.count());
+    }
+
+    @Test
+    void Given_AInvalidVideoId_When_CallsDeleteById_Should_DoNothingIt() {
+        this.videoGateway.create(Video.newVideo(
+                Fixture.title(),
+                Fixture.Videos.description(),
+                Year.of(Fixture.year()),
+                Fixture.duration(),
+                Fixture.Videos.rating(),
+                Fixture.bool(),
+                Fixture.bool(),
+                Set.<CategoryID>of(),
+                Set.<GenreID>of(),
+                Set.<CastMemberID>of()));
+
+        final var anId = VideoID.unique();
+
+        assertEquals(1, this.videoRepository.count());
+
+        this.videoGateway.deleteById(anId);
+
+        assertEquals(1, this.videoRepository.count());
     }
 
 }
