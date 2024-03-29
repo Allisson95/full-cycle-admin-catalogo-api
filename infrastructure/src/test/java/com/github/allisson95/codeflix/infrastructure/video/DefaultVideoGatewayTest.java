@@ -367,4 +367,94 @@ class DefaultVideoGatewayTest {
         assertEquals(1, this.videoRepository.count());
     }
 
+    @Test
+    void Given_AValidVideoId_When_CallsFindById_Should_ReturnIt() {
+        final var category = this.categoryGateway.create(Fixture.Categories.random());
+        final var genre = this.genreGateway.create(Fixture.Genres.random());
+        final var castMember = this.castMemberGateway.create(Fixture.CastMembers.clintEastwood());
+
+        final var expectedTitle = Fixture.title();
+        final var expectedDescription = Fixture.Videos.description();
+        final var expectedLaunchedAt = Year.of(Fixture.year());
+        final var expectedDuration = Fixture.duration();
+        final var expectedRating = Fixture.Videos.rating();
+        final var expectedOpened = Fixture.bool();
+        final var expectedPublished = Fixture.bool();
+        final var expectedCategories = Set.<CategoryID>of(category.getId());
+        final var expectedGenres = Set.<GenreID>of(genre.getId());
+        final var expectedCastMembers = Set.<CastMemberID>of(castMember.getId());
+
+        final ImageMedia expectedBanner = ImageMedia.with("0bb2827c5eacf570b6064e24e0e6653b", "banner", "/images");
+        final ImageMedia expectedThumbnail = ImageMedia.with("0bb2827c5eacf570b6064e24e0e6653b", "thumbnail", "/images");
+        final ImageMedia expectedThumbnailHalf = ImageMedia.with("0bb2827c5eacf570b6064e24e0e6653b", "thumbnail_half", "/images");
+        final VideoMedia expectedTrailer = VideoMedia.with("0bb2827c5eacf570b6064e24e0e6653b", "trailer", "/videos");
+        final VideoMedia expectedVideo = VideoMedia.with("0bb2827c5eacf570b6064e24e0e6653b", "video", "/videos");
+
+        final var aVideo = this.videoGateway.create(
+                Video.newVideo(
+                            expectedTitle,
+                            expectedDescription,
+                            expectedLaunchedAt,
+                            expectedDuration,
+                            expectedRating,
+                            expectedOpened,
+                            expectedPublished,
+                            expectedCategories,
+                            expectedGenres,
+                            expectedCastMembers
+                        )
+                        .setBanner(expectedBanner)
+                        .setThumbnail(expectedThumbnail)
+                        .setThumbnailHalf(expectedThumbnailHalf)
+                        .setTrailer(expectedTrailer)
+                        .setVideo(expectedVideo));
+
+        final var actualVideo = this.videoGateway.findById(aVideo.getId()).get();
+
+        assertNotNull(actualVideo);
+        assertEquals(aVideo.getId(), actualVideo.getId());
+        assertEquals(expectedTitle, actualVideo.getTitle());
+        assertEquals(expectedDescription, actualVideo.getDescription());
+        assertEquals(expectedLaunchedAt, actualVideo.getLaunchedAt());
+        assertEquals(expectedDuration, actualVideo.getDuration());
+        assertEquals(expectedRating, actualVideo.getRating());
+        assertEquals(expectedOpened, actualVideo.isOpened());
+        assertEquals(expectedPublished, actualVideo.isPublished());
+        assertEquals(expectedCategories, actualVideo.getCategories());
+        assertEquals(expectedGenres, actualVideo.getGenres());
+        assertEquals(expectedCastMembers, actualVideo.getCastMembers());
+        assertTrue(actualVideo.getBanner().isPresent());
+        assertEquals(expectedBanner.name(), actualVideo.getBanner().get().name());
+        assertTrue(actualVideo.getThumbnail().isPresent());
+        assertEquals(expectedThumbnail.name(), actualVideo.getThumbnail().get().name());
+        assertTrue(actualVideo.getThumbnailHalf().isPresent());
+        assertEquals(expectedThumbnailHalf.name(), actualVideo.getThumbnailHalf().get().name());
+        assertTrue(actualVideo.getTrailer().isPresent());
+        assertEquals(expectedTrailer.name(), actualVideo.getTrailer().get().name());
+        assertTrue(actualVideo.getVideo().isPresent());
+        assertEquals(expectedVideo.name(), actualVideo.getVideo().get().name());
+    }
+
+    @Test
+    void Given_AInvalidVideoId_When_CallsFindById_Should_ReturnEmpty() {
+        this.videoGateway.create(Video.newVideo(
+                Fixture.title(),
+                Fixture.Videos.description(),
+                Year.of(Fixture.year()),
+                Fixture.duration(),
+                Fixture.Videos.rating(),
+                Fixture.bool(),
+                Fixture.bool(),
+                Set.<CategoryID>of(),
+                Set.<GenreID>of(),
+                Set.<CastMemberID>of()));
+
+        final var anId = VideoID.unique();
+
+        final var actualVideo = this.videoGateway.findById(anId);
+
+        assertNotNull(actualVideo);
+        assertTrue(actualVideo.isEmpty());
+    }
+
 }
