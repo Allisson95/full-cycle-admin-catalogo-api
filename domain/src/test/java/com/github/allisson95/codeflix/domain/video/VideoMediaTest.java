@@ -7,10 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.allisson95.codeflix.domain.utils.IdUtils;
+
 class VideoMediaTest {
 
     @Test
     void Given_AValidParams_When_CallsWith_Should_InstantiateIt() {
+        final var expectedId = IdUtils.uuid();
         final var expectedChecksum = "d41d8cd98f00b204e9800998ecf8427e";
         final var expectedName = "Teste";
         final var expectedRawLocation = "/medias/raw";
@@ -18,6 +21,7 @@ class VideoMediaTest {
         final var expectedStatus = MediaStatus.PROCESSING;
 
         final var aMedia = VideoMedia.with(
+                expectedId,
                 expectedChecksum,
                 expectedName,
                 expectedRawLocation,
@@ -25,6 +29,7 @@ class VideoMediaTest {
                 expectedStatus);
 
         assertNotNull(aMedia);
+        assertEquals(expectedId, aMedia.id());
         assertEquals(expectedChecksum, aMedia.checksum());
         assertEquals(expectedName, aMedia.name());
         assertEquals(expectedRawLocation, aMedia.rawLocation());
@@ -35,6 +40,7 @@ class VideoMediaTest {
     @Test
     void Given_TwoMediasWithSameChecksumAndRawLocation_When_CallsEquals_Should_ReturnTrue() {
         final var aMediaOne = VideoMedia.with(
+                IdUtils.uuid(),
                 "d41d8cd98f00b204e9800998ecf8427e",
                 "Teste One",
                 "/medias/raw",
@@ -42,6 +48,7 @@ class VideoMediaTest {
                 MediaStatus.PROCESSING);
 
         final var aMediaTwo = VideoMedia.with(
+                IdUtils.uuid(),
                 "d41d8cd98f00b204e9800998ecf8427e",
                 "Teste Two",
                 "/medias/raw",
@@ -58,6 +65,7 @@ class VideoMediaTest {
                 NullPointerException.class,
                 () -> VideoMedia.with(
                         null,
+                        "d41d8cd98f00b204e9800998ecf8427e",
                         "Teste Two",
                         "/medias/raw",
                         "/medias/encoded",
@@ -66,6 +74,17 @@ class VideoMediaTest {
         assertThrows(
                 NullPointerException.class,
                 () -> VideoMedia.with(
+                        IdUtils.uuid(),
+                        null,
+                        "Teste Two",
+                        "/medias/raw",
+                        "/medias/encoded",
+                        MediaStatus.COMPLETED));
+
+        assertThrows(
+                NullPointerException.class,
+                () -> VideoMedia.with(
+                        IdUtils.uuid(),
                         "d41d8cd98f00b204e9800998ecf8427e",
                         null,
                         "/medias/raw",
@@ -75,6 +94,7 @@ class VideoMediaTest {
         assertThrows(
                 NullPointerException.class,
                 () -> VideoMedia.with(
+                        IdUtils.uuid(),
                         "d41d8cd98f00b204e9800998ecf8427e",
                         "Teste Two",
                         null,
@@ -84,6 +104,7 @@ class VideoMediaTest {
         assertThrows(
                 NullPointerException.class,
                 () -> VideoMedia.with(
+                        IdUtils.uuid(),
                         "d41d8cd98f00b204e9800998ecf8427e",
                         "Teste Two",
                         "/medias/raw",
@@ -93,6 +114,7 @@ class VideoMediaTest {
         assertThrows(
                 NullPointerException.class,
                 () -> VideoMedia.with(
+                        IdUtils.uuid(),
                         "d41d8cd98f00b204e9800998ecf8427e",
                         "Teste Two",
                         "/medias/raw",

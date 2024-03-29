@@ -17,6 +17,9 @@ public class VideoMediaJpaEntity {
     @Id
     private String id;
 
+    @Column(name = "checksum", nullable = false)
+    private String checksum;
+
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -35,11 +38,13 @@ public class VideoMediaJpaEntity {
 
     private VideoMediaJpaEntity(
             final String id,
+            final String checksum,
             final String name,
             final String rawLocation,
             final String encodedLocation,
             final MediaStatus status) {
         this.id = id;
+        this.checksum = checksum;
         this.name = name;
         this.rawLocation = rawLocation;
         this.encodedLocation = encodedLocation;
@@ -48,6 +53,7 @@ public class VideoMediaJpaEntity {
 
     public static VideoMediaJpaEntity from(final VideoMedia media) {
         return new VideoMediaJpaEntity(
+                media.id(),
                 media.checksum(),
                 media.name(),
                 media.rawLocation(),
@@ -58,6 +64,7 @@ public class VideoMediaJpaEntity {
     public VideoMedia toDomain() {
         return VideoMedia.with(
                 getId(),
+                getChecksum(),
                 getName(),
                 getRawLocation(),
                 getEncodedLocation(),
@@ -70,6 +77,14 @@ public class VideoMediaJpaEntity {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getChecksum() {
+        return checksum;
+    }
+
+    public void setChecksum(String checksum) {
+        this.checksum = checksum;
     }
 
     public String getName() {

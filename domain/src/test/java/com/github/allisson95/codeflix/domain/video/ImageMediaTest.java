@@ -7,20 +7,25 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.allisson95.codeflix.domain.utils.IdUtils;
+
 class ImageMediaTest {
 
     @Test
     void Given_AValidParams_When_CallsWith_Should_InstantiateIt() {
+        final var expectedId = IdUtils.uuid();
         final var expectedChecksum = "d41d8cd98f00b204e9800998ecf8427e";
         final var expectedName = "Teste";
         final var expectedLocation = "/medias";
 
         final var aMedia = ImageMedia.with(
+                expectedId,
                 expectedChecksum,
                 expectedName,
                 expectedLocation);
 
         assertNotNull(aMedia);
+        assertEquals(expectedId, aMedia.id());
         assertEquals(expectedChecksum, aMedia.checksum());
         assertEquals(expectedName, aMedia.name());
         assertEquals(expectedLocation, aMedia.location());
@@ -39,15 +44,19 @@ class ImageMediaTest {
     void Given_InvalidParams_When_CallsWith_Should_ReturnError() {
         assertThrows(
                 NullPointerException.class,
-                () -> ImageMedia.with(null, "Teste Two", "/medias"));
+                () -> ImageMedia.with(null, "d41d8cd98f00b204e9800998ecf8427e", "Teste Two", "/medias"));
 
         assertThrows(
                 NullPointerException.class,
-                () -> ImageMedia.with("d41d8cd98f00b204e9800998ecf8427e", null, "/medias"));
+                () -> ImageMedia.with(IdUtils.uuid(), null, "Teste Two", "/medias"));
 
         assertThrows(
                 NullPointerException.class,
-                () -> ImageMedia.with("d41d8cd98f00b204e9800998ecf8427e", "Teste Two", null));
+                () -> ImageMedia.with(IdUtils.uuid(), "d41d8cd98f00b204e9800998ecf8427e", null, "/medias"));
+
+        assertThrows(
+                NullPointerException.class,
+                () -> ImageMedia.with(IdUtils.uuid(), "d41d8cd98f00b204e9800998ecf8427e", "Teste Two", null));
 
     }
 

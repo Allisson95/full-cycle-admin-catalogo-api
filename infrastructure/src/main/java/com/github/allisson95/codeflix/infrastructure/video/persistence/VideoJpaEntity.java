@@ -22,6 +22,7 @@ import javax.persistence.Table;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
+import com.github.allisson95.codeflix.domain.utils.CollectionUtils;
 import com.github.allisson95.codeflix.domain.video.Rating;
 import com.github.allisson95.codeflix.domain.video.Video;
 import com.github.allisson95.codeflix.domain.video.VideoID;
@@ -339,6 +340,18 @@ public class VideoJpaEntity {
 
     public void setCastMembers(Set<VideoCastMemberJpaEntity> castMembers) {
         this.castMembers = castMembers;
+    }
+
+    public Set<CategoryID> getCategoriesId() {
+        return CollectionUtils.mapTo(getCategories(), it -> CategoryID.from(it.getId().getCategoryId()));
+    }
+
+    public Set<GenreID> getGenresId() {
+        return CollectionUtils.mapTo(getGenres(), it -> GenreID.from(it.getId().getGenreId()));
+    }
+
+    public Set<CastMemberID> getCastMembersId() {
+        return CollectionUtils.mapTo(getCastMembers(), it -> CastMemberID.from(it.getId().getCastMemberId()));
     }
 
 }

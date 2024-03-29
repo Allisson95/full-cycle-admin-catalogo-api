@@ -34,7 +34,6 @@ import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.utils.IdUtils;
 import com.github.allisson95.codeflix.domain.video.ImageMedia;
 import com.github.allisson95.codeflix.domain.video.MediaResourceGateway;
-import com.github.allisson95.codeflix.domain.video.MediaStatus;
 import com.github.allisson95.codeflix.domain.video.Resource;
 import com.github.allisson95.codeflix.domain.video.VideoGateway;
 import com.github.allisson95.codeflix.domain.video.VideoMedia;
@@ -125,7 +124,7 @@ class CreateVideoUseCaseTest extends UseCaseTest {
         when(mediaResourceGateway.storeVideo(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos", "/encoded", MediaStatus.PENDING);
+                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos");
                 });
 
         when(videoGateway.create(any()))
@@ -211,7 +210,7 @@ class CreateVideoUseCaseTest extends UseCaseTest {
         when(mediaResourceGateway.storeVideo(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos", "/encoded", MediaStatus.PENDING);
+                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos");
                 });
 
         when(videoGateway.create(any()))
@@ -295,7 +294,7 @@ class CreateVideoUseCaseTest extends UseCaseTest {
         when(mediaResourceGateway.storeVideo(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos", "/encoded", MediaStatus.PENDING);
+                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos");
                 });
 
         when(videoGateway.create(any()))
@@ -381,7 +380,7 @@ class CreateVideoUseCaseTest extends UseCaseTest {
         when(mediaResourceGateway.storeVideo(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos", "/encoded", MediaStatus.PENDING);
+                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos");
                 });
 
         when(videoGateway.create(any()))
@@ -1058,7 +1057,7 @@ class CreateVideoUseCaseTest extends UseCaseTest {
         when(mediaResourceGateway.storeVideo(any(), any()))
                 .then(it -> {
                     final var aResource = it.getArgument(1, Resource.class);
-                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos", "/encoded", MediaStatus.PENDING);
+                    return VideoMedia.with(IdUtils.uuid(), aResource.name(), "/videos");
                 });
 
         when(videoGateway.create(any()))

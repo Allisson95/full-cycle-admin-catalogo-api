@@ -136,9 +136,7 @@ class GetVideoByIdUseCaseTest extends UseCaseTest {
         return VideoMedia.with(
                 checksum,
                 type.name().toLowerCase(),
-                "/images/" + checksum,
-                "",
-                MediaStatus.PENDING);
+                "/images/" + checksum);
     }
 
 }

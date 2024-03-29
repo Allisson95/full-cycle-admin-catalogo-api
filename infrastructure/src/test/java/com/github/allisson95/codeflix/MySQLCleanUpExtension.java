@@ -11,6 +11,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.github.allisson95.codeflix.infrastructure.castmember.persistence.CastMemberRepository;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryRepository;
 import com.github.allisson95.codeflix.infrastructure.genre.persistence.GenreRepository;
+import com.github.allisson95.codeflix.infrastructure.video.persistence.VideoRepository;
 
 public class MySQLCleanUpExtension implements BeforeEachCallback {
 
@@ -19,6 +20,7 @@ public class MySQLCleanUpExtension implements BeforeEachCallback {
         final var applicationContext = SpringExtension.getApplicationContext(context);
 
         cleanUp(List.of(
+                applicationContext.getBean(VideoRepository.class),
                 applicationContext.getBean(CastMemberRepository.class),
                 applicationContext.getBean(GenreRepository.class),
                 applicationContext.getBean(CategoryRepository.class)));
