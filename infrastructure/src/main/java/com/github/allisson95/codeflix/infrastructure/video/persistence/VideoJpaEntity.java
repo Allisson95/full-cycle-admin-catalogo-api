@@ -47,7 +47,6 @@ public class VideoJpaEntity {
     private double duration;
 
     @Column(name = "rating", nullable = false)
-    @Enumerated(EnumType.STRING)
     private Rating rating;
 
     @Column(name = "opened", nullable = false)
