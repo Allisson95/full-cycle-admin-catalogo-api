@@ -1,5 +1,7 @@
 package com.github.allisson95.codeflix.infrastructure.castmember;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,8 +13,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.MySQLGatewayTest;
+import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.domain.castmember.CastMember;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
@@ -308,6 +310,33 @@ class CastMemberMySQLGatewayTest {
         for (final String expectedName : expectedNames.split(";")) {
             assertEquals(expectedName, actualPage.items().get(index++).getName());
         }
+    }
+
+    @Test
+    void Given_PrePersistedCastMembers_When_CallsExistsByIds_Then_ReturnIds() {
+        final var nicolasCage = CastMember.newMember("Nicolas Cage", CastMemberType.ACTOR);
+        final var willSmith = CastMember.newMember("Will Smith", CastMemberType.ACTOR);
+        final var stevenSpielberg = CastMember.newMember("Steven Spielberg", CastMemberType.DIRECTOR);
+
+        final var expectedIds = List.of(willSmith.getId(), stevenSpielberg.getId());
+
+        assertEquals(0, this.castMemberRepository.count());
+
+        this.castMemberRepository.saveAllAndFlush(List.of(
+                CastMemberJpaEntity.from(nicolasCage),
+                CastMemberJpaEntity.from(willSmith),
+                CastMemberJpaEntity.from(stevenSpielberg)));
+
+        assertEquals(3, this.castMemberRepository.count());
+
+        final var actualIds = castMemberMySQLGateway.existsByIds(List.of(
+                willSmith.getId(),
+                stevenSpielberg.getId(),
+                CastMemberID.from("123")));
+
+        assertEquals(3, this.castMemberRepository.count());
+
+        assertThat(actualIds, containsInAnyOrder(expectedIds.toArray()));
     }
 
     private void mockMembers() {

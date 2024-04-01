@@ -17,7 +17,7 @@ import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.genre.Genre;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
 
-@Entity
+@Entity(name = "Genre")
 @Table(name = "genres")
 public class GenreJpaEntity {
 
