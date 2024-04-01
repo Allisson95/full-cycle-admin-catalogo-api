@@ -8,25 +8,24 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
-import com.github.allisson95.codeflix.domain.category.CategoryID;
-import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.video.VideoPreview;
 
 public interface VideoRepository extends JpaRepository<VideoJpaEntity, String> {
 
     @Query("""
-            SELECT new com.github.allisson95.codeflix.domain.video.VideoPreview(
-                v.id as id,
-                v.title as title,
-                v.description as description,
-                v.createdAt as createdAt,
-                v.updatedAt as updatedAt
-            )
+            SELECT
+                DISTINCT
+                    new com.github.allisson95.codeflix.domain.video.VideoPreview(
+                        v.id as id,
+                        v.title as title,
+                        v.description as description,
+                        v.createdAt as createdAt,
+                        v.updatedAt as updatedAt
+                    )
             FROM Video v
-                JOIN v.castMembers members
-                JOIN v.categories categories
-                JOIN v.genres genres
+                LEFT JOIN v.castMembers members
+                LEFT JOIN v.categories categories
+                LEFT JOIN v.genres genres
             WHERE
                 ( :terms IS NULL OR UPPER(v.title) LIKE :terms )
                 AND
@@ -42,4 +41,5 @@ public interface VideoRepository extends JpaRepository<VideoJpaEntity, String> {
             @Param("categories") Set<String> categories,
             @Param("genres") Set<String> genres,
             PageRequest page);
+
 }

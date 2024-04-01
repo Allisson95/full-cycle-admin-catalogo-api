@@ -2,6 +2,8 @@ package com.github.allisson95.codeflix.infrastructure.video;
 
 import static com.github.allisson95.codeflix.domain.utils.CollectionUtils.mapTo;
 import static com.github.allisson95.codeflix.domain.utils.CollectionUtils.nullIfEmpty;
+import static com.github.allisson95.codeflix.infrastructure.utils.SqlUtils.like;
+import static com.github.allisson95.codeflix.infrastructure.utils.SqlUtils.upper;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -18,7 +20,6 @@ import com.github.allisson95.codeflix.domain.video.VideoGateway;
 import com.github.allisson95.codeflix.domain.video.VideoID;
 import com.github.allisson95.codeflix.domain.video.VideoPreview;
 import com.github.allisson95.codeflix.domain.video.VideoSearchQuery;
-import com.github.allisson95.codeflix.infrastructure.utils.SqlUtils;
 import com.github.allisson95.codeflix.infrastructure.video.persistence.VideoJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.video.persistence.VideoRepository;
 
@@ -60,7 +61,7 @@ public class DefaultVideoGateway implements VideoGateway {
                 Sort.by(Sort.Direction.fromString(aQuery.direction()), aQuery.sort()));
 
         final var actualPage = this.videoRepository.findAll(
-                SqlUtils.like(aQuery.terms()),
+                upper(like(aQuery.terms())),
                 nullIfEmpty(mapTo(aQuery.castMembers(), Identifier::getValue)),
                 nullIfEmpty(mapTo(aQuery.categories(), Identifier::getValue)),
                 nullIfEmpty(mapTo(aQuery.genres(), Identifier::getValue)),

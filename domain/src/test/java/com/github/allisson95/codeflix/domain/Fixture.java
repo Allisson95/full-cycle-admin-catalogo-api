@@ -140,25 +140,31 @@ public final class Fixture {
 
     public static class Genres {
 
-        private static final Genre TERROR = Genre.newGenre("Terror", true);
+        private static final Genre ACAO = Genre.newGenre("Ação", true);
         private static final Genre FICCAO_CIENTIFICA = Genre.newGenre("Ficção Científica", true);
+        private static final Genre TERROR = Genre.newGenre("Terror", true);
 
         private Genres() throws IllegalAccessException {
             throw new IllegalAccessException("Cannot construct a instance of Fixture.Genres");
         }
 
-        public static Genre terror() {
-            return Genre.with(TERROR);
+        public static Genre acao() {
+            return Genre.with(ACAO);
         }
 
         public static Genre ficcaoCientifica() {
             return Genre.with(FICCAO_CIENTIFICA);
         }
 
+        public static Genre terror() {
+            return Genre.with(TERROR);
+        }
+
         public static Genre random() {
             final var genre = FAKER.options().option(
-                    TERROR,
-                    FICCAO_CIENTIFICA);
+                    ACAO,
+                    FICCAO_CIENTIFICA,
+                    TERROR);
 
             return Genre.with(genre);
         }

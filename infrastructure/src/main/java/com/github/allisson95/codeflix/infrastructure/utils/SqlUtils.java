@@ -9,4 +9,9 @@ public final class SqlUtils {
         return "%" + term + "%";
     }
 
+    public static String upper(final String term) {
+        if (term == null) return null;
+        return term.toUpperCase();
+    }
+
 }

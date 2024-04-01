@@ -8,22 +8,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.Year;
 import java.util.Set;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.allisson95.codeflix.IntegrationTest;
 import com.github.allisson95.codeflix.domain.Fixture;
+import com.github.allisson95.codeflix.domain.castmember.CastMember;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberGateway;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
+import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.category.CategoryGateway;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
+import com.github.allisson95.codeflix.domain.genre.Genre;
 import com.github.allisson95.codeflix.domain.genre.GenreGateway;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.video.ImageMedia;
 import com.github.allisson95.codeflix.domain.video.Video;
 import com.github.allisson95.codeflix.domain.video.VideoID;
 import com.github.allisson95.codeflix.domain.video.VideoMedia;
+import com.github.allisson95.codeflix.domain.video.VideoSearchQuery;
 import com.github.allisson95.codeflix.infrastructure.video.persistence.VideoRepository;
 
 @IntegrationTest
@@ -44,6 +51,27 @@ class DefaultVideoGatewayTest {
     @Autowired
     private VideoRepository videoRepository;
 
+    private Category filmes;
+    private Category documentarios;
+    private Genre acao;
+    private Genre ficcaoCientifica;
+    private Genre terror;
+    private CastMember nicolasCage;
+    private CastMember morganFreeman;
+
+    @BeforeEach
+    public void setUp() {
+        filmes = this.categoryGateway.create(Fixture.Categories.filmes());
+        documentarios = this.categoryGateway.create(Fixture.Categories.documentarios());
+
+        acao = this.genreGateway.create(Fixture.Genres.acao());
+        ficcaoCientifica = this.genreGateway.create(Fixture.Genres.ficcaoCientifica());
+        terror = this.genreGateway.create(Fixture.Genres.terror());
+
+        nicolasCage = this.castMemberGateway.create(Fixture.CastMembers.nicolasCage());
+        morganFreeman = this.castMemberGateway.create(Fixture.CastMembers.morganFreeman());
+    }
+
     @Test
     void testInjection() {
         assertNotNull(videoGateway);
@@ -56,10 +84,6 @@ class DefaultVideoGatewayTest {
     @Transactional
     @Test
     void Given_AValidVideo_When_CallsCreate_Should_PersistIt() {
-        final var category = this.categoryGateway.create(Fixture.Categories.random());
-        final var genre = this.genreGateway.create(Fixture.Genres.random());
-        final var castMember = this.castMemberGateway.create(Fixture.CastMembers.clintEastwood());
-
         final var expectedTitle = Fixture.title();
         final var expectedDescription = Fixture.Videos.description();
         final var expectedLaunchedAt = Year.of(Fixture.year());
@@ -67,9 +91,9 @@ class DefaultVideoGatewayTest {
         final var expectedRating = Fixture.Videos.rating();
         final var expectedOpened = Fixture.bool();
         final var expectedPublished = Fixture.bool();
-        final var expectedCategories = Set.<CategoryID>of(category.getId());
-        final var expectedGenres = Set.<GenreID>of(genre.getId());
-        final var expectedCastMembers = Set.<CastMemberID>of(castMember.getId());
+        final var expectedCategories = Set.<CategoryID>of(filmes.getId());
+        final var expectedGenres = Set.<GenreID>of(ficcaoCientifica.getId());
+        final var expectedCastMembers = Set.<CastMemberID>of(nicolasCage.getId());
 
         final ImageMedia expectedBanner = ImageMedia.with("0bb2827c5eacf570b6064e24e0e6653b", "banner", "/images");
         final ImageMedia expectedThumbnail = ImageMedia.with("0bb2827c5eacf570b6064e24e0e6653b", "thumbnail", "/images");
@@ -78,16 +102,16 @@ class DefaultVideoGatewayTest {
         final VideoMedia expectedVideo = VideoMedia.with("0bb2827c5eacf570b6064e24e0e6653b", "video", "/videos");
 
         final var aVideo = Video.newVideo(
-                expectedTitle,
-                expectedDescription,
-                expectedLaunchedAt,
-                expectedDuration,
-                expectedRating,
-                expectedOpened,
-                expectedPublished,
-                expectedCategories,
-                expectedGenres,
-                expectedCastMembers)
+                    expectedTitle,
+                    expectedDescription,
+                    expectedLaunchedAt,
+                    expectedDuration,
+                    expectedRating,
+                    expectedOpened,
+                    expectedPublished,
+                    expectedCategories,
+                    expectedGenres,
+                    expectedCastMembers)
                 .setBanner(expectedBanner)
                 .setThumbnail(expectedThumbnail)
                 .setThumbnailHalf(expectedThumbnailHalf)
@@ -225,10 +249,6 @@ class DefaultVideoGatewayTest {
                 Set.<GenreID>of(),
                 Set.<CastMemberID>of()));
 
-        final var category = this.categoryGateway.create(Fixture.Categories.random());
-        final var genre = this.genreGateway.create(Fixture.Genres.random());
-        final var castMember = this.castMemberGateway.create(Fixture.CastMembers.clintEastwood());
-
         final var expectedTitle = Fixture.title();
         final var expectedDescription = Fixture.Videos.description();
         final var expectedLaunchedAt = Year.of(Fixture.year());
@@ -236,9 +256,9 @@ class DefaultVideoGatewayTest {
         final var expectedRating = Fixture.Videos.rating();
         final var expectedOpened = Fixture.bool();
         final var expectedPublished = Fixture.bool();
-        final var expectedCategories = Set.<CategoryID>of(category.getId());
-        final var expectedGenres = Set.<GenreID>of(genre.getId());
-        final var expectedCastMembers = Set.<CastMemberID>of(castMember.getId());
+        final var expectedCategories = Set.<CategoryID>of(filmes.getId());
+        final var expectedGenres = Set.<GenreID>of(ficcaoCientifica.getId());
+        final var expectedCastMembers = Set.<CastMemberID>of(nicolasCage.getId());
 
         final ImageMedia expectedBanner = ImageMedia.with("0bb2827c5eacf570b6064e24e0e6653b", "banner", "/images");
         final ImageMedia expectedThumbnail = ImageMedia.with("0bb2827c5eacf570b6064e24e0e6653b", "thumbnail", "/images");
@@ -257,8 +277,7 @@ class DefaultVideoGatewayTest {
                         expectedPublished,
                         expectedCategories,
                         expectedGenres,
-                        expectedCastMembers
-                )
+                        expectedCastMembers)
                 .setBanner(expectedBanner)
                 .setThumbnail(expectedThumbnail)
                 .setThumbnailHalf(expectedThumbnailHalf)
@@ -369,10 +388,6 @@ class DefaultVideoGatewayTest {
 
     @Test
     void Given_AValidVideoId_When_CallsFindById_Should_ReturnIt() {
-        final var category = this.categoryGateway.create(Fixture.Categories.random());
-        final var genre = this.genreGateway.create(Fixture.Genres.random());
-        final var castMember = this.castMemberGateway.create(Fixture.CastMembers.clintEastwood());
-
         final var expectedTitle = Fixture.title();
         final var expectedDescription = Fixture.Videos.description();
         final var expectedLaunchedAt = Year.of(Fixture.year());
@@ -380,9 +395,9 @@ class DefaultVideoGatewayTest {
         final var expectedRating = Fixture.Videos.rating();
         final var expectedOpened = Fixture.bool();
         final var expectedPublished = Fixture.bool();
-        final var expectedCategories = Set.<CategoryID>of(category.getId());
-        final var expectedGenres = Set.<GenreID>of(genre.getId());
-        final var expectedCastMembers = Set.<CastMemberID>of(castMember.getId());
+        final var expectedCategories = Set.<CategoryID>of(filmes.getId());
+        final var expectedGenres = Set.<GenreID>of(ficcaoCientifica.getId());
+        final var expectedCastMembers = Set.<CastMemberID>of(nicolasCage.getId());
 
         final ImageMedia expectedBanner = ImageMedia.with("0bb2827c5eacf570b6064e24e0e6653b", "banner", "/images");
         final ImageMedia expectedThumbnail = ImageMedia.with("0bb2827c5eacf570b6064e24e0e6653b", "thumbnail", "/images");
@@ -401,8 +416,7 @@ class DefaultVideoGatewayTest {
                             expectedPublished,
                             expectedCategories,
                             expectedGenres,
-                            expectedCastMembers
-                        )
+                            expectedCastMembers)
                         .setBanner(expectedBanner)
                         .setThumbnail(expectedThumbnail)
                         .setThumbnailHalf(expectedThumbnailHalf)
@@ -455,6 +469,369 @@ class DefaultVideoGatewayTest {
 
         assertNotNull(actualVideo);
         assertTrue(actualVideo.isEmpty());
+    }
+
+    @Test
+    void Given_EmptyVideos_When_CallsFindAll_Should_ReturnAEmptyList() {
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "";
+        final var expectedSort = "title";
+        final var expectedDirection = "asc";
+        final var expectedTotal = 0;
+
+        final var aQuery = new VideoSearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection,
+                Set.<CastMemberID>of(),
+                Set.<CategoryID>of(),
+                Set.<GenreID>of());
+
+        final var actualPage = videoGateway.findAll(aQuery);
+
+        assertEquals(expectedPage, actualPage.currentPage());
+        assertEquals(expectedPerPage, actualPage.perPage());
+        assertEquals(expectedTotal, actualPage.total());
+        assertEquals(expectedTotal, actualPage.items().size());
+    }
+
+    @Test
+    void Given_DefaultParams_When_CallsFindAll_Should_ReturnAllList() {
+        this.mockVideos();
+
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "";
+        final var expectedSort = "title";
+        final var expectedDirection = "asc";
+        final var expectedTotal = 5;
+
+        final var aQuery = new VideoSearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection,
+                Set.<CastMemberID>of(),
+                Set.<CategoryID>of(),
+                Set.<GenreID>of());
+
+        final var actualPage = this.videoGateway.findAll(aQuery);
+
+        assertEquals(expectedPage, actualPage.currentPage());
+        assertEquals(expectedPerPage, actualPage.perPage());
+        assertEquals(expectedTotal, actualPage.total());
+        assertEquals(expectedTotal, actualPage.items().size());
+    }
+
+    @Test
+    void Given_AValidCategory_When_CallsFindAll_Should_ReturnFilteredList() {
+        this.mockVideos();
+
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "";
+        final var expectedSort = "title";
+        final var expectedDirection = "asc";
+        final var expectedTotal = 1;
+
+        final var aQuery = new VideoSearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection,
+                Set.<CastMemberID>of(),
+                Set.<CategoryID>of(documentarios.getId()),
+                Set.<GenreID>of());
+
+        final var actualPage = this.videoGateway.findAll(aQuery);
+
+        assertEquals(expectedPage, actualPage.currentPage());
+        assertEquals(expectedPerPage, actualPage.perPage());
+        assertEquals(expectedTotal, actualPage.total());
+        assertEquals(expectedTotal, actualPage.items().size());
+
+        assertEquals("Enigmas do Universo", actualPage.items().get(0).title());
+    }
+
+    @Test
+    void Given_AValidCastMember_When_CallsFindAll_Should_ReturnFilteredList() {
+        this.mockVideos();
+
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "";
+        final var expectedSort = "title";
+        final var expectedDirection = "asc";
+        final var expectedTotal = 2;
+
+        final var aQuery = new VideoSearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection,
+                Set.<CastMemberID>of(nicolasCage.getId()),
+                Set.<CategoryID>of(),
+                Set.<GenreID>of());
+
+        final var actualPage = this.videoGateway.findAll(aQuery);
+
+        assertEquals(expectedPage, actualPage.currentPage());
+        assertEquals(expectedPerPage, actualPage.perPage());
+        assertEquals(expectedTotal, actualPage.total());
+        assertEquals(expectedTotal, actualPage.items().size());
+
+        assertEquals("Arcadian", actualPage.items().get(0).title());
+        assertEquals("O Apocalipse", actualPage.items().get(1).title());
+    }
+
+    @Test
+    void Given_AValidGenre_When_CallsFindAll_Should_ReturnFilteredList() {
+        this.mockVideos();
+
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "";
+        final var expectedSort = "title";
+        final var expectedDirection = "asc";
+        final var expectedTotal = 3;
+
+        final var aQuery = new VideoSearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection,
+                Set.<CastMemberID>of(),
+                Set.<CategoryID>of(),
+                Set.<GenreID>of(ficcaoCientifica.getId()));
+
+        final var actualPage = this.videoGateway.findAll(aQuery);
+
+        assertEquals(expectedPage, actualPage.currentPage());
+        assertEquals(expectedPerPage, actualPage.perPage());
+        assertEquals(expectedTotal, actualPage.total());
+        assertEquals(expectedTotal, actualPage.items().size());
+
+        assertEquals("Enigmas do Universo", actualPage.items().get(0).title());
+        assertEquals("O Apocalipse", actualPage.items().get(1).title());
+        assertEquals("Transcendence - A Revolução", actualPage.items().get(2).title());
+    }
+
+    @Test
+    void Given_AllParams_When_CallsFindAll_Should_ReturnFilteredList() {
+        this.mockVideos();
+
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "Revolução";
+        final var expectedSort = "title";
+        final var expectedDirection = "asc";
+        final var expectedTotal = 1;
+
+        final var aQuery = new VideoSearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection,
+                Set.<CastMemberID>of(morganFreeman.getId()),
+                Set.<CategoryID>of(filmes.getId()),
+                Set.<GenreID>of(ficcaoCientifica.getId()));
+
+        final var actualPage = this.videoGateway.findAll(aQuery);
+
+        assertEquals(expectedPage, actualPage.currentPage());
+        assertEquals(expectedPerPage, actualPage.perPage());
+        assertEquals(expectedTotal, actualPage.total());
+        assertEquals(expectedTotal, actualPage.items().size());
+
+        assertEquals("Transcendence - A Revolução", actualPage.items().get(0).title());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "title,asc,0,10,5,5,Arcadian",
+            "title,desc,0,10,5,5,Transcendence - A Revolução",
+            "createdAt,asc,0,10,5,5,Arcadian",
+            "createdAt,desc,0,10,5,5,O Problema dos 3 Corpos",
+    })
+    void Given_AValidSortAndDirection_When_CallsFindAll_Should_ReturnOrdered(
+            final String expectedSort,
+            final String expectedDirection,
+            final int expectedPage,
+            final int expectedPerPage,
+            final int expectedItemsCount,
+            final long expectedTotal,
+            final String expectedVideoTitle) {
+        this.mockVideos();
+
+        final var expectedTerms = "";
+
+        final var aQuery = new VideoSearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection,
+                Set.<CastMemberID>of(),
+                Set.<CategoryID>of(),
+                Set.<GenreID>of());
+
+        final var actualPage = videoGateway.findAll(aQuery);
+
+        assertEquals(expectedPage, actualPage.currentPage());
+        assertEquals(expectedPerPage, actualPage.perPage());
+        assertEquals(expectedTotal, actualPage.total());
+        assertEquals(expectedItemsCount, actualPage.items().size());
+        assertEquals(expectedVideoTitle, actualPage.items().get(0).title());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "ar,0,10,1,1,Arcadian",
+            "sc,0,10,1,1,Transcendence - A Revolução",
+            "pro,0,10,1,1,O Problema dos 3 Corpos",
+            "vers,0,10,1,1,Enigmas do Universo",
+            "apoca,0,10,1,1,O Apocalipse",
+    })
+    void Given_AValidTerms_When_CallsFindAll_Should_ReturnFiltered(
+            final String expectedTerms,
+            final int expectedPage,
+            final int expectedPerPage,
+            final int expectedItemsCount,
+            final long expectedTotal,
+            final String expectedVideoTitle) {
+        this.mockVideos();
+
+        final var expectedSort = "title";
+        final var expectedDirection = "asc";
+
+        final var aQuery = new VideoSearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection,
+                Set.<CastMemberID>of(),
+                Set.<CategoryID>of(),
+                Set.<GenreID>of());
+
+        final var actualPage = this.videoGateway.findAll(aQuery);
+
+        assertEquals(expectedPage, actualPage.currentPage());
+        assertEquals(expectedPerPage, actualPage.perPage());
+        assertEquals(expectedTotal, actualPage.total());
+        assertEquals(expectedItemsCount, actualPage.items().size());
+        assertEquals(expectedVideoTitle, actualPage.items().get(0).title());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "0,2,2,5,Arcadian;Enigmas do Universo",
+            "1,2,2,5,O Apocalipse;O Problema dos 3 Corpos",
+            "2,2,1,5,Transcendence - A Revolução",
+    })
+    void Given_AValidPage_When_CallsFindAll_Should_ReturnPaginated(
+            final int expectedPage,
+            final int expectedPerPage,
+            final int expectedItemsCount,
+            final long expectedTotal,
+            final String expectedVideos) {
+        this.mockVideos();
+
+        final var expectedTerms = "";
+        final var expectedSort = "title";
+        final var expectedDirection = "asc";
+
+        final var aQuery = new VideoSearchQuery(
+                expectedPage,
+                expectedPerPage,
+                expectedTerms,
+                expectedSort,
+                expectedDirection,
+                Set.<CastMemberID>of(),
+                Set.<CategoryID>of(),
+                Set.<GenreID>of());
+
+        final var actualPage = this.videoGateway.findAll(aQuery);
+
+        assertEquals(expectedPage, actualPage.currentPage());
+        assertEquals(expectedPerPage, actualPage.perPage());
+        assertEquals(expectedTotal, actualPage.total());
+        assertEquals(expectedItemsCount, actualPage.items().size());
+
+        final var expectedVideosTitle = expectedVideos.split(";");
+        for (int i = 0; i < expectedVideosTitle.length; i++) {
+            assertEquals(expectedVideosTitle[i], actualPage.items().get(i).title());
+        }
+    }
+
+    private void mockVideos() {
+        this.videoGateway.create(Video.newVideo(
+                "Arcadian",
+                Fixture.Videos.description(),
+                Year.of(Fixture.year()),
+                Fixture.duration(),
+                Fixture.Videos.rating(),
+                Fixture.bool(),
+                Fixture.bool(),
+                Set.<CategoryID>of(filmes.getId()),
+                Set.<GenreID>of(terror.getId()),
+                Set.<CastMemberID>of(nicolasCage.getId())));
+
+        this.videoGateway.create(Video.newVideo(
+                "O Apocalipse",
+                Fixture.Videos.description(),
+                Year.of(Fixture.year()),
+                Fixture.duration(),
+                Fixture.Videos.rating(),
+                Fixture.bool(),
+                Fixture.bool(),
+                Set.<CategoryID>of(filmes.getId()),
+                Set.<GenreID>of(acao.getId(), ficcaoCientifica.getId()),
+                Set.<CastMemberID>of(nicolasCage.getId())));
+
+        this.videoGateway.create(Video.newVideo(
+                "Transcendence - A Revolução",
+                Fixture.Videos.description(),
+                Year.of(Fixture.year()),
+                Fixture.duration(),
+                Fixture.Videos.rating(),
+                Fixture.bool(),
+                Fixture.bool(),
+                Set.<CategoryID>of(filmes.getId()),
+                Set.<GenreID>of(ficcaoCientifica.getId()),
+                Set.<CastMemberID>of(morganFreeman.getId())));
+
+        this.videoGateway.create(Video.newVideo(
+                "Enigmas do Universo",
+                Fixture.Videos.description(),
+                Year.of(Fixture.year()),
+                Fixture.duration(),
+                Fixture.Videos.rating(),
+                Fixture.bool(),
+                Fixture.bool(),
+                Set.<CategoryID>of(documentarios.getId()),
+                Set.<GenreID>of(ficcaoCientifica.getId()),
+                Set.<CastMemberID>of(morganFreeman.getId())));
+
+        this.videoGateway.create(Video.newVideo(
+                "O Problema dos 3 Corpos",
+                Fixture.Videos.description(),
+                Year.of(Fixture.year()),
+                Fixture.duration(),
+                Fixture.Videos.rating(),
+                Fixture.bool(),
+                Fixture.bool(),
+                Set.<CategoryID>of(),
+                Set.<GenreID>of(),
+                Set.<CastMemberID>of()));
     }
 
 }

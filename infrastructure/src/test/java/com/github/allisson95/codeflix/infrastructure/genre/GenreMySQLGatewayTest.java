@@ -441,7 +441,7 @@ class GenreMySQLGatewayTest {
             "createdAt,asc,0,10,5,5,Comédia Romântica",
             "createdAt,desc,0,10,5,5,Ficção Científica",
     })
-    void Given_AValidSortAndDirection_When_CallsFindAll_Should_ReturnFiltered(
+    void Given_AValidSortAndDirection_When_CallsFindAll_Should_ReturnOrdered(
             final String expectedSort,
             final String expectedDirection,
             final int expectedPage,
