@@ -3,7 +3,7 @@ package com.github.allisson95.codeflix.application.video.update;
 import java.util.Optional;
 import java.util.Set;
 
-import com.github.allisson95.codeflix.domain.video.Resource;
+import com.github.allisson95.codeflix.domain.resource.Resource;
 
 public record UpdateVideoCommand(
         String id,

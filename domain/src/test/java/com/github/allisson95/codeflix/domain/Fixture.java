@@ -12,9 +12,13 @@ import com.github.allisson95.codeflix.domain.castmember.CastMember;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
 import com.github.allisson95.codeflix.domain.category.Category;
 import com.github.allisson95.codeflix.domain.genre.Genre;
+import com.github.allisson95.codeflix.domain.resource.Resource;
+import com.github.allisson95.codeflix.domain.utils.IdUtils;
+import com.github.allisson95.codeflix.domain.video.ImageMedia;
 import com.github.allisson95.codeflix.domain.video.Rating;
-import com.github.allisson95.codeflix.domain.video.Resource;
 import com.github.allisson95.codeflix.domain.video.Video;
+import com.github.allisson95.codeflix.domain.video.VideoMedia;
+import com.github.allisson95.codeflix.domain.video.VideoMediaType;
 
 import net.datafaker.Faker;
 
@@ -203,15 +207,30 @@ public final class Fixture {
             return FAKER.options().option(Rating.values());
         }
 
-        public static Resource resource(final Resource.Type type) {
+        public static Resource resource(final VideoMediaType type) {
             final String contentType = Match(type).of(
-                Case($(List(Resource.Type.VIDEO, Resource.Type.TRAILER)::contains), "video/mp4"),
+                Case($(List(VideoMediaType.VIDEO, VideoMediaType.TRAILER)::contains), "video/mp4"),
                 Case($(), "image/jpg")
             );
 
+            final String checksum = IdUtils.uuid();
             final byte[] content = "content".getBytes();
 
-            return Resource.of(content, contentType, type.name().toLowerCase(), type);
+            return Resource.of(checksum, content, contentType, type.name().toLowerCase());
+        }
+
+        public static ImageMedia imageMedia(final VideoMediaType type) {
+            final var checksum = IdUtils.uuid();
+            final var name = type.name().toLowerCase() + "_" + checksum;
+
+            return ImageMedia.with(checksum, name, "/images/".concat(name));
+        }
+
+        public static VideoMedia videoMedia(final VideoMediaType type) {
+            final var checksum = IdUtils.uuid();
+            final var name = type.name().toLowerCase() + "_" + checksum;
+
+            return VideoMedia.with(checksum, name, "/videos/".concat(name));
         }
 
     }

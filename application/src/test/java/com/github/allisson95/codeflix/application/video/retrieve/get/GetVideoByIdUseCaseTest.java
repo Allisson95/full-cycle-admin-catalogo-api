@@ -20,13 +20,10 @@ import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
-import com.github.allisson95.codeflix.domain.utils.IdUtils;
-import com.github.allisson95.codeflix.domain.video.ImageMedia;
-import com.github.allisson95.codeflix.domain.video.Resource;
 import com.github.allisson95.codeflix.domain.video.Video;
 import com.github.allisson95.codeflix.domain.video.VideoGateway;
 import com.github.allisson95.codeflix.domain.video.VideoID;
-import com.github.allisson95.codeflix.domain.video.VideoMedia;
+import com.github.allisson95.codeflix.domain.video.VideoMediaType;
 
 class GetVideoByIdUseCaseTest extends UseCaseTest {
 
@@ -56,11 +53,11 @@ class GetVideoByIdUseCaseTest extends UseCaseTest {
                 Fixture.CastMembers.clintEastwood().getId(),
                 Fixture.CastMembers.morganFreeman().getId());
 
-        final var expectedBanner = imageMedia(Resource.Type.BANNER);
-        final var expectedThumbnail = imageMedia(Resource.Type.THUMBNAIL);
-        final var expectedThumbnailHalf = imageMedia(Resource.Type.THUMBNAIL_HALF);
-        final var expectedTrailer = videoMedia(Resource.Type.TRAILER);
-        final var expectedVideo = videoMedia(Resource.Type.VIDEO);
+        final var expectedBanner = Fixture.Videos.imageMedia(VideoMediaType.BANNER);
+        final var expectedThumbnail = Fixture.Videos.imageMedia(VideoMediaType.THUMBNAIL);
+        final var expectedThumbnailHalf = Fixture.Videos.imageMedia(VideoMediaType.THUMBNAIL_HALF);
+        final var expectedTrailer = Fixture.Videos.videoMedia(VideoMediaType.TRAILER);
+        final var expectedVideo = Fixture.Videos.videoMedia(VideoMediaType.VIDEO);
 
         final var aVideo = Video.newVideo(
                 expectedTitle,
@@ -120,22 +117,6 @@ class GetVideoByIdUseCaseTest extends UseCaseTest {
                 () -> this.useCase.execute(expectedId.getValue()));
 
         assertEquals(expectedErrorMessage, actualError.getMessage());
-    }
-
-    private ImageMedia imageMedia(final Resource.Type type) {
-        final var checksum = IdUtils.uuid();
-        return ImageMedia.with(
-                checksum,
-                type.name().toLowerCase(),
-                "/images/" + checksum);
-    }
-
-    private VideoMedia videoMedia(final Resource.Type type) {
-        final var checksum = IdUtils.uuid();
-        return VideoMedia.with(
-                checksum,
-                type.name().toLowerCase(),
-                "/images/" + checksum);
     }
 
 }

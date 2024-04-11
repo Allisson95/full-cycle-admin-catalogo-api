@@ -24,6 +24,8 @@ import com.github.allisson95.codeflix.domain.video.MediaResourceGateway;
 import com.github.allisson95.codeflix.domain.video.Rating;
 import com.github.allisson95.codeflix.domain.video.Video;
 import com.github.allisson95.codeflix.domain.video.VideoGateway;
+import com.github.allisson95.codeflix.domain.video.VideoMediaType;
+import com.github.allisson95.codeflix.domain.video.VideoResource;
 
 public class DefaultCreateVideoUseCase extends CreateVideoUseCase {
 
@@ -86,23 +88,23 @@ public class DefaultCreateVideoUseCase extends CreateVideoUseCase {
 
         try {
             final var aBannerMedia = aCommand.getBanner()
-                    .map(it -> this.mediaResourceGateway.storeImage(anId, it))
+                    .map(it -> this.mediaResourceGateway.storeImage(anId, VideoResource.with(it, VideoMediaType.BANNER)))
                     .orElse(null);
 
             final var aThumbnailMedia = aCommand.getThumbnail()
-                    .map(it -> this.mediaResourceGateway.storeImage(anId, it))
+                    .map(it -> this.mediaResourceGateway.storeImage(anId, VideoResource.with(it, VideoMediaType.THUMBNAIL)))
                     .orElse(null);
 
             final var aThumbnailHalfMedia = aCommand.getThumbnailHalf()
-                    .map(it -> this.mediaResourceGateway.storeImage(anId, it))
+                    .map(it -> this.mediaResourceGateway.storeImage(anId, VideoResource.with(it, VideoMediaType.THUMBNAIL_HALF)))
                     .orElse(null);
 
             final var aVideoMedia = aCommand.getVideo()
-                    .map(it -> this.mediaResourceGateway.storeVideo(anId, it))
+                    .map(it -> this.mediaResourceGateway.storeVideo(anId, VideoResource.with(it, VideoMediaType.VIDEO)))
                     .orElse(null);
 
             final var aTrailerMedia = aCommand.getTrailer()
-                    .map(it -> this.mediaResourceGateway.storeVideo(anId, it))
+                    .map(it -> this.mediaResourceGateway.storeVideo(anId, VideoResource.with(it, VideoMediaType.TRAILER)))
                     .orElse(null);
 
             aVideo

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.github.allisson95.codeflix.domain.video.Resource;
+import com.github.allisson95.codeflix.domain.resource.Resource;
 import com.github.allisson95.codeflix.infrastructure.services.StorageService;
 
 public class InMemoryStorageService implements StorageService {

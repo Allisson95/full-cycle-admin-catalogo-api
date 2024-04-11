@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import com.github.allisson95.codeflix.domain.video.Resource;
+import com.github.allisson95.codeflix.domain.resource.Resource;
 
 public interface StorageService {
 
