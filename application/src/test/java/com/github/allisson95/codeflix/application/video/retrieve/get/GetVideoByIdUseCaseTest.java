@@ -22,7 +22,6 @@ import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.utils.IdUtils;
 import com.github.allisson95.codeflix.domain.video.ImageMedia;
-import com.github.allisson95.codeflix.domain.video.MediaStatus;
 import com.github.allisson95.codeflix.domain.video.Resource;
 import com.github.allisson95.codeflix.domain.video.Video;
 import com.github.allisson95.codeflix.domain.video.VideoGateway;

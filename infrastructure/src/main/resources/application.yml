@@ -1,3 +1,22 @@
+google:
+  cloud:
+    credentials: ${GOOGLE_CLOUD_CREDENTIALS}
+    project-id: ${GOOGLE_CLOUD_PROJECT_ID}
+    storage:
+      video-catalog:
+        bucket: fc_cf_video_catalog
+        connectTimeout: 1000
+        readTimeout: 2000
+        retryDelay: 50
+        retryMaxAttempts: 2
+        retryMaxDelay: 50
+        retryMultiplier: 1.0
+
+logging:
+  level:
+    root: INFO
+    '[com.github.allisson95.codeflix]': DEBUG
+
 server:
   port: 8080
   servlet:
