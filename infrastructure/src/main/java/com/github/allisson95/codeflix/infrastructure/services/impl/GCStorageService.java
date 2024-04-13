@@ -38,7 +38,7 @@ public class GCStorageService implements StorageService {
                         it.getCrc32cToHexString(),
                         it.getContent(),
                         it.getContentType(),
-                        name));
+                        it.getName()));
     }
 
     @Override

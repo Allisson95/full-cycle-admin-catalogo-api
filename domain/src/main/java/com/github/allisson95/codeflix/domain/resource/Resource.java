@@ -1,5 +1,6 @@
 package com.github.allisson95.codeflix.domain.resource;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import com.github.allisson95.codeflix.domain.ValueObject;
@@ -36,6 +37,28 @@ public class Resource extends ValueObject {
 
     public String name() {
         return name;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(content);
+        result = prime * result + Objects.hash(checksum, contentType, name);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Resource other = (Resource) obj;
+        return Objects.equals(checksum, other.checksum) && Arrays.equals(content, other.content)
+                && Objects.equals(contentType, other.contentType) && Objects.equals(name, other.name);
     }
 
 }
