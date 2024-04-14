@@ -233,6 +233,10 @@ public final class Fixture {
             return VideoMedia.with(checksum, name, "/videos/".concat(name));
         }
 
+        public static VideoMediaType videoMediaType() {
+            return FAKER.options().option(VideoMediaType.values());
+        }
+
     }
 
 }
