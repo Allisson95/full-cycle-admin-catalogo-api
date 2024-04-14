@@ -1,4 +1,4 @@
-package com.github.allisson95.codeflix.infrastructure.configuration.properties;
+package com.github.allisson95.codeflix.infrastructure.configuration.properties.google;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
