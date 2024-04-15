@@ -20,4 +20,8 @@ public class NotFoundException extends DomainException {
         return new NotFoundException(anError, Collections.emptyList());
     }
 
+    public static NotFoundException with(final Error anError) {
+        return new NotFoundException(anError.message(), List.of(anError));
+    }
+
 }
