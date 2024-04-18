@@ -1,6 +1,7 @@
 package com.github.allisson95.codeflix.infrastructure.video;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -31,7 +32,7 @@ public class DefaultMediaResourceGateway implements MediaResourceGateway {
 
     @Override
     public VideoMedia storeVideo(final VideoID anId, final VideoResource videoResource) {
-        final var filepath = filepath(anId, videoResource);
+        final var filepath = filepath(anId, videoResource.getType());
         final var aResource = videoResource.getResource();
         store(filepath, aResource);
         return VideoMedia.with(aResource.checksum(), aResource.name(), filepath);
@@ -39,10 +40,15 @@ public class DefaultMediaResourceGateway implements MediaResourceGateway {
 
     @Override
     public ImageMedia storeImage(final VideoID anId, final VideoResource videoResource) {
-        final var filepath = filepath(anId, videoResource);
+        final var filepath = filepath(anId, videoResource.getType());
         final var aResource = videoResource.getResource();
         store(filepath, aResource);
         return ImageMedia.with(aResource.checksum(), aResource.name(), filepath);
+    }
+
+    @Override
+    public Optional<Resource> getResource(VideoID anId, VideoMediaType aType) {
+        return this.storageService.get(filepath(anId, aType));
     }
 
     @Override
@@ -59,10 +65,10 @@ public class DefaultMediaResourceGateway implements MediaResourceGateway {
         return locationPattern.replace("{videoId}", anId.getValue());
     }
 
-    private String filepath(final VideoID anId, final VideoResource videoResource) {
+    private String filepath(final VideoID anId, final VideoMediaType aType) {
         return folder(anId)
                 .concat("/")
-                .concat(filename(videoResource.getType()));
+                .concat(filename(aType));
     }
 
     private void store(final String filepath, final Resource aResource) {
