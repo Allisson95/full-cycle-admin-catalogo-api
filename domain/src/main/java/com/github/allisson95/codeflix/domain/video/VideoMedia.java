@@ -46,6 +46,26 @@ public class VideoMedia extends ValueObject {
         return with(IdUtils.uuid(), checksum, name, rawLocation, "", MediaStatus.PENDING);
     }
 
+    public VideoMedia processing() {
+        return VideoMedia.with(
+                id(),
+                checksum(),
+                name(),
+                rawLocation(),
+                encodedLocation(),
+                MediaStatus.PROCESSING);
+    }
+
+    public VideoMedia completed(final String encodedLocation) {
+        return VideoMedia.with(
+                id(),
+                checksum(),
+                name(),
+                rawLocation(),
+                encodedLocation,
+                MediaStatus.COMPLETED);
+    }
+
     public String id() {
         return id;
     }

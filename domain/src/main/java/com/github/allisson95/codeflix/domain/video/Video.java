@@ -234,6 +234,38 @@ public class Video extends AggregateRoot<VideoID> {
         return this;
     }
 
+    public Video processing(final VideoMediaType aType) {
+        switch (aType) {
+            case TRAILER:
+                getTrailer().ifPresent(media -> setTrailer(media.processing()));
+                break;
+            case VIDEO:
+                getVideo().ifPresent(media -> setVideo(media.processing()));
+                break;
+
+            default:
+                break;
+        }
+
+        return this;
+    }
+
+    public Video completed(final VideoMediaType aType, final String encodedLocation) {
+        switch (aType) {
+            case TRAILER:
+                getTrailer().ifPresent(media -> setTrailer(media.completed(encodedLocation)));
+                break;
+            case VIDEO:
+                getVideo().ifPresent(media -> setVideo(media.completed(encodedLocation)));
+                break;
+
+            default:
+                break;
+        }
+
+        return this;
+    }
+
     @Override
     public void validate(final ValidationHandler aHandler) {
         new VideoValidator(this, aHandler).validate();
