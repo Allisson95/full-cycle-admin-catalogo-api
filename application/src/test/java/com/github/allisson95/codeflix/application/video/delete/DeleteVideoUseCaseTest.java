@@ -15,6 +15,7 @@ import org.mockito.Mock;
 
 import com.github.allisson95.codeflix.application.UseCaseTest;
 import com.github.allisson95.codeflix.domain.exceptions.InternalErrorException;
+import com.github.allisson95.codeflix.domain.video.MediaResourceGateway;
 import com.github.allisson95.codeflix.domain.video.VideoGateway;
 import com.github.allisson95.codeflix.domain.video.VideoID;
 
@@ -26,9 +27,14 @@ class DeleteVideoUseCaseTest extends UseCaseTest {
     @Mock
     private VideoGateway videoGateway;
 
+    @Mock
+    private MediaResourceGateway mediaResourceGateway;
+
     @Override
     protected List<Object> getMocksForClean() {
-        return List.of(videoGateway);
+        return List.of(
+                videoGateway,
+                mediaResourceGateway);
     }
 
     @Test
@@ -38,9 +44,13 @@ class DeleteVideoUseCaseTest extends UseCaseTest {
         doNothing()
                 .when(videoGateway).deleteById(any());
 
+        doNothing()
+                .when(mediaResourceGateway).clearResources(any());
+
         assertDoesNotThrow(() -> this.useCase.execute(videoId.getValue()));
 
         verify(videoGateway).deleteById(videoId);
+        verify(mediaResourceGateway).clearResources(videoId);
     }
 
     @Test
@@ -50,9 +60,13 @@ class DeleteVideoUseCaseTest extends UseCaseTest {
         doNothing()
                 .when(videoGateway).deleteById(any());
 
+        doNothing()
+                .when(mediaResourceGateway).clearResources(any());
+
         assertDoesNotThrow(() -> this.useCase.execute(videoId.getValue()));
 
         verify(videoGateway).deleteById(videoId);
+        verify(mediaResourceGateway).clearResources(videoId);
     }
 
     @Test
