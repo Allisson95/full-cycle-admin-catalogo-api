@@ -1,5 +1,18 @@
+amqp:
+  admin:
+      auto-create: true
+  host: rabbitmq
+  port: 5672
+  username: admin_videos
+  password: 123456
+
 mysql:
   url: ${mysql.host}:${mysql.port}
   schema: admin_catalogo
   username:
   password:
+
+spring:
+  autoconfigure:
+    exclude:
+    - org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration

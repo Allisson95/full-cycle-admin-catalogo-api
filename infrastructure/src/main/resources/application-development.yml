@@ -1,3 +1,11 @@
+amqp:
+  admin:
+      auto-create: true
+  host: rabbitmq
+  port: 5672
+  username: admin_videos
+  password: 123456
+
 mysql:
   url: db:3306
   schema: admin_catalogo
