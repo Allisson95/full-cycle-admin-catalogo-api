@@ -25,6 +25,20 @@ services:
     volumes:
       - admin-catalogo-db:/var/lib/mysql
 
+  rabbitmq:
+    container_name: admin-videos-rabbitmq
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=SWQOKODSQALRPCLNMEQG
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-admin_videos}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-123456}
+      - RABBITMQ_DEFAULT_VHOST=/
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      - codeflix-network
+
 volumes:
   admin-catalogo-db:
     driver: local
