@@ -78,7 +78,7 @@ class EntityTest {
         assertEquals(expectedSentEvents, counter.getCounter());
     }
 
-    public static class CounterDomainEventPublisher implements DomainEventPublisher<DomainEvent> {
+    public static class CounterDomainEventPublisher implements DomainEventPublisher {
 
         private final AtomicInteger counter;
 

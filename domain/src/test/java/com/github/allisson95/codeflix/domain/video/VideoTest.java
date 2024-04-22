@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
+import com.github.allisson95.codeflix.domain.utils.InstantUtils;
 import com.github.allisson95.codeflix.domain.validation.handler.ThrowsValidationHandler;
 
 class VideoTest {
@@ -67,6 +68,8 @@ class VideoTest {
         assertTrue(actualVideo.getThumbnailHalf().isEmpty());
         assertTrue(actualVideo.getTrailer().isEmpty());
         assertTrue(actualVideo.getVideo().isEmpty());
+        assertNotNull(actualVideo.getDomainEvents());
+        assertTrue(actualVideo.getDomainEvents().isEmpty());
 
         assertDoesNotThrow(() -> actualVideo.validate(new ThrowsValidationHandler()));
     }
@@ -88,6 +91,8 @@ class VideoTest {
         final var expectedCategories = Set.of(CategoryID.unique());
         final var expectedGenres = Set.of(GenreID.unique());
         final var expectedMembers = Set.of(CastMemberID.unique());
+        final var expectedEvent = new VideoMediaCreated("resourceId", "filePath");
+        final var expectedEventCount = 1;
 
         final var aVideo = Video.newVideo(
                 " ",
@@ -100,6 +105,8 @@ class VideoTest {
                 Set.of(),
                 Set.of(),
                 Set.of());
+
+        aVideo.registerEvent(expectedEvent);
 
         final var actualVideo = Video.with(aVideo).update(
                 expectedTitle,
@@ -133,6 +140,9 @@ class VideoTest {
         assertTrue(actualVideo.getThumbnailHalf().isEmpty());
         assertTrue(actualVideo.getTrailer().isEmpty());
         assertTrue(actualVideo.getVideo().isEmpty());
+
+        assertEquals(expectedEventCount, actualVideo.getDomainEvents().size());
+        assertEquals(expectedEvent, actualVideo.getDomainEvents().get(0));
 
         assertDoesNotThrow(() -> actualVideo.validate(new ThrowsValidationHandler()));
     }
@@ -425,6 +435,48 @@ class VideoTest {
         assertTrue(actualVideo.getVideo().isPresent());
 
         assertDoesNotThrow(() -> actualVideo.validate(new ThrowsValidationHandler()));
+    }
+
+    @Test
+    void Given_AValidVideo_When_CallsWith_Should_CreateWithoutEvents() {
+        final var expectedTitle = "System Design Interviews";
+        final var expectedDescription = """
+                Disclaimer: o estudo de caso apresentado tem fins educacionais e representa nossas opiniôes pessoais.
+                Esse vídeo faz parte da Imersão Full Stack && Full Cycle.
+                Para acessar todas as aulas, lives e desafios, acesse:
+                https://imersao.fullcycle.com.br/
+                """;
+        final var expectedLaunchedAt = Year.of(2022);
+        final var expectedDuration = 120.0;
+        final var expectedOpened = false;
+        final var expectedPublished = false;
+        final var expectedRating = Rating.L;
+        final var expectedCategories = Set.of(CategoryID.unique());
+        final var expectedGenres = Set.of(GenreID.unique());
+        final var expectedMembers = Set.of(CastMemberID.unique());
+
+        final var actualVideo = Video.with(
+                VideoID.unique(),
+                expectedTitle,
+                expectedDescription,
+                expectedLaunchedAt,
+                expectedDuration,
+                expectedRating,
+                expectedOpened,
+                expectedPublished,
+                InstantUtils.now(),
+                InstantUtils.now(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                expectedCategories,
+                expectedGenres,
+                expectedMembers);
+
+        assertNotNull(actualVideo.getDomainEvents());
+        assertTrue(actualVideo.getDomainEvents().isEmpty());
     }
 
 }

@@ -32,13 +32,12 @@ import com.github.allisson95.codeflix.domain.exceptions.InternalErrorException;
 import com.github.allisson95.codeflix.domain.genre.GenreGateway;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.resource.Resource;
-import com.github.allisson95.codeflix.domain.utils.IdUtils;
 import com.github.allisson95.codeflix.domain.video.ImageMedia;
 import com.github.allisson95.codeflix.domain.video.MediaResourceGateway;
-import com.github.allisson95.codeflix.domain.video.VideoMediaType;
-import com.github.allisson95.codeflix.domain.video.VideoResource;
 import com.github.allisson95.codeflix.domain.video.VideoGateway;
 import com.github.allisson95.codeflix.domain.video.VideoMedia;
+import com.github.allisson95.codeflix.domain.video.VideoMediaType;
+import com.github.allisson95.codeflix.domain.video.VideoResource;
 
 class CreateVideoUseCaseTest extends UseCaseTest {
 
