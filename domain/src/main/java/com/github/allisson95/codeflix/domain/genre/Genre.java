@@ -62,13 +62,13 @@ public class Genre extends AggregateRoot<GenreID> {
 
     public static Genre with(final Genre aGenre) {
         return with(
-                aGenre.id,
-                aGenre.name,
-                aGenre.active,
-                new ArrayList<>(aGenre.categories),
-                aGenre.createdAt,
-                aGenre.updatedAt,
-                aGenre.deletedAt);
+                aGenre.getId(),
+                aGenre.getName(),
+                aGenre.isActive(),
+                new ArrayList<>(aGenre.getCategories()),
+                aGenre.getCreatedAt(),
+                aGenre.getUpdatedAt(),
+                aGenre.getDeletedAt());
     }
 
     public Genre activate() {

@@ -4,12 +4,14 @@ import java.time.Instant;
 import java.time.Year;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import com.github.allisson95.codeflix.domain.AggregateRoot;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
+import com.github.allisson95.codeflix.domain.events.DomainEvent;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.utils.InstantUtils;
 import com.github.allisson95.codeflix.domain.validation.ValidationHandler;
@@ -57,8 +59,9 @@ public class Video extends AggregateRoot<VideoID> {
             final VideoMedia aVideo,
             final Set<CategoryID> categories,
             final Set<GenreID> genres,
-            final Set<CastMemberID> castMembers) {
-        super(anId);
+            final Set<CastMemberID> castMembers,
+            final List<DomainEvent> domainEvents) {
+        super(anId, domainEvents);
         this.title = aTitle;
         this.description = aDescription;
         this.launchedAt = aLaunchedYear;
@@ -110,7 +113,8 @@ public class Video extends AggregateRoot<VideoID> {
                 null,
                 categories,
                 genres,
-                castMembers);
+                castMembers,
+                null);
     }
 
     public static Video with(final Video video) {
@@ -132,7 +136,8 @@ public class Video extends AggregateRoot<VideoID> {
                 video.getVideo().orElse(null),
                 new HashSet<>(video.getCategories()),
                 new HashSet<>(video.getGenres()),
-                new HashSet<>(video.getCastMembers()));
+                new HashSet<>(video.getCastMembers()),
+                video.getDomainEvents());
     }
 
     public static Video with(
@@ -172,7 +177,8 @@ public class Video extends AggregateRoot<VideoID> {
                 aVideo,
                 categories,
                 genres,
-                castMembers);
+                castMembers,
+                null);
     }
 
     public Video setBanner(final ImageMedia aBanner) {
