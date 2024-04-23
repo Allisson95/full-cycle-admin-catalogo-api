@@ -112,11 +112,11 @@ class DefaultVideoGatewayTest {
                     expectedCategories,
                     expectedGenres,
                     expectedCastMembers)
-                .setBanner(expectedBanner)
-                .setThumbnail(expectedThumbnail)
-                .setThumbnailHalf(expectedThumbnailHalf)
-                .setTrailer(expectedTrailer)
-                .setVideo(expectedVideo);
+                .updateBannerMedia(expectedBanner)
+                .updateThumbnailMedia(expectedThumbnail)
+                .updateThumbnailHalfMedia(expectedThumbnailHalf)
+                .updateTrailerMedia(expectedTrailer)
+                .updateVideoMedia(expectedVideo);
 
         final var actualVideo = this.videoGateway.create(aVideo);
 
@@ -278,11 +278,11 @@ class DefaultVideoGatewayTest {
                         expectedCategories,
                         expectedGenres,
                         expectedCastMembers)
-                .setBanner(expectedBanner)
-                .setThumbnail(expectedThumbnail)
-                .setThumbnailHalf(expectedThumbnailHalf)
-                .setTrailer(expectedTrailer)
-                .setVideo(expectedVideo);
+                .updateBannerMedia(expectedBanner)
+                .updateThumbnailMedia(expectedThumbnail)
+                .updateThumbnailHalfMedia(expectedThumbnailHalf)
+                .updateTrailerMedia(expectedTrailer)
+                .updateVideoMedia(expectedVideo);
 
         final var actualVideo = this.videoGateway.update(updatedVideo);
 
@@ -417,11 +417,11 @@ class DefaultVideoGatewayTest {
                             expectedCategories,
                             expectedGenres,
                             expectedCastMembers)
-                        .setBanner(expectedBanner)
-                        .setThumbnail(expectedThumbnail)
-                        .setThumbnailHalf(expectedThumbnailHalf)
-                        .setTrailer(expectedTrailer)
-                        .setVideo(expectedVideo));
+                        .updateBannerMedia(expectedBanner)
+                        .updateThumbnailMedia(expectedThumbnail)
+                        .updateThumbnailHalfMedia(expectedThumbnailHalf)
+                        .updateTrailerMedia(expectedTrailer)
+                        .updateVideoMedia(expectedVideo));
 
         final var actualVideo = this.videoGateway.findById(aVideo.getId()).get();
 

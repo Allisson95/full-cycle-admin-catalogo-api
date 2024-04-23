@@ -117,11 +117,11 @@ public class DefaultUpdateVideoUseCase extends UpdateVideoUseCase {
                     .orElse(null);
 
             aVideo
-                    .setBanner(aBannerMedia)
-                    .setThumbnail(aThumbnailMedia)
-                    .setThumbnailHalf(aThumbnailHalfMedia)
-                    .setVideo(aVideoMedia)
-                    .setTrailer(aTrailerMedia);
+                    .updateBannerMedia(aBannerMedia)
+                    .updateThumbnailMedia(aThumbnailMedia)
+                    .updateThumbnailHalfMedia(aThumbnailHalfMedia)
+                    .updateVideoMedia(aVideoMedia)
+                    .updateTrailerMedia(aTrailerMedia);
 
             return this.videoGateway.update(aVideo);
         } catch (final Exception e) {

@@ -179,7 +179,7 @@ class VideoTest {
 
         final var aImageMedia = ImageMedia.with("d41d8cd98f00b204e9800998ecf8427e", "Teste", "/medias");
 
-        final var actualVideo = Video.with(aVideo).setBanner(aImageMedia);
+        final var actualVideo = Video.with(aVideo).updateBannerMedia(aImageMedia);
 
         assertNotNull(actualVideo);
         assertNotNull(actualVideo.getId());
@@ -237,7 +237,7 @@ class VideoTest {
 
         final var aImageMedia = ImageMedia.with("d41d8cd98f00b204e9800998ecf8427e", "Teste", "/medias");
 
-        final var actualVideo = Video.with(aVideo).setThumbnail(aImageMedia);
+        final var actualVideo = Video.with(aVideo).updateThumbnailMedia(aImageMedia);
 
         assertNotNull(actualVideo);
         assertNotNull(actualVideo.getId());
@@ -295,7 +295,7 @@ class VideoTest {
 
         final var aImageMedia = ImageMedia.with("d41d8cd98f00b204e9800998ecf8427e", "Teste", "/medias");
 
-        final var actualVideo = Video.with(aVideo).setThumbnailHalf(aImageMedia);
+        final var actualVideo = Video.with(aVideo).updateThumbnailHalfMedia(aImageMedia);
 
         assertNotNull(actualVideo);
         assertNotNull(actualVideo.getId());
@@ -338,6 +338,7 @@ class VideoTest {
         final var expectedCategories = Set.of(CategoryID.unique());
         final var expectedGenres = Set.of(GenreID.unique());
         final var expectedMembers = Set.of(CastMemberID.unique());
+        final var expectedDomainEventSize = 1;
 
         final var aVideo = Video.newVideo(
                 expectedTitle,
@@ -353,7 +354,7 @@ class VideoTest {
 
         final var aVideoMedia = VideoMedia.with("d41d8cd98f00b204e9800998ecf8427e", "Teste", "/medias/raw");
 
-        final var actualVideo = Video.with(aVideo).setTrailer(aVideoMedia);
+        final var actualVideo = Video.with(aVideo).updateTrailerMedia(aVideoMedia);
 
         assertNotNull(actualVideo);
         assertNotNull(actualVideo.getId());
@@ -375,6 +376,12 @@ class VideoTest {
         assertTrue(actualVideo.getThumbnailHalf().isEmpty());
         assertTrue(actualVideo.getTrailer().isPresent());
         assertTrue(actualVideo.getVideo().isEmpty());
+        assertEquals(expectedDomainEventSize, actualVideo.getDomainEvents().size());
+
+        final var actualEvent = (VideoMediaCreated) actualVideo.getDomainEvents().get(0);
+        assertEquals(aVideo.getId().getValue(), actualEvent.resourceId());
+        assertEquals(aVideoMedia.rawLocation(), actualEvent.filePath());
+        assertNotNull(actualEvent.occurredOn());
 
         assertDoesNotThrow(() -> actualVideo.validate(new ThrowsValidationHandler()));
     }
@@ -396,6 +403,7 @@ class VideoTest {
         final var expectedCategories = Set.of(CategoryID.unique());
         final var expectedGenres = Set.of(GenreID.unique());
         final var expectedMembers = Set.of(CastMemberID.unique());
+        final var expectedDomainEventSize = 1;
 
         final var aVideo = Video.newVideo(
                 expectedTitle,
@@ -411,7 +419,7 @@ class VideoTest {
 
         final var aVideoMedia = VideoMedia.with("d41d8cd98f00b204e9800998ecf8427e", "Teste", "/medias/raw");
 
-        final var actualVideo = Video.with(aVideo).setVideo(aVideoMedia);
+        final var actualVideo = Video.with(aVideo).updateVideoMedia(aVideoMedia);
 
         assertNotNull(actualVideo);
         assertNotNull(actualVideo.getId());
@@ -433,6 +441,12 @@ class VideoTest {
         assertTrue(actualVideo.getThumbnailHalf().isEmpty());
         assertTrue(actualVideo.getTrailer().isEmpty());
         assertTrue(actualVideo.getVideo().isPresent());
+        assertEquals(expectedDomainEventSize, actualVideo.getDomainEvents().size());
+
+        final var actualEvent = (VideoMediaCreated) actualVideo.getDomainEvents().get(0);
+        assertEquals(aVideo.getId().getValue(), actualEvent.resourceId());
+        assertEquals(aVideoMedia.rawLocation(), actualEvent.filePath());
+        assertNotNull(actualEvent.occurredOn());
 
         assertDoesNotThrow(() -> actualVideo.validate(new ThrowsValidationHandler()));
     }
