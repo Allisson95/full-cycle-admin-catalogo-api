@@ -20,6 +20,8 @@ import com.github.allisson95.codeflix.domain.video.VideoGateway;
 import com.github.allisson95.codeflix.domain.video.VideoID;
 import com.github.allisson95.codeflix.domain.video.VideoPreview;
 import com.github.allisson95.codeflix.domain.video.VideoSearchQuery;
+import com.github.allisson95.codeflix.infrastructure.configuration.annotations.VideoCreatedQueue;
+import com.github.allisson95.codeflix.infrastructure.services.EventService;
 import com.github.allisson95.codeflix.infrastructure.video.persistence.VideoJpaEntity;
 import com.github.allisson95.codeflix.infrastructure.video.persistence.VideoRepository;
 
@@ -27,9 +29,13 @@ import com.github.allisson95.codeflix.infrastructure.video.persistence.VideoRepo
 public class DefaultVideoGateway implements VideoGateway {
 
     private final VideoRepository videoRepository;
+    private final EventService eventService;
 
-    public DefaultVideoGateway(final VideoRepository videoRepository) {
+    public DefaultVideoGateway(
+            final VideoRepository videoRepository,
+            @VideoCreatedQueue final EventService eventService) {
         this.videoRepository = Objects.requireNonNull(videoRepository);
+        this.eventService = Objects.requireNonNull(eventService);
     }
 
     @Transactional
@@ -81,8 +87,12 @@ public class DefaultVideoGateway implements VideoGateway {
     }
 
     private Video save(final Video aVideo) {
-        return this.videoRepository.save(VideoJpaEntity.from(aVideo))
+        final var aggregate = this.videoRepository.save(VideoJpaEntity.from(aVideo))
                 .toAggregate();
+
+        aggregate.publishDomainEvents(this.eventService::send);
+
+        return aggregate;
     }
 
 }
