@@ -14,7 +14,7 @@ services:
         - VARIANT=17
         - INSTALL_GRADLE=true
         - GRADLE_VERSION=7.3
-        - NODE_VERSION=18.14.0
+        - NODE_VERSION=20.12.2
 
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
