@@ -24,8 +24,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RequestMapping(value = "cast_members")
-@Tag(name = "Cast Members")
+@RequestMapping(path = "cast_members")
+@Tag(name = "Cast Member")
 public interface CastMemberAPI {
 
     @PostMapping(

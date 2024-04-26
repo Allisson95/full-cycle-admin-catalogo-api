@@ -24,8 +24,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RequestMapping(value = "categories")
-@Tag(name = "Categories")
+@RequestMapping(path = "categories")
+@Tag(name = "Category")
 public interface CategoryAPI {
 
     @PostMapping(
