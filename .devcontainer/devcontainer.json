@@ -37,6 +37,7 @@
 				"java.codeGeneration.hashCodeEquals.useJava7Objects": true,
 				"java.compile.nullAnalysis.mode": "automatic",
 				"java.completion.favoriteStaticMembers": [
+					"org.assertj.core.api.Assertions.*",
 					"org.hamcrest.Matchers.*",
 					"org.hamcrest.MatcherAssert.*",
 					"org.junit.jupiter.api.Assertions.*",
