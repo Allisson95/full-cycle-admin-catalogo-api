@@ -1,5 +1,6 @@
 package com.github.allisson95.codeflix.infrastructure.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -13,7 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.Year;
 import java.util.Set;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,31 +132,31 @@ class VideoAPITest {
         assertEquals(expectedCategories, aCommand.categories());
         assertEquals(expectedGenres, aCommand.genres());
         assertEquals(expectedCastMembers, aCommand.castMembers());
-        Assertions.assertThat(aCommand.getBanner())
-            .isPresent()
-            .hasValueSatisfying(resource -> {
-                assertEquals(expectedBanner.getOriginalFilename(), resource.name());
-            });
-        Assertions.assertThat(aCommand.getThumbnail())
-            .isPresent()
-            .hasValueSatisfying(resource -> {
-                assertEquals(expectedThumbnail.getOriginalFilename(), resource.name());
-            });
-        Assertions.assertThat(aCommand.getThumbnailHalf())
-            .isPresent()
-            .hasValueSatisfying(resource -> {
-                assertEquals(expectedThumbnailHalf.getOriginalFilename(), resource.name());
-            });
-        Assertions.assertThat(aCommand.getTrailer())
-            .isPresent()
-            .hasValueSatisfying(resource -> {
-                assertEquals(expectedTrailer.getOriginalFilename(), resource.name());
-            });
-        Assertions.assertThat(aCommand.getVideo())
-            .isPresent()
-            .hasValueSatisfying(resource -> {
-                assertEquals(expectedVideo.getOriginalFilename(), resource.name());
-            });
+        assertThat(aCommand.getBanner())
+                .isPresent()
+                .hasValueSatisfying(resource -> {
+                    assertEquals(expectedBanner.getOriginalFilename(), resource.name());
+                });
+        assertThat(aCommand.getThumbnail())
+                .isPresent()
+                .hasValueSatisfying(resource -> {
+                    assertEquals(expectedThumbnail.getOriginalFilename(), resource.name());
+                });
+        assertThat(aCommand.getThumbnailHalf())
+                .isPresent()
+                .hasValueSatisfying(resource -> {
+                    assertEquals(expectedThumbnailHalf.getOriginalFilename(), resource.name());
+                });
+        assertThat(aCommand.getTrailer())
+                .isPresent()
+                .hasValueSatisfying(resource -> {
+                    assertEquals(expectedTrailer.getOriginalFilename(), resource.name());
+                });
+        assertThat(aCommand.getVideo())
+                .isPresent()
+                .hasValueSatisfying(resource -> {
+                    assertEquals(expectedVideo.getOriginalFilename(), resource.name());
+                });
     }
 
 }
