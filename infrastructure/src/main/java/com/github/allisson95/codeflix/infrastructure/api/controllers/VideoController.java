@@ -10,18 +10,25 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.github.allisson95.codeflix.application.video.create.CreateVideoCommand;
 import com.github.allisson95.codeflix.application.video.create.CreateVideoUseCase;
+import com.github.allisson95.codeflix.application.video.retrieve.get.GetVideoByIdUseCase;
 import com.github.allisson95.codeflix.domain.resource.Resource;
 import com.github.allisson95.codeflix.infrastructure.api.VideoAPI;
 import com.github.allisson95.codeflix.infrastructure.utils.HashingUtils;
 import com.github.allisson95.codeflix.infrastructure.video.models.CreateVideoRequest;
+import com.github.allisson95.codeflix.infrastructure.video.models.VideoResponse;
+import com.github.allisson95.codeflix.infrastructure.video.presenters.VideoApiPresenter;
 
 @RestController
 public class VideoController implements VideoAPI {
 
     private final CreateVideoUseCase createVideoUseCase;
+    private final GetVideoByIdUseCase getVideoByIdUseCase;
 
-    public VideoController(final CreateVideoUseCase createVideoUseCase) {
+    public VideoController(
+            final CreateVideoUseCase createVideoUseCase,
+            final GetVideoByIdUseCase getVideoByIdUseCase) {
         this.createVideoUseCase = Objects.requireNonNull(createVideoUseCase);
+        this.getVideoByIdUseCase = Objects.requireNonNull(getVideoByIdUseCase);
     }
 
     @Override
@@ -84,6 +91,11 @@ public class VideoController implements VideoAPI {
         return ResponseEntity
                 .created(URI.create("/videos/" + output.id()))
                 .body(output);
+    }
+
+    @Override
+    public VideoResponse getById(final String id) {
+        return VideoApiPresenter.present(this.getVideoByIdUseCase.execute(id));
     }
 
     private Resource resourceOf(final MultipartFile part) {
