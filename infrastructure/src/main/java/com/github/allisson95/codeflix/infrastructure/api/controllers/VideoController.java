@@ -13,6 +13,7 @@ import com.github.allisson95.codeflix.application.video.create.CreateVideoUseCas
 import com.github.allisson95.codeflix.domain.resource.Resource;
 import com.github.allisson95.codeflix.infrastructure.api.VideoAPI;
 import com.github.allisson95.codeflix.infrastructure.utils.HashingUtils;
+import com.github.allisson95.codeflix.infrastructure.video.models.CreateVideoRequest;
 
 @RestController
 public class VideoController implements VideoAPI {
@@ -56,6 +57,27 @@ public class VideoController implements VideoAPI {
                 resourceOf(thumbHalfFile),
                 resourceOf(trailerFile),
                 resourceOf(videoFile));
+
+        final var output = this.createVideoUseCase.execute(aCommand);
+
+        return ResponseEntity
+                .created(URI.create("/videos/" + output.id()))
+                .body(output);
+    }
+
+    @Override
+    public ResponseEntity<?> createPartial(final CreateVideoRequest request) {
+        final var aCommand = CreateVideoCommand.with(
+                request.title(),
+                request.description(),
+                request.yearLaunched(),
+                request.duration(),
+                request.rating(),
+                request.opened(),
+                request.published(),
+                request.categories(),
+                request.genres(),
+                request.castMembers());
 
         final var output = this.createVideoUseCase.execute(aCommand);
 

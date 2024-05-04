@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,6 +31,7 @@ import com.github.allisson95.codeflix.application.video.create.CreateVideoOutput
 import com.github.allisson95.codeflix.application.video.create.CreateVideoUseCase;
 import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.domain.video.VideoID;
+import com.github.allisson95.codeflix.infrastructure.video.models.CreateVideoRequest;
 
 @ControllerTest(controllers = { VideoAPI.class })
 class VideoAPITest {
@@ -112,6 +114,7 @@ class VideoAPITest {
                 .contentType(MediaType.MULTIPART_FORM_DATA);
 
         this.mockMvc.perform(request)
+                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
                 .andExpect(header().string("Location", equalTo("/videos/" + expectedId.getValue())))
@@ -200,6 +203,7 @@ class VideoAPITest {
                 .content(this.mapper.writeValueAsBytes(createVideoRequest));
 
         this.mockMvc.perform(request)
+                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
                 .andExpect(header().string("Location", equalTo("/videos/" + expectedId.getValue())))

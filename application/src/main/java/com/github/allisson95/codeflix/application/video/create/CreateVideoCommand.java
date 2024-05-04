@@ -56,6 +56,35 @@ public record CreateVideoCommand(
                 video);
     }
 
+    public static CreateVideoCommand with(
+            final String title,
+            final String description,
+            final Integer launchedAt,
+            final Double duration,
+            final String rating,
+            final boolean opened,
+            final boolean published,
+            final Set<String> categories,
+            final Set<String> genres,
+            final Set<String> castMembers) {
+        return new CreateVideoCommand(
+                title,
+                description,
+                launchedAt,
+                duration,
+                rating,
+                opened,
+                published,
+                categories,
+                genres,
+                castMembers,
+                null,
+                null,
+                null,
+                null,
+                null);
+    }
+
     public Optional<Integer> getLaunchedAt() {
         return Optional.ofNullable(launchedAt);
     }
