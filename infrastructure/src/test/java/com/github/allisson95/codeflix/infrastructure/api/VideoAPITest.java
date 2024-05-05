@@ -6,8 +6,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,6 +37,7 @@ import com.github.allisson95.codeflix.ControllerTest;
 import com.github.allisson95.codeflix.application.video.create.CreateVideoCommand;
 import com.github.allisson95.codeflix.application.video.create.CreateVideoOutput;
 import com.github.allisson95.codeflix.application.video.create.CreateVideoUseCase;
+import com.github.allisson95.codeflix.application.video.delete.DeleteVideoUseCase;
 import com.github.allisson95.codeflix.application.video.retrieve.get.GetVideoByIdUseCase;
 import com.github.allisson95.codeflix.application.video.retrieve.get.VideoOutput;
 import com.github.allisson95.codeflix.application.video.update.UpdateVideoCommand;
@@ -69,6 +72,9 @@ class VideoAPITest {
 
     @MockBean
     private UpdateVideoUseCase updateVideoUseCase;
+
+    @MockBean
+    private DeleteVideoUseCase deleteVideoUseCase;
 
     @Test
     void Given_AllParams_When_CallsCreateFull_Then_ReturnId() throws Exception {
@@ -504,6 +510,26 @@ class VideoAPITest {
         assertThat(aCommand.getThumbnailHalf()).isEmpty();
         assertThat(aCommand.getTrailer()).isEmpty();
         assertThat(aCommand.getVideo()).isEmpty();
+    }
+
+    @Test
+    void Given_AValidId_When_CallsDeleteById_Then_DeleteIt() throws Exception {
+        // given
+        final var expectedId = VideoID.unique();
+
+        doNothing()
+                .when(deleteVideoUseCase).execute(any());
+
+        // when
+        final var request = delete("/videos/{videoId}", expectedId.getValue())
+                .accept(MediaType.APPLICATION_JSON);
+
+        final var response = this.mockMvc.perform(request).andDo(print());
+
+        // then
+        response.andExpect(status().isNoContent());
+
+        verify(deleteVideoUseCase).execute(expectedId.getValue());
     }
 
 }
