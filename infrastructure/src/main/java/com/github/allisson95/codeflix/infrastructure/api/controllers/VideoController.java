@@ -1,5 +1,7 @@
 package com.github.allisson95.codeflix.infrastructure.api.controllers;
 
+import static com.github.allisson95.codeflix.domain.utils.CollectionUtils.mapTo;
+
 import java.net.URI;
 import java.util.Objects;
 import java.util.Set;
@@ -12,13 +14,20 @@ import com.github.allisson95.codeflix.application.video.create.CreateVideoComman
 import com.github.allisson95.codeflix.application.video.create.CreateVideoUseCase;
 import com.github.allisson95.codeflix.application.video.delete.DeleteVideoUseCase;
 import com.github.allisson95.codeflix.application.video.retrieve.get.GetVideoByIdUseCase;
+import com.github.allisson95.codeflix.application.video.retrieve.list.ListVideoUseCase;
 import com.github.allisson95.codeflix.application.video.update.UpdateVideoCommand;
 import com.github.allisson95.codeflix.application.video.update.UpdateVideoUseCase;
+import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
+import com.github.allisson95.codeflix.domain.category.CategoryID;
+import com.github.allisson95.codeflix.domain.genre.GenreID;
+import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.domain.resource.Resource;
+import com.github.allisson95.codeflix.domain.video.VideoSearchQuery;
 import com.github.allisson95.codeflix.infrastructure.api.VideoAPI;
 import com.github.allisson95.codeflix.infrastructure.utils.HashingUtils;
 import com.github.allisson95.codeflix.infrastructure.video.models.CreateVideoRequest;
 import com.github.allisson95.codeflix.infrastructure.video.models.UpdateVideoRequest;
+import com.github.allisson95.codeflix.infrastructure.video.models.VideoListResponse;
 import com.github.allisson95.codeflix.infrastructure.video.models.VideoResponse;
 import com.github.allisson95.codeflix.infrastructure.video.presenters.VideoApiPresenter;
 
@@ -29,16 +38,42 @@ public class VideoController implements VideoAPI {
     private final GetVideoByIdUseCase getVideoByIdUseCase;
     private final UpdateVideoUseCase updateVideoUseCase;
     private final DeleteVideoUseCase deleteVideoUseCase;
+    private final ListVideoUseCase listVideoUseCase;
 
     public VideoController(
             final CreateVideoUseCase createVideoUseCase,
             final GetVideoByIdUseCase getVideoByIdUseCase,
             final UpdateVideoUseCase updateVideoUseCase,
-            final DeleteVideoUseCase deleteVideoUseCase) {
+            final DeleteVideoUseCase deleteVideoUseCase,
+            final ListVideoUseCase listVideoUseCase) {
         this.createVideoUseCase = Objects.requireNonNull(createVideoUseCase);
         this.getVideoByIdUseCase = Objects.requireNonNull(getVideoByIdUseCase);
         this.updateVideoUseCase = Objects.requireNonNull(updateVideoUseCase);
         this.deleteVideoUseCase = Objects.requireNonNull(deleteVideoUseCase);
+        this.listVideoUseCase = Objects.requireNonNull(listVideoUseCase);
+    }
+
+    @Override
+    public Pagination<VideoListResponse> list(
+            final String search,
+            final int page,
+            final int perPage,
+            final String sort,
+            final String direction,
+            final Set<String> castMembersIds,
+            final Set<String> categoriesIds,
+            final Set<String> genresIds) {
+        final var aQuery = new VideoSearchQuery(
+                page,
+                perPage,
+                search,
+                sort,
+                direction,
+                mapTo(castMembersIds, CastMemberID::from),
+                mapTo(categoriesIds, CategoryID::from),
+                mapTo(genresIds, GenreID::from));
+
+        return VideoApiPresenter.present(this.listVideoUseCase.execute(aQuery));
     }
 
     @Override
