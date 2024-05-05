@@ -59,6 +59,37 @@ public record UpdateVideoCommand(
                 video);
     }
 
+    public static UpdateVideoCommand with(
+            final String id,
+            final String title,
+            final String description,
+            final Integer launchedAt,
+            final Double duration,
+            final String rating,
+            final boolean opened,
+            final boolean published,
+            final Set<String> categories,
+            final Set<String> genres,
+            final Set<String> castMembers) {
+        return new UpdateVideoCommand(
+                id,
+                title,
+                description,
+                launchedAt,
+                duration,
+                rating,
+                opened,
+                published,
+                categories,
+                genres,
+                castMembers,
+                null,
+                null,
+                null,
+                null,
+                null);
+    }
+
     public Optional<Integer> getLaunchedAt() {
         return Optional.ofNullable(launchedAt);
     }

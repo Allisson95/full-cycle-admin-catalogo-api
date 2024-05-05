@@ -11,10 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.github.allisson95.codeflix.application.video.create.CreateVideoCommand;
 import com.github.allisson95.codeflix.application.video.create.CreateVideoUseCase;
 import com.github.allisson95.codeflix.application.video.retrieve.get.GetVideoByIdUseCase;
+import com.github.allisson95.codeflix.application.video.update.UpdateVideoCommand;
+import com.github.allisson95.codeflix.application.video.update.UpdateVideoUseCase;
 import com.github.allisson95.codeflix.domain.resource.Resource;
 import com.github.allisson95.codeflix.infrastructure.api.VideoAPI;
 import com.github.allisson95.codeflix.infrastructure.utils.HashingUtils;
 import com.github.allisson95.codeflix.infrastructure.video.models.CreateVideoRequest;
+import com.github.allisson95.codeflix.infrastructure.video.models.UpdateVideoRequest;
 import com.github.allisson95.codeflix.infrastructure.video.models.VideoResponse;
 import com.github.allisson95.codeflix.infrastructure.video.presenters.VideoApiPresenter;
 
@@ -23,12 +26,15 @@ public class VideoController implements VideoAPI {
 
     private final CreateVideoUseCase createVideoUseCase;
     private final GetVideoByIdUseCase getVideoByIdUseCase;
+    private final UpdateVideoUseCase updateVideoUseCase;
 
     public VideoController(
             final CreateVideoUseCase createVideoUseCase,
-            final GetVideoByIdUseCase getVideoByIdUseCase) {
+            final GetVideoByIdUseCase getVideoByIdUseCase,
+            final UpdateVideoUseCase updateVideoUseCase) {
         this.createVideoUseCase = Objects.requireNonNull(createVideoUseCase);
         this.getVideoByIdUseCase = Objects.requireNonNull(getVideoByIdUseCase);
+        this.updateVideoUseCase = Objects.requireNonNull(updateVideoUseCase);
     }
 
     @Override
@@ -96,6 +102,26 @@ public class VideoController implements VideoAPI {
     @Override
     public VideoResponse getById(final String id) {
         return VideoApiPresenter.present(this.getVideoByIdUseCase.execute(id));
+    }
+
+    @Override
+    public ResponseEntity<?> updateById(final String id, final UpdateVideoRequest request) {
+        final var aCommand = UpdateVideoCommand.with(
+                id,
+                request.title(),
+                request.description(),
+                request.yearLaunched(),
+                request.duration(),
+                request.rating(),
+                request.opened(),
+                request.published(),
+                request.categories(),
+                request.genres(),
+                request.castMembers());
+
+        final var output = this.updateVideoUseCase.execute(aCommand);
+
+        return ResponseEntity.ok(output);
     }
 
     private Resource resourceOf(final MultipartFile part) {

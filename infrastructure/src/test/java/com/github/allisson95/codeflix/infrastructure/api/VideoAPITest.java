@@ -50,6 +50,7 @@ import com.github.allisson95.codeflix.domain.video.Video;
 import com.github.allisson95.codeflix.domain.video.VideoID;
 import com.github.allisson95.codeflix.domain.video.VideoMediaType;
 import com.github.allisson95.codeflix.infrastructure.video.models.CreateVideoRequest;
+import com.github.allisson95.codeflix.infrastructure.video.models.UpdateVideoRequest;
 
 @ControllerTest(controllers = { VideoAPI.class })
 class VideoAPITest {

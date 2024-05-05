@@ -7,12 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.github.allisson95.codeflix.infrastructure.video.models.CreateVideoRequest;
+import com.github.allisson95.codeflix.infrastructure.video.models.UpdateVideoRequest;
 import com.github.allisson95.codeflix.infrastructure.video.models.VideoResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,5 +67,15 @@ public interface VideoAPI {
             @ApiResponse(responseCode = "500", description = "An internal server error"),
     })
     VideoResponse getById(@PathVariable(name = "id") String id);
+
+    @PutMapping(path = "{id}", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+    @Operation(summary = "Update a video by it's identifier")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Video updated successfuly"),
+            @ApiResponse(responseCode = "404", description = "Video was not found"),
+            @ApiResponse(responseCode = "422", description = "A validation error"),
+            @ApiResponse(responseCode = "500", description = "An internal server error"),
+    })
+    ResponseEntity<?> updateById(@PathVariable(name = "id") String id, @RequestBody UpdateVideoRequest request);
 
 }
