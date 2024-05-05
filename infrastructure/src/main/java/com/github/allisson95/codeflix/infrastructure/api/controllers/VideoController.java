@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.github.allisson95.codeflix.application.video.create.CreateVideoCommand;
 import com.github.allisson95.codeflix.application.video.create.CreateVideoUseCase;
+import com.github.allisson95.codeflix.application.video.delete.DeleteVideoUseCase;
 import com.github.allisson95.codeflix.application.video.retrieve.get.GetVideoByIdUseCase;
 import com.github.allisson95.codeflix.application.video.update.UpdateVideoCommand;
 import com.github.allisson95.codeflix.application.video.update.UpdateVideoUseCase;
@@ -27,14 +28,17 @@ public class VideoController implements VideoAPI {
     private final CreateVideoUseCase createVideoUseCase;
     private final GetVideoByIdUseCase getVideoByIdUseCase;
     private final UpdateVideoUseCase updateVideoUseCase;
+    private final DeleteVideoUseCase deleteVideoUseCase;
 
     public VideoController(
             final CreateVideoUseCase createVideoUseCase,
             final GetVideoByIdUseCase getVideoByIdUseCase,
-            final UpdateVideoUseCase updateVideoUseCase) {
+            final UpdateVideoUseCase updateVideoUseCase,
+            final DeleteVideoUseCase deleteVideoUseCase) {
         this.createVideoUseCase = Objects.requireNonNull(createVideoUseCase);
         this.getVideoByIdUseCase = Objects.requireNonNull(getVideoByIdUseCase);
         this.updateVideoUseCase = Objects.requireNonNull(updateVideoUseCase);
+        this.deleteVideoUseCase = Objects.requireNonNull(deleteVideoUseCase);
     }
 
     @Override
@@ -122,6 +126,11 @@ public class VideoController implements VideoAPI {
         final var output = this.updateVideoUseCase.execute(aCommand);
 
         return ResponseEntity.ok(output);
+    }
+
+    @Override
+    public void deleteById(final String id) {
+        this.deleteVideoUseCase.execute(id);
     }
 
     private Resource resourceOf(final MultipartFile part) {
