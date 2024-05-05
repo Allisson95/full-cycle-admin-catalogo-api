@@ -9,6 +9,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
+import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -39,6 +42,9 @@ import com.github.allisson95.codeflix.application.video.create.CreateVideoComman
 import com.github.allisson95.codeflix.application.video.create.CreateVideoOutput;
 import com.github.allisson95.codeflix.application.video.create.CreateVideoUseCase;
 import com.github.allisson95.codeflix.application.video.delete.DeleteVideoUseCase;
+import com.github.allisson95.codeflix.application.video.media.get.GetMediaCommand;
+import com.github.allisson95.codeflix.application.video.media.get.GetMediaUseCase;
+import com.github.allisson95.codeflix.application.video.media.get.MediaOutput;
 import com.github.allisson95.codeflix.application.video.retrieve.get.GetVideoByIdUseCase;
 import com.github.allisson95.codeflix.application.video.retrieve.get.VideoOutput;
 import com.github.allisson95.codeflix.application.video.retrieve.list.ListVideoUseCase;
@@ -84,6 +90,9 @@ class VideoAPITest {
 
     @MockBean
     private ListVideoUseCase listVideoUseCase;
+
+    @MockBean
+    private GetMediaUseCase getMediaUseCase;
 
     @Test
     void Given_AllParams_When_CallsCreateFull_Then_ReturnId() throws Exception {
@@ -319,6 +328,7 @@ class VideoAPITest {
 
         when(getVideoByIdUseCase.execute(any()))
                 .thenReturn(VideoOutput.from(aVideo));
+
         // when
         final var request = get("/videos/{videoId}", expectedId)
                 .accept(MediaType.APPLICATION_JSON);
@@ -656,6 +666,45 @@ class VideoAPITest {
         assertThat(actualQuery.castMembers()).isEmpty();
         assertThat(actualQuery.genres()).isEmpty();
         assertThat(actualQuery.categories()).isEmpty();
+    }
+
+    @Test
+    void Given_AValidVideoIdAndFileType_When_CallsGetMediaById_Then_ReturnContent() throws Exception {
+        // given
+        final var expectedId = VideoID.unique();
+
+        final var expectedMediaType = VideoMediaType.VIDEO;
+        final var expectedResource = Fixture.Videos.resource(expectedMediaType);
+
+        final var expectedMedia = new MediaOutput(
+                expectedResource.content(),
+                expectedResource.contentType(),
+                expectedResource.name());
+
+        when(getMediaUseCase.execute(any())).thenReturn(expectedMedia);
+
+        // when
+        final var request = get("/videos/{id}/medias/{type}", expectedId.getValue(), expectedMediaType.name());
+
+        final var response = this.mockMvc.perform(request).andDo(print());
+
+        // then
+        response
+                .andExpect(status().isOk())
+                .andExpect(header().string(CONTENT_TYPE, expectedMedia.contentType()))
+                .andExpect(header().string(CONTENT_LENGTH, String.valueOf(expectedMedia.content().length)))
+                .andExpect(
+                        header().string(CONTENT_DISPOSITION, "attachment; filename=%s".formatted(expectedMedia.name())))
+                .andExpect(content().bytes(expectedMedia.content()));
+
+        final var captor = ArgumentCaptor.forClass(GetMediaCommand.class);
+
+        verify(getMediaUseCase).execute(captor.capture());
+
+        final var command = captor.getValue();
+
+        assertEquals(expectedId.getValue(), command.videoId());
+        assertEquals(expectedMediaType.name(), command.mediaType());
     }
 
 }
