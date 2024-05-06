@@ -1,11 +1,13 @@
 package com.github.allisson95.codeflix.infrastructure.video.presenters;
 
+import com.github.allisson95.codeflix.application.video.media.upload.UploadMediaOutput;
 import com.github.allisson95.codeflix.application.video.retrieve.get.VideoOutput;
 import com.github.allisson95.codeflix.application.video.retrieve.list.VideoListOutput;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.domain.video.ImageMedia;
 import com.github.allisson95.codeflix.domain.video.VideoMedia;
 import com.github.allisson95.codeflix.infrastructure.video.models.ImageMediaResponse;
+import com.github.allisson95.codeflix.infrastructure.video.models.UploadMediaResponse;
 import com.github.allisson95.codeflix.infrastructure.video.models.VideoListResponse;
 import com.github.allisson95.codeflix.infrastructure.video.models.VideoMediaResponse;
 import com.github.allisson95.codeflix.infrastructure.video.models.VideoResponse;
@@ -71,6 +73,10 @@ public interface VideoApiPresenter {
 
     static Pagination<VideoListResponse> present(final Pagination<VideoListOutput> page) {
         return page.map(VideoApiPresenter::present);
+    }
+
+    static UploadMediaResponse present(final UploadMediaOutput output) {
+        return new UploadMediaResponse(output.videoId(), output.mediaType());
     }
 
 }

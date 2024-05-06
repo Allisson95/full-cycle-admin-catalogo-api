@@ -17,15 +17,21 @@ import com.github.allisson95.codeflix.application.video.create.CreateVideoUseCas
 import com.github.allisson95.codeflix.application.video.delete.DeleteVideoUseCase;
 import com.github.allisson95.codeflix.application.video.media.get.GetMediaCommand;
 import com.github.allisson95.codeflix.application.video.media.get.GetMediaUseCase;
+import com.github.allisson95.codeflix.application.video.media.upload.UploadMediaCommand;
+import com.github.allisson95.codeflix.application.video.media.upload.UploadMediaUseCase;
 import com.github.allisson95.codeflix.application.video.retrieve.get.GetVideoByIdUseCase;
 import com.github.allisson95.codeflix.application.video.retrieve.list.ListVideoUseCase;
 import com.github.allisson95.codeflix.application.video.update.UpdateVideoCommand;
 import com.github.allisson95.codeflix.application.video.update.UpdateVideoUseCase;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
+import com.github.allisson95.codeflix.domain.exceptions.NotificationException;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.domain.resource.Resource;
+import com.github.allisson95.codeflix.domain.validation.Error;
+import com.github.allisson95.codeflix.domain.video.VideoMediaType;
+import com.github.allisson95.codeflix.domain.video.VideoResource;
 import com.github.allisson95.codeflix.domain.video.VideoSearchQuery;
 import com.github.allisson95.codeflix.infrastructure.api.VideoAPI;
 import com.github.allisson95.codeflix.infrastructure.utils.HashingUtils;
@@ -44,6 +50,7 @@ public class VideoController implements VideoAPI {
     private final DeleteVideoUseCase deleteVideoUseCase;
     private final ListVideoUseCase listVideoUseCase;
     private final GetMediaUseCase getMediaUseCase;
+    private final UploadMediaUseCase uploadMediaUseCase;
 
     public VideoController(
             final CreateVideoUseCase createVideoUseCase,
@@ -51,13 +58,15 @@ public class VideoController implements VideoAPI {
             final UpdateVideoUseCase updateVideoUseCase,
             final DeleteVideoUseCase deleteVideoUseCase,
             final ListVideoUseCase listVideoUseCase,
-            final GetMediaUseCase getMediaUseCase) {
+            final GetMediaUseCase getMediaUseCase,
+            final UploadMediaUseCase uploadMediaUseCase) {
         this.createVideoUseCase = Objects.requireNonNull(createVideoUseCase);
         this.getVideoByIdUseCase = Objects.requireNonNull(getVideoByIdUseCase);
         this.updateVideoUseCase = Objects.requireNonNull(updateVideoUseCase);
         this.deleteVideoUseCase = Objects.requireNonNull(deleteVideoUseCase);
         this.listVideoUseCase = Objects.requireNonNull(listVideoUseCase);
         this.getMediaUseCase = Objects.requireNonNull(getMediaUseCase);
+        this.uploadMediaUseCase = Objects.requireNonNull(uploadMediaUseCase);
     }
 
     @Override
@@ -184,6 +193,21 @@ public class VideoController implements VideoAPI {
                 .contentLength(aMedia.content().length)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(aMedia.name()))
                 .body(aMedia.content());
+    }
+
+    @Override
+    public ResponseEntity<?> uploadMediaByType(final String id, final String type, final MultipartFile file) {
+        final var mediaType = VideoMediaType.of(type)
+                .orElseThrow(
+                        () -> NotificationException.with(new Error("Invalid %s for VideoMediaType".formatted(type))));
+
+        final var command = UploadMediaCommand.with(id, VideoResource.with(resourceOf(file), mediaType));
+
+        final var output = this.uploadMediaUseCase.execute(command);
+
+        return ResponseEntity
+                .created(URI.create("/videos/%s/medias/%s".formatted(id, type)))
+                .body(VideoApiPresenter.present(output));
     }
 
     private Resource resourceOf(final MultipartFile part) {
