@@ -1,25 +1,12 @@
 plugins {
-    id 'java'
+    id('java-conventions')
+    id('java-library')
 }
 
-group 'com.github.allisson95.codeflix'
-version '1.0.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-}
+group 'com.github.allisson95.codeflix.application'
 
 dependencies {
-    implementation project(':domain')
+    implementation(project(':domain'))
 
-    implementation 'io.vavr:vavr:0.10.4'
-
-    testImplementation platform('org.junit:junit-bom:5.9.1')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
-    testImplementation project(path: ':domain', configuration: 'testClasses')
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
+    testImplementation(project(path: ':domain', configuration: 'testClasses'))
 }
