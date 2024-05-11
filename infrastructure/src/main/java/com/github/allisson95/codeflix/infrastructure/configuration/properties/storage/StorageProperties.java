@@ -11,10 +11,6 @@ public class StorageProperties implements InitializingBean {
     private String filenamePattern;
     private String locationPattern;
 
-    public static Logger getLogger() {
-        return logger;
-    }
-
     public String getFilenamePattern() {
         return filenamePattern;
     }

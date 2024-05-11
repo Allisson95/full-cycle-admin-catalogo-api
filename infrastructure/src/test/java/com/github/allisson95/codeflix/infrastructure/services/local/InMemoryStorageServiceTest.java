@@ -78,6 +78,22 @@ class InMemoryStorageServiceTest {
     }
 
     @Test
+    void Given_AnInvalidPrefix_When_CallsList_Should_ReturnEmptyList() {
+        final var all = new ArrayList<String>();
+        all.add("image_" + IdUtils.uuid());
+        all.add("image_" + IdUtils.uuid());
+
+        all.forEach(name -> ((InMemoryStorageService) this.target).storage()
+                .put(name, Fixture.Videos.resource(VideoMediaType.VIDEO)));
+
+        assertEquals(2, ((InMemoryStorageService) this.target).storage().size());
+
+        final var actualResource = target.list(null);
+
+        assertTrue(actualResource.isEmpty());
+    }
+
+    @Test
     void Given_AValidNames_When_CallsDelete_Should_DeleteAll() {
         final var expectedNames = List.of(
                 "video_" + IdUtils.uuid(),
