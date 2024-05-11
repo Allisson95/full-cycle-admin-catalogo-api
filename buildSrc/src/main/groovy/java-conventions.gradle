@@ -12,13 +12,13 @@ repositories {
 dependencies {
     implementation('io.vavr:vavr:0.10.4')
 
-    testImplementation(platform('org.junit:junit-bom:5.9.1'))
+    testImplementation(platform('org.junit:junit-bom:5.10.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
-    testImplementation('org.mockito:mockito-junit-jupiter:4.8.0')
+    testImplementation('org.mockito:mockito-junit-jupiter:5.11.0')
 }
 
 jacoco {
-    toolVersion = '0.8.8'
+    toolVersion = '0.8.11'
 }
 
 tasks.named('test') {

@@ -6,7 +6,7 @@ plugins {
 group 'com.github.allisson95.codeflix.domain'
 
 dependencies {
-    testImplementation('net.datafaker:datafaker:1.9.0')
+    testImplementation('net.datafaker:datafaker:2.2.2')
 }
 
 configurations {
