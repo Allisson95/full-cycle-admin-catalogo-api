@@ -60,9 +60,11 @@ import com.github.allisson95.codeflix.application.video.update.UpdateVideoUseCas
 import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
+import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 import com.github.allisson95.codeflix.domain.exceptions.NotificationException;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
+import com.github.allisson95.codeflix.domain.validation.Error;
 import com.github.allisson95.codeflix.domain.validation.handler.Notification;
 import com.github.allisson95.codeflix.domain.video.Video;
 import com.github.allisson95.codeflix.domain.video.VideoID;
@@ -221,6 +223,25 @@ class VideoAPITest {
     }
 
     @Test
+    void Given_InvalidParams_When_CallsCreateFull_Then_ReturnError() throws Exception {
+        // given
+        final var expectedErrorMessage = "title is required";
+
+        when(createVideoUseCase.execute(any()))
+                .thenThrow(NotificationException.with(new Error(expectedErrorMessage)));
+
+        // when
+        final var request = multipart("/videos")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.MULTIPART_FORM_DATA);
+
+        final var response = this.mockMvc.perform(request).andDo(print());
+        // then
+        response.andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+    }
+
+    @Test
     void Given_AValidCommand_When_CallsCreatePartial_Should_ReturnId() throws Exception {
         // given
         final var category = Fixture.Categories.random();
@@ -288,6 +309,45 @@ class VideoAPITest {
         assertThat(aCommand.getThumbnailHalf()).isEmpty();
         assertThat(aCommand.getTrailer()).isEmpty();
         assertThat(aCommand.getVideo()).isEmpty();
+    }
+
+    @Test
+    void Given_AnEmptyBody_When_CallsCreatePartial_Should_ReturnError() throws Exception {
+        // when
+        final var aRequest = post("/videos")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mockMvc.perform(aRequest);
+
+        // then
+        response.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void Given_AnInvalidCommand_When_CallsCreatePartial_Should_ReturnError() throws Exception {
+        // given
+        final var expectedErrorMessage = "title is required";
+
+        when(createVideoUseCase.execute(any()))
+                .thenThrow(NotificationException.with(new Error(expectedErrorMessage)));
+
+        // when
+        final var aRequest = post("/videos")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "title": "Olá Mundo!"
+                        }
+                        """);
+
+        final var response = this.mockMvc.perform(aRequest);
+
+        // then
+        response.andExpect(status().isUnprocessableEntity())
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
     }
 
     @Test
@@ -390,6 +450,27 @@ class VideoAPITest {
                 .andExpect(jsonPath("$.categories_id", equalTo(new ArrayList<>(expectedCategories))))
                 .andExpect(jsonPath("$.genres_id", equalTo(new ArrayList<>(expectedGenres))))
                 .andExpect(jsonPath("$.cast_members_id", equalTo(new ArrayList<>(expectedCastMembers))));
+    }
+
+    @Test
+    void Given_AnInvalidId_When_CallsGetById_Should_ReturnNotFound() throws Exception {
+        // given
+        final var expectedId = VideoID.unique();
+        final var expectedErrorMessage = "Video with id %s was not found".formatted(expectedId.getValue());
+
+        when(getVideoByIdUseCase.execute(any()))
+                .thenThrow(NotFoundException.with(Video.class, expectedId));
+
+        // when
+        final var aRequest = get("/videos/{id}", expectedId)
+                .accept(MediaType.APPLICATION_JSON);
+
+        final var response = this.mockMvc.perform(aRequest);
+
+        // then
+        response.andExpect(status().isNotFound())
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
     }
 
     @Test
