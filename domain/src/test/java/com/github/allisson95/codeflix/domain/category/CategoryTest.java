@@ -10,10 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.allisson95.codeflix.domain.UnitTest;
 import com.github.allisson95.codeflix.domain.exceptions.DomainException;
 import com.github.allisson95.codeflix.domain.validation.handler.ThrowsValidationHandler;
 
-class CategoryTest {
+class CategoryTest extends UnitTest {
 
     @Test
     void Given_ValidParams_When_CallNewCategory_Then_InstantiateACategory() {

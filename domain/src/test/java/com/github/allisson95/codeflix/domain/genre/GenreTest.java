@@ -14,10 +14,11 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.allisson95.codeflix.domain.UnitTest;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.exceptions.NotificationException;
 
-class GenreTest {
+class GenreTest extends UnitTest {
 
     @Test
     void Given_AValidParams_When_CallNewGenre_Should_InstantiateAGenre() {

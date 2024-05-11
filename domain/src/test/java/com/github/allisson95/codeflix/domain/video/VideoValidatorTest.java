@@ -8,13 +8,14 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.allisson95.codeflix.domain.UnitTest;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.exceptions.DomainException;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.validation.handler.ThrowsValidationHandler;
 
-class VideoValidatorTest {
+class VideoValidatorTest extends UnitTest {
 
     @Test
     void Given_NullTitle_When_CallsValidate_Should_ReceiveError() {

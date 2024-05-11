@@ -7,9 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.allisson95.codeflix.domain.UnitTest;
 import com.github.allisson95.codeflix.domain.exceptions.NotificationException;
 
-class CastMemberTest {
+class CastMemberTest extends UnitTest {
 
     @Test
     void Given_ValidParams_When_CallNewCastMember_Then_InstantiateACastMember() {

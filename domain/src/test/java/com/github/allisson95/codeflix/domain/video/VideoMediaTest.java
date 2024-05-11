@@ -7,9 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.allisson95.codeflix.domain.UnitTest;
 import com.github.allisson95.codeflix.domain.utils.IdUtils;
 
-class VideoMediaTest {
+class VideoMediaTest extends UnitTest {
 
     @Test
     void Given_AValidParams_When_CallsWith_Should_InstantiateIt() {

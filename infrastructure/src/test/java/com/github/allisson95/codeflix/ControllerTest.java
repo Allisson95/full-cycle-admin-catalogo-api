@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
@@ -19,6 +20,7 @@ import com.github.allisson95.codeflix.infrastructure.configuration.ObjectMapperC
 @ActiveProfiles("test-integration")
 @WebMvcTest
 @Import(value = { ObjectMapperConfig.class })
+@Tag("integrationTest")
 public @interface ControllerTest {
 
     @AliasFor(annotation = WebMvcTest.class, attribute = "controllers")

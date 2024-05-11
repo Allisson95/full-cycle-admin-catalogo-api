@@ -18,7 +18,7 @@ import com.github.allisson95.codeflix.domain.utils.IdUtils;
 import com.github.allisson95.codeflix.domain.utils.InstantUtils;
 import com.github.allisson95.codeflix.domain.validation.ValidationHandler;
 
-class EntityTest {
+class EntityTest extends UnitTest {
 
     @Test
     void Given_NullAsEvents_When_Instantiate_Should_BeOk() {
