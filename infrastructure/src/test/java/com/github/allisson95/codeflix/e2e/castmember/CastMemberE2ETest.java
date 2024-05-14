@@ -46,8 +46,7 @@ class CastMemberE2ETest implements MockDsl {
 
     @DynamicPropertySource
     public static void setDatasourceProperties(final DynamicPropertyRegistry registry) {
-        registry.add("mysql.host", MYSQL_CONTAINER::getHost);
-        registry.add("mysql.port", () -> MYSQL_CONTAINER.getMappedPort(MySQLContainer.MYSQL_PORT));
+        registry.add("mysql.url", MYSQL_CONTAINER::getJdbcUrl);
         registry.add("mysql.username", MYSQL_CONTAINER::getUsername);
         registry.add("mysql.password", MYSQL_CONTAINER::getPassword);
     }

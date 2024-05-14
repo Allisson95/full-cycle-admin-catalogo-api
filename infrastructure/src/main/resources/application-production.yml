@@ -1,14 +1,15 @@
 amqp:
-  host: ${AMQP_RABBIT_HOST}
-  port: ${AMQP_RABBIT_PORT}
-  username: ${AMQP_RABBIT_USERNAME}
-  password: ${AMQP_RABBIT_PASSWORD}
+  admin:
+      auto-create: ${AMQP_ADMIN_AUTO_CREATE:false}
+  host: ${AMQP_HOST:localhost}
+  port: ${AMQP_PORT:5672}
+  username: ${AMQP_USERNAME:admin_videos}
+  password: ${AMQP_PASSWORD:123456}
 
 mysql:
-  username: ${DATABASE_MYSQL_USERNAME:root}
-  password: ${DATABASE_MYSQL_PASSWORD:root}
-  schema: admin_catalogo
-  url: ${DATABASE_MYSQL_URL:localhost:3306}
+  url: ${MYSQL_URL:jdbc:mysql://db:3306/admin_catalogo?useSSL=true&serverTimezone=UTC&characterEncoding=UTF-8}
+  username: ${MYSQL_USERNAME:root}
+  password: ${MYSQL_PASSWORD:root}
 
 spring:
   jpa:

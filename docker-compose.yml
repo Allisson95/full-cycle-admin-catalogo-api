@@ -6,17 +6,28 @@ networks:
 
 services:
   app:
-    image: ubuntu:latest
+    container_name: admin-catalogo-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    profiles:
+      - app
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - 8080:8080
     networks:
       - codeflix-network
     depends_on:
       - db
+      - rabbitmq
 
   db:
     container_name: admin-catalogo-db
     image: mysql:8.0
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD:-root}
       - MYSQL_DATABASE=admin_catalogo
     ports:
       - 3306:3306
@@ -26,12 +37,12 @@ services:
       - admin-catalogo-db:/var/lib/mysql
 
   rabbitmq:
-    container_name: admin-videos-rabbitmq
+    container_name: admin-catalogo-rabbitmq
     image: rabbitmq:3-management
     environment:
       - RABBITMQ_ERLANG_COOKIE=SWQOKODSQALRPCLNMEQG
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-admin_videos}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-123456}
+      - RABBITMQ_DEFAULT_USER=${AMQP_USERNAME:-admin_videos}
+      - RABBITMQ_DEFAULT_PASS=${AMQP_PASSWORD:-123456}
       - RABBITMQ_DEFAULT_VHOST=/
     ports:
       - 15672:15672
