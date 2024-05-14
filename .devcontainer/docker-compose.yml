@@ -1,4 +1,5 @@
 version: '3.9'
+
 services:
   # Update this to the name of the service you want to work with in your docker-compose.yml file
   app:
@@ -10,11 +11,6 @@ services:
     build:
       context: .
       dockerfile: .devcontainer/Dockerfile
-      args:
-        - VARIANT=17
-        - INSTALL_GRADLE=true
-        - GRADLE_VERSION=7.6
-        - NODE_VERSION=20.12.2
 
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
@@ -27,5 +23,4 @@ services:
     #   - seccomp:unconfined
 
     # Overrides default command so things don't shut down after the process ends.
-    command: /bin/sh -c "while sleep 1000; do :; done"
- 
+    command: sleep infinity

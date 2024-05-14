@@ -10,11 +10,6 @@
 		"docker-compose.yml"
 	],
 
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
-	},
-
 	// The 'service' property is the name of the service for the container that VS Code should
 	// use. Update this value and .devcontainer/docker-compose.yml to the real service name.
 	"service": "app",
@@ -23,12 +18,37 @@
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "17",
+			"jdkDistro": "tem", // Eclipse Temurin
+			"installGradle": true,
+			"gradleVersion": "7.6"
+		},
+		"ghcr.io/devcontainers/features/node:1": {}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Uncomment the next line if you want start specific services in your Docker Compose config.
+	// "runServices": [],
+
+	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.
+	"shutdownAction": "stopCompose",
+
+	// Uncomment the next line to run commands after the container is created.
+	// "postCreateCommand": "cat /etc/os-release",
+	"postCreateCommand": "gradle flywayMigrate -i",
+
 	// Configure tool-specific properties.
 	"customizations": {
 		// Configure properties specific to VS Code.
 		"vscode": {
 			// Set *default* container specific settings.json values on container create.
-			"settings": { 
+			"settings": {
 				"[java]": {
 					"editor.detectIndentation": false,
 					"editor.insertSpaces": true,
@@ -56,17 +76,17 @@
 				"java.configuration.runtimes": [
 					{
 						"name": "JavaSE-17",
-						"path": "/usr/lib/jvm/msopenjdk-current",
-						"sources": "/usr/lib/jvm/msopenjdk-current/lib/src.zip",
+						"path": "/usr/local/sdkman/candidates/java/current",
+						"sources": "/usr/local/sdkman/candidates/java/current/lib/src.zip",
 						"javadoc": "https://docs.oracle.com/en/java/javase/17/docs/api/",
 						"default": true
 					}
 				],
 				"java.configuration.updateBuildConfiguration": "automatic",
 				"java.dependency.packagePresentation": "hierarchical",
+				"java.import.gradle.java.home": "/usr/local/sdkman/candidates/java/current",
 				"java.signatureHelp.description.enabled": true
 			},
-
 			// Add the IDs of extensions you want installed when the container is created.
 			"extensions": [
 				"vscjava.vscode-java-pack",
@@ -78,20 +98,8 @@
 				"eamodio.gitlens"
 			]
 		}
-	},
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-
-	// Uncomment the next line if you want start specific services in your Docker Compose config.
-	// "runServices": [],
-
-	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.
-	"shutdownAction": "stopCompose",
-
-	// Uncomment the next line to run commands after the container is created.
-	// "postCreateCommand": "cat /etc/os-release",
+	}
 
 	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
-	"remoteUser": "vscode"
+	// "remoteUser": "devcontainer"
 }
