@@ -48,6 +48,7 @@ import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.domain.validation.Error;
 import com.github.allisson95.codeflix.domain.validation.handler.Notification;
+import com.github.allisson95.codeflix.infrastructure.ApiTest;
 import com.github.allisson95.codeflix.infrastructure.genre.models.CreateGenreRequest;
 import com.github.allisson95.codeflix.infrastructure.genre.models.UpdateGenreRequest;
 
@@ -90,6 +91,7 @@ class GenreAPITest {
                 .thenReturn(CreateGenreOutput.from(GenreID.from(expectedId)));
 
         final var request = post("/genres")
+                .with(ApiTest.GENRE_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsBytes(anInput));
@@ -124,6 +126,7 @@ class GenreAPITest {
                 .thenThrow(NotificationException.with(new Error(expectedErrorMessage)));
 
         final var request = post("/genres")
+                .with(ApiTest.GENRE_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsBytes(anInput));
@@ -160,6 +163,7 @@ class GenreAPITest {
         when(getGenreByIdUseCase.execute(any())).thenReturn(expectedGenre);
 
         final var request = get("/genres/{genreId}", expectedId.getValue())
+                .with(ApiTest.GENRE_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -188,6 +192,7 @@ class GenreAPITest {
                         NotFoundException.with(Genre.class, expectedId));
 
         final var request = get("/genres/{genreId}", expectedId.getValue())
+                .with(ApiTest.GENRE_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -221,6 +226,7 @@ class GenreAPITest {
         when(updateGenreUseCase.execute(any())).thenReturn(UpdateGenreOutput.from(aGenre));
 
         final var request = put("/genres/{genreId}", expectedId.getValue())
+                .with(ApiTest.GENRE_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsBytes(anInput));
@@ -260,6 +266,7 @@ class GenreAPITest {
                         new NotificationException("Error", Notification.create(new Error(expectedErrorMessage))));
 
         final var request = put("/genres/{genreId}", expectedId.getValue())
+                .with(ApiTest.GENRE_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsBytes(anInput));
@@ -287,6 +294,7 @@ class GenreAPITest {
         doNothing().when(deleteGenreUseCase).execute(expectedId.getValue());
 
         final var request = delete("/genres/{genreId}", expectedId.getValue())
+                .with(ApiTest.GENRE_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -304,6 +312,7 @@ class GenreAPITest {
         doNothing().when(deleteGenreUseCase).execute(expectedId.getValue());
 
         final var request = delete("/genres/{genreId}", expectedId.getValue())
+                .with(ApiTest.GENRE_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -341,6 +350,7 @@ class GenreAPITest {
                 .queryParam("perPage", String.valueOf(expectedPerPage))
                 .queryParam("sort", expectedSort)
                 .queryParam("dir", expectedDirection)
+                .with(ApiTest.GENRE_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -359,8 +369,7 @@ class GenreAPITest {
                 .andExpect(jsonPath("$.items[0].created_at", equalTo(aGenre.getCreatedAt().toString())))
                 .andExpect(jsonPath("$.items[0].deleted_at", equalTo(aGenre.getDeletedAt().toString())));
 
-        verify(listGenreUseCase, times(1)).execute(argThat(query -> 
-            Objects.equals(query.page(), expectedPage)
+        verify(listGenreUseCase, times(1)).execute(argThat(query -> Objects.equals(query.page(), expectedPage)
                 && Objects.equals(query.perPage(), expectedPerPage)
                 && Objects.equals(query.terms(), expectedTerms)
                 && Objects.equals(query.sort(), expectedSort)

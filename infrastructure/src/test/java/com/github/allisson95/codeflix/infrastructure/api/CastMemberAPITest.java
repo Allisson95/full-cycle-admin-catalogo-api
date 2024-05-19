@@ -29,7 +29,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.allisson95.codeflix.ControllerTest;
-import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.application.castmember.create.CreateCastMemberOutput;
 import com.github.allisson95.codeflix.application.castmember.create.DefaultCreateCastMemberUseCase;
 import com.github.allisson95.codeflix.application.castmember.delete.DefaultDeleteCastMemberUseCase;
@@ -39,6 +38,7 @@ import com.github.allisson95.codeflix.application.castmember.retrieve.list.CastM
 import com.github.allisson95.codeflix.application.castmember.retrieve.list.DefaultListCastMembersUseCase;
 import com.github.allisson95.codeflix.application.castmember.update.DefaultUpdateCastMemberUseCase;
 import com.github.allisson95.codeflix.application.castmember.update.UpdateCastMemberOutput;
+import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.domain.castmember.CastMember;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
@@ -46,6 +46,7 @@ import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 import com.github.allisson95.codeflix.domain.exceptions.NotificationException;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.domain.validation.Error;
+import com.github.allisson95.codeflix.infrastructure.ApiTest;
 import com.github.allisson95.codeflix.infrastructure.castmember.models.CreateCastMemberRequest;
 import com.github.allisson95.codeflix.infrastructure.castmember.models.UpdateCastMemberRequest;
 
@@ -85,6 +86,7 @@ class CastMemberAPITest {
                 .thenReturn(CreateCastMemberOutput.with(expectedId));
 
         final var request = post("/cast_members")
+                .with(ApiTest.CAST_MEMBER_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(aCommand));
@@ -116,6 +118,7 @@ class CastMemberAPITest {
                 .thenThrow(NotificationException.with(new Error(expectedErrorMessage)));
 
         final var request = post("/cast_members")
+                .with(ApiTest.CAST_MEMBER_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(aCommand));
@@ -148,6 +151,7 @@ class CastMemberAPITest {
                 .thenReturn(expectedMember);
 
         final var request = get("/cast_members/{id}", expectedId.getValue())
+                .with(ApiTest.CAST_MEMBER_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -174,6 +178,7 @@ class CastMemberAPITest {
                         NotFoundException.with(CastMember.class, expectedId));
 
         final var request = get("/cast_members/{id}", expectedId.getValue())
+                .with(ApiTest.CAST_MEMBER_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -204,6 +209,7 @@ class CastMemberAPITest {
                 .thenReturn(UpdateCastMemberOutput.with(expectedId));
 
         final var request = put("/cast_members/{castMemberId}", expectedId.getValue())
+                .with(ApiTest.CAST_MEMBER_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(aCommand));
@@ -238,6 +244,7 @@ class CastMemberAPITest {
                 .thenThrow(NotificationException.with(new Error(expectedErrorMessage)));
 
         final var request = put("/cast_members/{castMemberId}", expectedId.getValue())
+                .with(ApiTest.CAST_MEMBER_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(aCommand));
@@ -271,6 +278,7 @@ class CastMemberAPITest {
                         NotFoundException.with(CastMember.class, expectedId));
 
         final var request = put("/cast_members/{castMemberId}", expectedId.getValue())
+                .with(ApiTest.CAST_MEMBER_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(aCommand));
@@ -298,6 +306,7 @@ class CastMemberAPITest {
         doNothing().when(deleteCastMemberUseCase).execute(any());
 
         final var request = delete("/cast_members/{id}", expectedId.getValue())
+                .with(ApiTest.CAST_MEMBER_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -336,6 +345,7 @@ class CastMemberAPITest {
                 .param("perPage", String.valueOf(expectedPerPage))
                 .param("sort", expectedSort)
                 .param("dir", expectedDirection)
+                .with(ApiTest.CAST_MEMBER_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -353,8 +363,7 @@ class CastMemberAPITest {
                 .andExpect(jsonPath("$.items[0].type", equalTo(aMember.getType().name())))
                 .andExpect(jsonPath("$.items[0].created_at", equalTo(aMember.getCreatedAt().toString())));
 
-        verify(listCastMembersUseCase, times(1)).execute(argThat(cmd -> 
-            Objects.equals(expectedPage, cmd.page())
+        verify(listCastMembersUseCase, times(1)).execute(argThat(cmd -> Objects.equals(expectedPage, cmd.page())
                 && Objects.equals(expectedPerPage, cmd.perPage())
                 && Objects.equals(expectedTerms, cmd.terms())
                 && Objects.equals(expectedSort, cmd.sort())
@@ -384,6 +393,7 @@ class CastMemberAPITest {
                         expectedItems));
 
         final var request = get("/cast_members")
+                .with(ApiTest.CAST_MEMBER_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -401,8 +411,7 @@ class CastMemberAPITest {
                 .andExpect(jsonPath("$.items[0].type", equalTo(aMember.getType().name())))
                 .andExpect(jsonPath("$.items[0].created_at", equalTo(aMember.getCreatedAt().toString())));
 
-        verify(listCastMembersUseCase, times(1)).execute(argThat(cmd -> 
-            Objects.equals(expectedPage, cmd.page())
+        verify(listCastMembersUseCase, times(1)).execute(argThat(cmd -> Objects.equals(expectedPage, cmd.page())
                 && Objects.equals(expectedPerPage, cmd.perPage())
                 && Objects.equals(expectedTerms, cmd.terms())
                 && Objects.equals(expectedSort, cmd.sort())

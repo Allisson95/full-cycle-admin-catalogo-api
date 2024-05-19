@@ -27,6 +27,7 @@ import com.github.allisson95.codeflix.domain.Fixture;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberID;
 import com.github.allisson95.codeflix.domain.castmember.CastMemberType;
 import com.github.allisson95.codeflix.e2e.MockDsl;
+import com.github.allisson95.codeflix.infrastructure.ApiTest;
 import com.github.allisson95.codeflix.infrastructure.castmember.models.UpdateCastMemberRequest;
 import com.github.allisson95.codeflix.infrastructure.castmember.persistence.CastMemberRepository;
 
@@ -209,6 +210,7 @@ class CastMemberE2ETest implements MockDsl {
         assertEquals(0, this.castMemberRepository.count());
 
         final var aRequest = get("/cast_members/{castMemberId}", 123)
+                .with(ApiTest.ADMIN_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 

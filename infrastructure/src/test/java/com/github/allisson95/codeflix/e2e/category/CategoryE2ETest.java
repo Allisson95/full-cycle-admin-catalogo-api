@@ -26,6 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import com.github.allisson95.codeflix.E2ETest;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.e2e.MockDsl;
+import com.github.allisson95.codeflix.infrastructure.ApiTest;
 import com.github.allisson95.codeflix.infrastructure.category.models.UpdateCategoryRequest;
 import com.github.allisson95.codeflix.infrastructure.category.persistence.CategoryRepository;
 
@@ -203,6 +204,7 @@ class CategoryE2ETest implements MockDsl {
         assertEquals(0, categoryRepository.count());
 
         final var aRequest = get("/categories/{categoryId}", 123)
+                .with(ApiTest.ADMIN_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 

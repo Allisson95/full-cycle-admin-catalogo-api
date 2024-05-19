@@ -49,6 +49,7 @@ import com.github.allisson95.codeflix.domain.exceptions.NotFoundException;
 import com.github.allisson95.codeflix.domain.pagination.Pagination;
 import com.github.allisson95.codeflix.domain.validation.Error;
 import com.github.allisson95.codeflix.domain.validation.handler.Notification;
+import com.github.allisson95.codeflix.infrastructure.ApiTest;
 import com.github.allisson95.codeflix.infrastructure.category.models.CreateCategoryRequest;
 import com.github.allisson95.codeflix.infrastructure.category.models.UpdateCategoryRequest;
 
@@ -88,6 +89,7 @@ class CategoryAPITest {
         final var anInput = new CreateCategoryRequest(expectedName, expectedDescription, expectedIsActive);
 
         final var request = post("/categories")
+                .with(ApiTest.CATEGORY_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsBytes(anInput));
@@ -121,6 +123,7 @@ class CategoryAPITest {
         final var anInput = new CreateCategoryRequest(expectedName, expectedDescription, expectedIsActive);
 
         final var request = post("/categories")
+                .with(ApiTest.CATEGORY_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsBytes(anInput));
@@ -154,6 +157,7 @@ class CategoryAPITest {
         final var anInput = new CreateCategoryRequest(expectedName, expectedDescription, expectedIsActive);
 
         final var request = post("/categories")
+                .with(ApiTest.CATEGORY_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsBytes(anInput));
@@ -187,6 +191,7 @@ class CategoryAPITest {
         when(getCategoryByIdUseCase.execute(expectedId)).thenReturn(expectedCategory);
 
         final var request = get("/categories/{categoryId}", expectedId)
+                .with(ApiTest.CATEGORY_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -215,6 +220,7 @@ class CategoryAPITest {
                         NotFoundException.with(Category.class, expectedId));
 
         final var request = get("/categories/{categoryId}", expectedId.getValue())
+                .with(ApiTest.CATEGORY_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -244,6 +250,7 @@ class CategoryAPITest {
         final var anInput = new UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive);
 
         final var request = put("/categories/{categoryId}", expectedId.getValue())
+                .with(ApiTest.CATEGORY_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsBytes(anInput));
@@ -276,6 +283,7 @@ class CategoryAPITest {
         final var anInput = new UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive);
 
         final var request = put("/categories/{categoryId}", expectedId.getValue())
+                .with(ApiTest.CATEGORY_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsBytes(anInput));
@@ -309,6 +317,7 @@ class CategoryAPITest {
         final var anInput = new UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive);
 
         final var request = put("/categories/{categoryId}", expectedId.getValue())
+                .with(ApiTest.CATEGORY_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsBytes(anInput));
@@ -335,6 +344,7 @@ class CategoryAPITest {
         doNothing().when(deleteCategoryUseCase).execute(expectedId);
 
         final var request = delete("/categories/{categoryId}", expectedId)
+                .with(ApiTest.CATEGORY_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -370,6 +380,7 @@ class CategoryAPITest {
                 .param("perPage", String.valueOf(expectedPerPage))
                 .param("sort", expectedSort)
                 .param("dir", expectedDirection)
+                .with(ApiTest.CATEGORY_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -389,8 +400,7 @@ class CategoryAPITest {
                 .andExpect(jsonPath("$.items[0].created_at", equalTo(aCategory.getCreatedAt().toString())))
                 .andExpect(jsonPath("$.items[0].deleted_at", nullValue()));
 
-        verify(listCategoriesUseCase, times(1)).execute(argThat(cmd -> 
-            Objects.equals(expectedPage, cmd.page())
+        verify(listCategoriesUseCase, times(1)).execute(argThat(cmd -> Objects.equals(expectedPage, cmd.page())
                 && Objects.equals(expectedPerPage, cmd.perPage())
                 && Objects.equals(expectedTerms, cmd.terms())
                 && Objects.equals(expectedSort, cmd.sort())

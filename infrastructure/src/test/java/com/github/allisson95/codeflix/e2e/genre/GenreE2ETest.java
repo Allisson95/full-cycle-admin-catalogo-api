@@ -31,6 +31,7 @@ import com.github.allisson95.codeflix.E2ETest;
 import com.github.allisson95.codeflix.domain.category.CategoryID;
 import com.github.allisson95.codeflix.domain.genre.GenreID;
 import com.github.allisson95.codeflix.e2e.MockDsl;
+import com.github.allisson95.codeflix.infrastructure.ApiTest;
 import com.github.allisson95.codeflix.infrastructure.genre.models.UpdateGenreRequest;
 import com.github.allisson95.codeflix.infrastructure.genre.persistence.GenreRepository;
 
@@ -232,6 +233,7 @@ class GenreE2ETest implements MockDsl {
         assertEquals(0, genreRepository.count());
 
         final var aRequest = get("/genres/{genreID}", 123)
+                .with(ApiTest.ADMIN_JWT)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -259,7 +261,8 @@ class GenreE2ETest implements MockDsl {
 
         final var genreId = givenAGenre("acao", expectedCategories, expectedIsActive);
 
-        final var aRequestBody = new UpdateGenreRequest(expectedName, mapTo(expectedCategories, CategoryID::getValue), expectedIsActive);
+        final var aRequestBody = new UpdateGenreRequest(expectedName, mapTo(expectedCategories, CategoryID::getValue),
+                expectedIsActive);
 
         updateGenre(genreId, aRequestBody)
                 .andExpect(status().isOk())
@@ -270,7 +273,8 @@ class GenreE2ETest implements MockDsl {
 
         assertEquals(genreId.getValue(), genreJpaEntity.getId());
         assertEquals(expectedName, genreJpaEntity.getName());
-        assertThat(genreJpaEntity.getCategoryIDs(), containsInAnyOrder(expectedCategories.toArray(new CategoryID[expectedCategories.size()])));
+        assertThat(genreJpaEntity.getCategoryIDs(),
+                containsInAnyOrder(expectedCategories.toArray(new CategoryID[expectedCategories.size()])));
         assertEquals(expectedIsActive, genreJpaEntity.isActive());
         assertNotNull(genreJpaEntity.getCreatedAt());
         assertNotNull(genreJpaEntity.getUpdatedAt());
@@ -288,7 +292,8 @@ class GenreE2ETest implements MockDsl {
 
         final var genreId = givenAGenre(expectedName, expectedCategories, true);
 
-        final var aRequestBody = new UpdateGenreRequest(expectedName, mapTo(expectedCategories, CategoryID::getValue), expectedIsActive);
+        final var aRequestBody = new UpdateGenreRequest(expectedName, mapTo(expectedCategories, CategoryID::getValue),
+                expectedIsActive);
 
         updateGenre(genreId, aRequestBody)
                 .andExpect(status().isOk())
@@ -299,7 +304,8 @@ class GenreE2ETest implements MockDsl {
 
         assertEquals(genreId.getValue(), genreJpaEntity.getId());
         assertEquals(expectedName, genreJpaEntity.getName());
-        assertThat(genreJpaEntity.getCategoryIDs(), containsInAnyOrder(expectedCategories.toArray(new CategoryID[expectedCategories.size()])));
+        assertThat(genreJpaEntity.getCategoryIDs(),
+                containsInAnyOrder(expectedCategories.toArray(new CategoryID[expectedCategories.size()])));
         assertEquals(expectedIsActive, genreJpaEntity.isActive());
         assertNotNull(genreJpaEntity.getCreatedAt());
         assertNotNull(genreJpaEntity.getUpdatedAt());
@@ -317,7 +323,8 @@ class GenreE2ETest implements MockDsl {
 
         final var genreId = givenAGenre(expectedName, expectedCategories, false);
 
-        final var aRequestBody = new UpdateGenreRequest(expectedName, mapTo(expectedCategories, CategoryID::getValue), expectedIsActive);
+        final var aRequestBody = new UpdateGenreRequest(expectedName, mapTo(expectedCategories, CategoryID::getValue),
+                expectedIsActive);
 
         updateGenre(genreId, aRequestBody)
                 .andExpect(status().isOk())
@@ -328,7 +335,8 @@ class GenreE2ETest implements MockDsl {
 
         assertEquals(genreId.getValue(), genreJpaEntity.getId());
         assertEquals(expectedName, genreJpaEntity.getName());
-        assertThat(genreJpaEntity.getCategoryIDs(), containsInAnyOrder(expectedCategories.toArray(new CategoryID[expectedCategories.size()])));
+        assertThat(genreJpaEntity.getCategoryIDs(),
+                containsInAnyOrder(expectedCategories.toArray(new CategoryID[expectedCategories.size()])));
         assertEquals(expectedIsActive, genreJpaEntity.isActive());
         assertNotNull(genreJpaEntity.getCreatedAt());
         assertNotNull(genreJpaEntity.getUpdatedAt());
